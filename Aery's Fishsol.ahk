@@ -119,11 +119,6 @@ if (FileExist(iniFilePath)) {
     StringLower, tempClipWebhook, tempClipWebhook
     clipWebhook := (tempClipWebhook = "true" || tempClipWebhook = "1")
     }
-    IniRead, tempUserID, %iniFilePath%, Macro, UserID
-    if (tempUserID != "ERROR") {
-    StringLower, tempUserID, tempUserID
-    userID := (tempUserID = "true" || tempUserID = "1")
-    }
 
     IniRead, tempOnoffWebhook, %iniFilePath%, Macro, onoffWebhook
     if (tempOnoffWebhook != "ERROR")
@@ -697,13 +692,6 @@ if (onoffWebhook) {
     GuiControl,, OnoffWebhookStatus, OFF
     GuiControl, +c0xFF4444, OnoffWebhookStatus
 }
-if (userID) {
-    GuiControl,, UserIDStatus, ON
-    GuiControl, +c0x00DD00,  UserIDStatus
-} else {
-    GuiControl,,  UserIDStatus, OFF
-    GuiControl, +c0xFF4444,  UserIDStatus
-}
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -854,21 +842,6 @@ ToggleClipWebhook:
         IniWrite, false, %iniFilePath%, Macro, ClipWebhook
     }
 return
-
-ToggleUserID:
-    userID := !userID
-
-    if (userID) {
-        GuiControl,, UserIDStatus, ON
-        GuiControl, +c0x00DD00, UserIDStatus
-        IniWrite, true, %iniFilePath%, Macro, UserID
-    } else {
-        GuiControl,, UserIDStatus, OFF
-        GuiControl, +c0xFF4444, UserIDStatus
-        IniWrite, false, %iniFilePath%, Macro, UserID
-    }
-return
-
 
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
