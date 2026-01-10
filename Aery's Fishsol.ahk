@@ -16,8 +16,6 @@ sellAllToggle := false
 advancedFishingToggle := false
 pathingMode := "Vip Pathing"
 azertyPathing := false
-autoAdd := false
-manualAdd := false
 autoUnequip := false
 useNothing := false
 nvidiaReplay := false
@@ -155,14 +153,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAzerty, %iniFilePath%, Macro, azertyPathing
     if (tempAzerty != "ERROR")
     azertyPathing := (tempAzerty = "true" || tempAzerty = "1")
-
-    IniRead, AutoAdd, %iniFilePath%, Macro, autoAdd
-    if (tempAutoAdd != "ERROR")
-    autoAdd := (tempAutoAdd = "true" || tempAutoAdd = "1")
-
-    IniRead, ManualAdd, %iniFilePath%, Macro, manualAdd
-    if (tempManualAdd != "ERROR")
-    manualAdd := (tempManualAdd = "true" || tempManualAdd = "1")
 
     IniRead, tempDetectLimbo, %iniFilePath%, Macro, detectLimbo
     if (tempDetectLimbo != "ERROR")
@@ -459,28 +449,6 @@ Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
 
-; Gui, Tab, Crafting
-
-; Gui, Font, s11 cWhite Bold, Segoe UI
-; Gui, Add, GroupBox, x33 y120 w534 h120 cWhite, Auto Add
-; Gui, Add, GroupBox, x33 y255 w534 h120 cWhite, Manual Add
-; Gui, Font, s13 cWhite Bold, Segoe UI
-; Gui, Add, Text, x200 y93 w250 h75 BackgroundTrans, [ Auto/Manual Craft ]
-
-; Gui, Font, s10 cWhite Normal
-; Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, Goes to Stella's cave and chooses which item to Auto-Add and Craft. Adds the nesscecary potions too. (Luck/Speed Potions)
-; Gui, Add, Text, x45 y275 w515 h135 BackgroundTrans, Goes to Stella's cave and manually adds all items. (Auras and Potions) Doesn't Choose what to Auto-Add
-
-; Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-; Gui, Add, DropDownList, x225 y201 w120 vAutoAdd gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
-; Gui, Add, DropDownList, x225 y336 w120 vManualAdd gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
-; Gui, Add, Button, x45 y200 w80 h25 gToggleAutoAdd vAutoAddBtn, Toggle
-; Gui, Add, Button, x45 y335 w80 h25 gToggleManualAdd vManualAddBtn, Toggle
-
-; Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-; Gui, Add, Text, x143 y203 w60 h25 vAutoAddStatus BackgroundTrans, OFF
-; Gui, Add, Text, x143 y338 w60 h25 vManualAddStatus BackgroundTrans, OFF
-
 Gui, Tab, Webhook
 
 Gui, Font, s10 cWhite Normal Bold
@@ -497,15 +465,12 @@ Gui, Add, Text, x50 y280 w500 h15 BackgroundTrans, Paste your Discord USERID her
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x60 y391 w500 h40 BackgroundTrans c0xCCCCCC, Messages and pings if anything has been clipped via Webhook.
 Gui, Add, Text, x60 y331 w500 h40 BackgroundTrans c0xCCCCCC, OFF = no message and ping if macro has started/ended.
-; Gui, Add, Text, x60 y341 w500 h40 BackgroundTrans c0xCCCCCC, Turn this ON if your using userid.
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x60 y366 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
 Gui, Add, Text, x150 y370 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 Gui, Add, Button, x60 y306 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
 Gui, Add, Text, x150 y310 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
-; Gui, Add, Button, x60 y316 w80 h25 gToggleUserID vUserIDBtn, Toggle
-; Gui, Add, Text, x150 y320 w60 h25 vUserIDStatus BackgroundTrans, OFF
 
 Gui, Tab, Failsafes
 
@@ -603,7 +568,7 @@ Gui, Add, Text, x110 y300 w300 h15 BackgroundTrans c0x0088FF gDev3LinkClick, %de
 Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y325 w480 h1 0x10 BackgroundTrans
 
-url := "https://raw.githubusercontent.com/Ayto0/personak/refs/heads/main/DONATORS.txt"  ; ← replace with your file URL
+url := "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/refs/heads/main/DONATORS.txt"
 
 Http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 Http.Open("GET", url, false)
@@ -739,20 +704,6 @@ if (userID) {
     GuiControl,,  UserIDStatus, OFF
     GuiControl, +c0xFF4444,  UserIDStatus
 }
-if (autoAdd) {
-    GuiControl,, AutoAddStatus, ON
-    GuiControl, +c0x00DD00, AutoAddStatus
-} else {
-    GuiControl,, AutoAddStatus, OFF
-    GuiControl, +c0xFF4444, AutoAddStatus
-}
-if (manualCraft) {
-    GuiControl,, ManualCraftStatus, ON
-    GuiControl, +c0x00DD00, ManualCraftStatus
-} else {
-    GuiControl,, ManualCraftStatus, OFF
-    GuiControl, +c0xFF4444, ManualCraftStatus
-}
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -873,19 +824,6 @@ if (azertyPathing) {
     GuiControl,, AzertyPathingStatus, OFF
     GuiControl, +c0xFF4444, AzertyPathingStatus
     IniWrite, false, %iniFilePath%, "Macro", "azertyPathing"
-}
-return
-
-ToggleAutoAdd:
-autoAdd := !autoAdd
-if (autoAdd) {
-    GuiControl,, AutoAddStatus, ON
-    GuiControl, +c0x00DD00, AutoAddStatus
-    IniWrite, true, %iniFilePath%, "Macro", "autoAdd"
-} else {
-    GuiControl,, AutoAddStatus, OFF
-    GuiControl, +c0xFF4444, AutoAddStatus
-    IniWrite, false, %iniFilePath%, "Macro", "autoAdd"
 }
 return
 
@@ -1174,7 +1112,7 @@ return
 DoClip2:
 if (clipWebhook) {
     ping := (webhookID != "" ? "<@" webhookID "> " : "")
-    try SendWebhook(":warning: A Transcendent has been clipped! :warning:", 16753920)
+    try SendWebhook(":warning: A Transcendent has been clipped!!! :warning:", 16753920)
     Send, !{F10}
 }
  else {
@@ -1237,143 +1175,6 @@ SendWebhook(text, color := 16777215) {
 
 
 
-
-SelectItem:
-    Gui, Submit, NoHide
-    selectedItem := AutoAdd
-return
-
-DoCraftMovement:
-    Send, {a Down}
-    Sleep, 3000
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 500
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 2000
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 700
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 500
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-
-
-    Send, {d Down}
-    Sleep, 700
-    Send, {d Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 25
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 40
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 25
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 40
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {d Down}
-    Sleep, 100
-    Send, {d Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 100
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 70
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {w Down}
-    Sleep, 40
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 150
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {d Down}
-    Sleep, 30
-    Send, {d Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 2500
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 300
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 200
-    Send, {a Up}
-    Sleep, 50
-return
-
 OpenNvidiaNotes:
     Gui, NvidiaNotes:New, +AlwaysOnTop +Resize, Nvidia Replay - Tutorial
     Gui, NvidiaNotes:Font, s10, Segoe UI
@@ -1423,354 +1224,6 @@ return
 CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
-
-
-; junk
-; tutorial: you must have stella's cauldren open. it chooses to auto crafts fortune 1 then auto crafts the desired item (idk if this works with the macros resolution lel)
-DoHeavenly:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Heavenly Potion
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoBound:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Potion of Bound
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoZeus:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Godly Zeus
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoHades:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Godly Hades
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoPoseidon:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Godly Poseidon
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoJewelry:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Jewlery Potion
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoZombie:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Zombie Potion
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoRage:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Rage Potion
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-DoDiver:
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
-    Sleep, 200
-    Send, Diver Potion
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 1420, 300, 3
-    Sleep, 200
-    Send, {Esc}
-    Sleep, 200
-    Send, r
-    Sleep, 200
-    Send, {Enter}
-return
-
-
-
 
 
 
@@ -1883,8 +1336,6 @@ if (toggle) {
     global privateServerLink
     global globalFailsafeTimer
     global azertyPathing
-    global autoAdd
-    global manualAdd
     global autoUnequip
     global useNothing
     global autoCloseChat
@@ -2121,55 +1572,6 @@ if (snowmanCollect) {
 
     Send, {Enter}
     Sleep, 2000
-}
-
-; no button
-if (autoAdd) {
-    Gosub, DoCraftMovement
-    if (selectedItem = "Heavenly Potion") {
-        Gosub, DoHeavenly
-    } else if (selectedItem = "Bound Potion") {
-        Gosub, DoBound
-    } else if (selectedItem = "Zeus Potion") {
-        Gosub, DoZeus
-    } else if (selectedItem = "Hades Potion") {
-        Gosub, DoHades
-    } else if (selectedItem = "Poseidon Potion") {
-        Gosub, DoPoseidon
-    } else if (selectedItem = "Jewelry Potion") {
-        Gosub, DoJewelry
-    } else if (selectedItem = "Zombie Potion") {
-        Gosub, DoZombie
-    } else if (selectedItem = "Rage Potion") {
-        Gosub, DoRage
-    } else if (selectedItem = "Diver Potion") {
-        Gosub, DoDiver
-    }
-}
-
-
-; no button
-if (manualAdd) {
-    Gosub, DoCraftMovement
-    if (selectedItem = "Heavenly Potion") {
-        Gosub, DoHeavenly
-    } else if (selectedItem = "Bound Potion") {
-        Gosub, DoBound
-    } else if (selectedItem = "Zeus Potion") {
-        Gosub, DoZeus
-    } else if (selectedItem = "Hades Potion") {
-        Gosub, DoHades
-    } else if (selectedItem = "Poseidon Potion") {
-        Gosub, DoPoseidon
-    } else if (selectedItem = "Jewelry Potion") {
-        Gosub, DoJewelry
-    } else if (selectedItem = "Zombie Potion") {
-        Gosub, DoZombie
-    } else if (selectedItem = "Rage Potion") {
-        Gosub, DoRage
-    } else if (selectedItem = "Diver Potion") {
-        Gosub, DoDiver
-    }
 }
 
 
