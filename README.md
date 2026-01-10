@@ -1,4 +1,4 @@
-# Aerys-Fishsol
+# Aerys-Fishsol (Only Works in 1080p and VIP)
 ALL CREDIT GOES TO FISHSOL DEVS.
 I only added stuff that I wanted (Nvidia Replay)
 
