@@ -8,5 +8,5 @@ Original fishSol and tutorial on how to use fishSol:
 (Original)
 https://github.com/ivelchampion249/FishSol-Macro
 
-(Setup/Tutorial
+(Setup/Tutorial)
 https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
