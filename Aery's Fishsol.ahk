@@ -36,6 +36,8 @@ webhookURL := ""
 webhookID := ""
 ClipWebhook := false
 onoffWebhook := false
+GlobalArea := false
+TransArea := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, "Macro", "resolution"
@@ -152,6 +154,14 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDetectLimbo, %iniFilePath%, Macro, detectLimbo
     if (tempDetectLimbo != "ERROR")
     detectLimbo := (tempDetectLimbo = "true" || tempDetectLimbo = "1")
+
+    IniRead, tempGlobalArea, %iniFilePath%, Macro, globalArea
+    if (tempGlobalArea != "ERROR")
+    globalArea := (tempGlobalArea = "true" || tempGlobalArea = "1")
+
+    IniRead, tempTransArea, %iniFilePath%, Macro, transArea
+    if (tempTransArea != "ERROR")
+    transArea := (tempTransAreao = "true" || tempTransArea = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, "Macro", "advancedFishingThreshold"
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -444,6 +454,22 @@ Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
 
+
+; Highlight Area
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x33 y520 w534 h75 cWhite, Highlight Detection Area
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
+Gui, Add, Text, x173 y566 w520 h145 BackgroundTrans, (Globals)
+Gui, Add, Text, x470 y566 w520 h145 BackgroundTrans, (Transcendents)
+Gui, Font, s9 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y561 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
+Gui, Add, Button, x345 y561 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
+Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y566 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
+Gui, Add, Text, x440 y566 w60 h25 vTransAreaStatus BackgroundTrans, OFF
+
 Gui, Tab, Webhook
 
 Gui, Font, s10 cWhite Normal Bold
@@ -692,6 +718,20 @@ if (onoffWebhook) {
     GuiControl,, OnoffWebhookStatus, OFF
     GuiControl, +c0xFF4444, OnoffWebhookStatus
 }
+if (globalArea) {
+    GuiControl,, GlobalAreaStatus, ON
+    GuiControl, +c0x00DD00, GlobalAreaStatus
+} else {
+    GuiControl,, GlobalAreaStatus, OFF
+    GuiControl, +c0xFF4444, GlobalAreaStatus
+}
+if (transArea) {
+    GuiControl,, TransAreaStatus, ON
+    GuiControl, +c0x00DD00, TransAreaStatus
+} else {
+    GuiControl,, TransAreaStatus, OFF
+    GuiControl, +c0xFF4444, TransAreaStatus
+}
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -736,145 +776,128 @@ cycleCount := 0
 
 TabChange:
 return
-
-
 UpdateLoopCount:
-Gui, Submit, nohide
-if (MaxLoopInput > 0) {
-    maxLoopCount := MaxLoopInput
-    IniWrite, %maxLoopCount%, %iniFilePath%, "Macro", "maxLoopCount"
-}
-if (FishingLoopInput > 0) {
-    fishingLoopCount := FishingLoopInput
-    IniWrite, %fishingLoopCount%, %iniFilePath%, "Macro", "fishingLoopCount"
-}
+    Gui, Submit, NoHide
+    if (MaxLoopInput > 0) {
+        maxLoopCount := MaxLoopInput
+        IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
+    }
+    if (FishingLoopInput > 0) {
+        fishingLoopCount := FishingLoopInput
+        IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
+    }
 return
 
 ToggleSellAll:
-sellAllToggle := !sellAllToggle
-if (sellAllToggle) {
-    GuiControl,, SellAllStatus, ON
-    GuiControl, +c0x00DD00, SellAllStatus
-    IniWrite, true, %iniFilePath%, "Macro", "sellAllToggle"
-} else {
-    GuiControl,, SellAllStatus, OFF
-    GuiControl, +c0xFF4444, SellAllStatus
-    IniWrite, false, %iniFilePath%, "Macro", "sellAllToggle"
-}
+    sellAllToggle := !sellAllToggle
+    if (sellAllToggle) {
+        GuiControl,, SellAllStatus, ON
+        GuiControl, +c0x00DD00, SellAllStatus
+    } else {
+        GuiControl,, SellAllStatus, OFF
+        GuiControl, +c0xFF4444, SellAllStatus
+    }
+    IniWrite, % (sellAllToggle ? "true" : "false"), %iniFilePath%, Macro, sellAllToggle
 return
 
 ToggleAdvancedFishing:
-advancedFishingToggle := !advancedFishingToggle
-if (advancedFishingToggle) {
-    GuiControl,, AdvancedFishingStatus, ON
-    GuiControl, +c0x00DD00, AdvancedFishingStatus
-    IniWrite, true, %iniFilePath%, "Macro", "advancedFishingToggle"
-} else {
-    GuiControl,, AdvancedFishingStatus, OFF
-    GuiControl, +c0xFF4444, AdvancedFishingStatus
-    IniWrite, false, %iniFilePath%, "Macro", "advancedFishingToggle"
-}
+    advancedFishingToggle := !advancedFishingToggle
+    if (advancedFishingToggle) {
+        GuiControl,, AdvancedFishingStatus, ON
+        GuiControl, +c0x00DD00, AdvancedFishingStatus
+    } else {
+        GuiControl,, AdvancedFishingStatus, OFF
+        GuiControl, +c0xFF4444, AdvancedFishingStatus
+    }
+    IniWrite, % (advancedFishingToggle ? "true" : "false"), %iniFilePath%, Macro, advancedFishingToggle
 return
 
 ToggleAutoUnequip:
-autoUnequip := !autoUnequip
-if (autoUnequip) {
-    GuiControl,, AutoUnequipStatus, ON
-    GuiControl, +c0x00DD00, AutoUnequipStatus
-    IniWrite, true, %iniFilePath%, "Macro", "autoUnequip"
-} else {
-    GuiControl,, AutoUnequipStatus, OFF
-    GuiControl, +c0xFF4444, AutoUnequipStatus
-    IniWrite, false, %iniFilePath%, "Macro", "autoUnequip"
-}
+    autoUnequip := !autoUnequip
+    if (autoUnequip) {
+        GuiControl,, AutoUnequipStatus, ON
+        GuiControl, +c0x00DD00, AutoUnequipStatus
+    } else {
+        GuiControl,, AutoUnequipStatus, OFF
+        GuiControl, +c0xFF4444, AutoUnequipStatus
+    }
+    IniWrite, % (autoUnequip ? "true" : "false"), %iniFilePath%, Macro, autoUnequip
 return
 
 ToggleUseNothing:
-useNothing := !useNothing
-if (useNothing) {
-    GuiControl,, UseNothingStatus, ON
-    GuiControl, +c0x00DD00, UseNothingStatus
-    IniWrite, true, %iniFilePath%, "Macro", "useNothing"
-} else {
-    GuiControl,, UseNothingStatus, OFF
-    GuiControl, +c0xFF4444, UseNothingStatus
-    IniWrite, false, %iniFilePath%, "Macro", "useNothing"
-}
+    useNothing := !useNothing
+    if (useNothing) {
+        GuiControl,, UseNothingStatus, ON
+        GuiControl, +c0x00DD00, UseNothingStatus
+    } else {
+        GuiControl,, UseNothingStatus, OFF
+        GuiControl, +c0xFF4444, UseNothingStatus
+    }
+    IniWrite, % (useNothing ? "true" : "false"), %iniFilePath%, Macro, useNothing
+return
+
+ToggleAutoCloseChat:
+    autoCloseChat := !autoCloseChat
+    if (autoCloseChat) {
+        GuiControl,, AutoCloseChatStatus, ON
+        GuiControl, +c0x00DD00, AutoCloseChatStatus
+    } else {
+        GuiControl,, AutoCloseChatStatus, OFF
+        GuiControl, +c0xFF4444, AutoCloseChatStatus
+    }
+    IniWrite, % (autoCloseChat ? "true" : "false"), %iniFilePath%, Macro, autoCloseChat
 return
 
 ToggleAzertyPathing:
-azertyPathing := !azertyPathing
-if (azertyPathing) {
-    GuiControl,, AzertyPathingStatus, ON
-    GuiControl, +c0x00DD00, AzertyPathingStatus
-    IniWrite, true, %iniFilePath%, "Macro", "azertyPathing"
-} else {
-    GuiControl,, AzertyPathingStatus, OFF
-    GuiControl, +c0xFF4444, AzertyPathingStatus
-    IniWrite, false, %iniFilePath%, "Macro", "azertyPathing"
-}
-return
-
-ToggleManualAdd:
-    manualAdd := !manualAdd
-
-    if (manualAdd) {
-        GuiControl,, ManualAddStatus, ON
-        GuiControl, +c0x00DD00, ManualAddStatus
-        IniWrite, true, %iniFilePath%, Macro, manualAdd
+    azertyPathing := !azertyPathing
+    if (azertyPathing) {
+        GuiControl,, AzertyPathingStatus, ON
+        GuiControl, +c0x00DD00, AzertyPathingStatus
     } else {
-        GuiControl,, ManualAddStatus, OFF
-        GuiControl, +c0xFF4444, ManualAddStatus
-        IniWrite, false, %iniFilePath%, Macro, manualAdd
+        GuiControl,, AzertyPathingStatus, OFF
+        GuiControl, +c0xFF4444, AzertyPathingStatus
     }
+    IniWrite, % (azertyPathing ? "true" : "false"), %iniFilePath%, Macro, azertyPathing
 return
 
 ToggleClipWebhook:
     clipWebhook := !clipWebhook
-
     if (clipWebhook) {
         GuiControl,, ClipWebhookStatus, ON
         GuiControl, +c0x00DD00, ClipWebhookStatus
-        IniWrite, true, %iniFilePath%, Macro, ClipWebhook
     } else {
         GuiControl,, ClipWebhookStatus, OFF
         GuiControl, +c0xFF4444, ClipWebhookStatus
-        IniWrite, false, %iniFilePath%, Macro, ClipWebhook
     }
+    IniWrite, % (clipWebhook ? "true" : "false"), %iniFilePath%, Macro, clipWebhook
 return
 
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
-
     if (onoffWebhook) {
         GuiControl,, OnoffWebhookStatus, ON
         GuiControl, +c0x00DD00, OnoffWebhookStatus
-        IniWrite, true, %iniFilePath%, Macro, onoffWebhook
     } else {
         GuiControl,, OnoffWebhookStatus, OFF
         GuiControl, +c0xFF4444, OnoffWebhookStatus
-        IniWrite, false, %iniFilePath%, Macro, onoffWebhook
     }
+    IniWrite, % (onoffWebhook ? "true" : "false"), %iniFilePath%, Macro, onoffWebhook
 return
 
-
-
 ToggleSnowmanCollect:
-snowmanCollect := !snowmanCollect
-if (snowmanCollect) {
-    GuiControl,, SnowmanCollectStatus, ON
-     GuiControl, +c0x00DD00, SnowmanCollectStatus
+    snowmanCollect := !snowmanCollect
+    if (snowmanCollect) {
+        GuiControl,, SnowmanCollectStatus, ON
+        GuiControl, +c0x00DD00, SnowmanCollectStatus
     } else {
         GuiControl,, SnowmanCollectStatus, OFF
         GuiControl, +c0xFF4444, SnowmanCollectStatus
     }
-
     IniWrite, % (snowmanCollect ? "true" : "false"), %iniFilePath%, Macro, snowmanCollect
 return
 
 ToggleStrangeController:
     strangeController := !strangeController
-
     if (strangeController) {
         GuiControl,, StrangeControllerStatus, ON
         GuiControl, +c0x00DD00, StrangeControllerStatus
@@ -882,13 +905,11 @@ ToggleStrangeController:
         GuiControl,, StrangeControllerStatus, OFF
         GuiControl, +c0xFF4444, StrangeControllerStatus
     }
-
     IniWrite, % (strangeController ? "true" : "false"), %iniFilePath%, Macro, strangeController
 return
 
 ToggleBiomeRandomizer:
     biomeRandomizer := !biomeRandomizer
-
     if (biomeRandomizer) {
         GuiControl,, BiomeRandomizerStatus, ON
         GuiControl, +c0x00DD00, BiomeRandomizerStatus
@@ -896,13 +917,39 @@ ToggleBiomeRandomizer:
         GuiControl,, BiomeRandomizerStatus, OFF
         GuiControl, +c0xFF4444, BiomeRandomizerStatus
     }
-
     IniWrite, % (biomeRandomizer ? "true" : "false"), %iniFilePath%, Macro, biomeRandomizer
+return
+
+ToggleGlobalArea:
+    globalArea := !globalArea
+
+    if (globalArea) {
+        GuiControl,, GlobalAreaStatus, ON
+        GuiControl, +c0x00DD00, GlobalAreaStatus
+    } else {
+        GuiControl,, GlobalAreaStatus, OFF
+        GuiControl, +c0xFF4444, GlobalAreaStatus
+    }
+
+    IniWrite, % (globalArea ? "true" : "false"), %iniFilePath%, Macro, globalArea
+    UpdateGlobalBox()
+return
+
+ToggleTransArea:
+    transArea := !transArea
+    if (transArea) {
+        GuiControl,, TransAreaStatus, ON
+        GuiControl, +c0x00DD00, TransAreaStatus
+    } else {
+        GuiControl,, TransAreaStatus, OFF
+        GuiControl, +c0xFF4444, TransAreaStatus
+    }
+    IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
+    UpdateTransBox()
 return
 
 ToggleDetectLimbo:
     detectLimbo := !detectLimbo
-
     if (detectLimbo) {
         GuiControl,, DetectLimboStatus, ON
         GuiControl, +c0x00DD00, DetectLimboStatus
@@ -910,19 +957,16 @@ ToggleDetectLimbo:
         GuiControl,, DetectLimboStatus, OFF
         GuiControl, +c0xFF4444, DetectLimboStatus
     }
-
     IniWrite, % (detectLimbo ? "true" : "false"), %iniFilePath%, Macro, detectLimbo
 return
 
 ToggleDetectTranscendents:
     detectTranscendents := !detectTranscendents
-
     if (detectTranscendents) {
         GuiControl,, DetectTranscendentsStatus, ON
         GuiControl, +c0x00DD00, DetectTranscendentsStatus
 
         triggerDelay2 := 30000
-
         transcendentPixels := []
         transcendentPixels.Push({x: 1050, y: 49})
 
@@ -936,25 +980,11 @@ ToggleDetectTranscendents:
         GuiControl, +c0xFF4444, DetectTranscendentsStatus
         SetTimer, CheckPixel2, Off
     }
-
     IniWrite, % (detectTranscendents ? "true" : "false"), %iniFilePath%, Macro, detectTranscendents
+    UpdateTransBox()
 return
 
 
-
-ToggleAutoCloseChat:
-    autoCloseChat := !autoCloseChat
-
-    if (autoCloseChat) {
-        GuiControl,, AutoCloseChatStatus, ON
-        GuiControl, +c0x00DD00, AutoCloseChatStatus
-    } else {
-        GuiControl,, AutoCloseChatStatus, OFF
-        GuiControl, +c0xFF4444, AutoCloseChatStatus
-    }
-
-    IniWrite, % (autoCloseChat ? "true" : "false"), %iniFilePath%, Macro, autoCloseChat
-return
 
 ToggleNvidiaReplay:
     nvidiaReplay := !nvidiaReplay
@@ -971,53 +1001,154 @@ ToggleNvidiaReplay:
     }
 
     IniWrite, % (nvidiaReplay ? "true" : "false"), %iniFilePath%, Macro, nvidiaReplay
+    UpdateGlobalBox()
 return
 
-GetPingText() {
-    global webhookID
-    if (webhookID != "")
-        return "<@" webhookID ">"
-    return ""
-}
 
-return
 UpdatePrivateServer:
-Gui, Submit, nohide
-privateServerLink := PrivateServerInput
-IniWrite, %privateServerLink%, %iniFilePath%, "Macro", "privateServerLink"
+    Gui, Submit, NoHide
+    privateServerLink := PrivateServerInput
+    IniWrite, %privateServerLink%, %iniFilePath%, Macro, privateServerLink
 return
 
 UpdateFishingFailsafe:
-Gui, Submit, nohide
-if (FishingFailsafeInput > 0) {
-    fishingFailsafeTime := FishingFailsafeInput
-    IniWrite, %fishingFailsafeTime%, %iniFilePath%, "Macro", "fishingFailsafeTime"
-}
+    Gui, Submit, NoHide
+    if (FishingFailsafeInput > 0) {
+        fishingFailsafeTime := FishingFailsafeInput
+        IniWrite, %fishingFailsafeTime%, %iniFilePath%, Macro, fishingFailsafeTime
+    }
 return
 
 UpdatePathingFailsafe:
-Gui, Submit, nohide
-if (PathingFailsafeInput > 0) {
-    pathingFailsafeTime := PathingFailsafeInput
-    IniWrite, %pathingFailsafeTime%, %iniFilePath%, "Macro", "pathingFailsafeTime"
-}
+    Gui, Submit, NoHide
+    if (PathingFailsafeInput > 0) {
+        pathingFailsafeTime := PathingFailsafeInput
+        IniWrite, %pathingFailsafeTime%, %iniFilePath%, Macro, pathingFailsafeTime
+    }
 return
 
 UpdateAutoRejoinFailsafe:
-Gui, Submit, nohide
-if (AutoRejoinFailsafeInput > 0) {
-    autoRejoinFailsafeTime := AutoRejoinFailsafeInput
-    IniWrite, %autoRejoinFailsafeTime%, %iniFilePath%, "Macro", "autoRejoinFailsafeTime"
-}
+    Gui, Submit, NoHide
+    if (AutoRejoinFailsafeInput > 0) {
+        autoRejoinFailsafeTime := AutoRejoinFailsafeInput
+        IniWrite, %autoRejoinFailsafeTime%, %iniFilePath%, Macro, autoRejoinFailsafeTime
+    }
 return
 
 UpdateAdvancedThreshold:
-Gui, Submit, nohide
-if (AdvancedThresholdInput >= 0 && AdvancedThresholdInput <= 40) {
-    advancedFishingThreshold := AdvancedThresholdInput
-    IniWrite, %advancedFishingThreshold%, %iniFilePath%, "Macro", "advancedFishingThreshold"
-}
+    Gui, Submit, NoHide
+    if (AdvancedThresholdInput >= 0 && AdvancedThresholdInput <= 40) {
+        advancedFishingThreshold := AdvancedThresholdInput
+        IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro, advancedFishingThreshold
+    }
 return
+
+UpdateGlobalBox() {
+    global globalArea, nvidiaReplay
+
+    if (globalArea && nvidiaReplay) {
+        ShowTranscendentOutline()
+    } else {
+        HideTranscendentOutline()
+    }
+}
+
+UpdateTransBox() {
+    global transArea, detectTranscendents
+
+    if (transArea && detectTranscendents) {
+        ShowGlobalOutline()
+    } else {
+        HideGlobalOutline()
+    }
+}
+
+ShowGlobalOutline() {
+    size := 40
+    thickness := 2
+
+    x := 1050 - size//2
+    y := 40 - size//2
+
+    yBottom := y + size - thickness
+    xRight  := x + size - thickness
+
+    Gui, GBoxTop:Destroy
+    Gui, GBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxTop:Color, 00FF00
+    Gui, GBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
+
+    Gui, GBoxBottom:Destroy
+    Gui, GBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxBottom:Color, 00FF00
+    Gui, GBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
+
+    Gui, GBoxLeft:Destroy
+    Gui, GBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxLeft:Color, 00FF00
+    Gui, GBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
+
+    Gui, GBoxRight:Destroy
+    Gui, GBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxRight:Color, 00FF00
+    Gui, GBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
+}
+
+HideGlobalOutline() {
+    Gui, GBoxTop:Destroy
+    Gui, GBoxBottom:Destroy
+    Gui, GBoxLeft:Destroy
+    Gui, GBoxRight:Destroy
+}
+
+ShowTranscendentOutline() {
+    size := 40
+    thickness := 2
+
+    x := 1050 - size//2
+    y := 49 - size//2
+
+    yBottom := y + size - thickness
+    xRight  := x + size - thickness
+
+    color := "66CCFF" ; light blue / transcendent color
+
+    ; Top
+    Gui, TBoxTop:Destroy
+    Gui, TBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxTop:Color, %color%
+    Gui, TBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
+
+    ; Bottom
+    Gui, TBoxBottom:Destroy
+    Gui, TBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxBottom:Color, %color%
+    Gui, TBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
+
+    ; Left
+    Gui, TBoxLeft:Destroy
+    Gui, TBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxLeft:Color, %color%
+    Gui, TBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
+
+    ; Right
+    Gui, TBoxRight:Destroy
+    Gui, TBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxRight:Color, %color%
+    Gui, TBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
+}
+
+HideTranscendentOutline() {
+    Gui, TBoxTop:Destroy
+    Gui, TBoxBottom:Destroy
+    Gui, TBoxLeft:Destroy
+    Gui, TBoxRight:Destroy
+}
+
+GetPingText() {
+    global webhookID
+    return webhookID != "" ? "<@" webhookID ">" : ""
+}
 
 CheckPixel:
     global nvidiaReplay, triggerDelay
