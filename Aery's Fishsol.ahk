@@ -1111,27 +1111,23 @@ ShowTranscendentOutline() {
     yBottom := y + size - thickness
     xRight  := x + size - thickness
 
-    color := "66CCFF" ; light blue / transcendent color
+    color := "66CCFF"
 
-    ; Top
     Gui, TBoxTop:Destroy
     Gui, TBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxTop:Color, %color%
     Gui, TBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
 
-    ; Bottom
     Gui, TBoxBottom:Destroy
     Gui, TBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxBottom:Color, %color%
     Gui, TBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
 
-    ; Left
     Gui, TBoxLeft:Destroy
     Gui, TBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxLeft:Color, %color%
     Gui, TBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
 
-    ; Right
     Gui, TBoxRight:Destroy
     Gui, TBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxRight:Color, %color%
