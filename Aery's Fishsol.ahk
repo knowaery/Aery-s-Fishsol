@@ -40,72 +40,73 @@ GlobalArea := false
 TransArea := false
 
 if (FileExist(iniFilePath)) {
-    IniRead, tempRes, %iniFilePath%, "Macro", "resolution"
+    IniRead, tempRes, %iniFilePath%, Macro, resolution
     if (tempRes != "ERROR")
     {
         res := tempRes
     }
-    IniRead, tempMaxLoop, %iniFilePath%, "Macro", "maxLoopCount"
+    IniRead, tempMaxLoop, %iniFilePath%, Macro, maxLoopCount
     if (tempMaxLoop != "ERROR" && tempMaxLoop > 0)
     {
         maxLoopCount := tempMaxLoop
     }
-    IniRead, tempFishingLoop, %iniFilePath%, "Macro", "fishingLoopCount"
+    IniRead, tempFishingLoop, %iniFilePath%, Macro, fishingLoopCount
     if (tempFishingLoop != "ERROR" && tempFishingLoop > 0)
     {
         fishingLoopCount := tempFishingLoop
     }
-    IniRead, tempSellAll, %iniFilePath%, "Macro", "sellAllToggle"
+    IniRead, tempSellAll, %iniFilePath%, Macro, sellAllToggle
     if (tempSellAll != "ERROR")
     {
         sellAllToggle := (tempSellAll = "true" || tempSellAll = "1")
     }
-    IniRead, tempPathing, %iniFilePath%, "Macro", "pathingMode"
+    
+    IniRead, tempPathing, %iniFilePath%, Macro, pathingMode
     if (tempPathing != "ERROR")
     {
         pathingMode := tempPathing
     }
-    IniRead, tempAzerty, %iniFilePath%, "Macro", "azertyPathing"
+    IniRead, tempAzerty, %iniFilePath%, Macro, azertyPathing
     if (tempAzerty != "ERROR")
     {
         azertyPathing := (tempAzerty = "true" || tempAzerty = "1")
     }
-    IniRead, tempPrivateServer, %iniFilePath%, "Macro", "privateServerLink"
+    IniRead, tempPrivateServer, %iniFilePath%, Macro, privateServerLink
     if (tempPrivateServer != "ERROR")
     {
         privateServerLink := tempPrivateServer
     }
-    IniRead, tempAdvancedFishing, %iniFilePath%, "Macro", "advancedFishingToggle"
+    IniRead, tempAdvancedFishing, %iniFilePath%, Macro, advancedFishingToggle
     if (tempAdvancedFishing != "ERROR")
     {
         advancedFishingToggle := (tempAdvancedFishing = "true" || tempAdvancedFishing = "1")
     }
-    IniRead, tempFishingFailsafe, %iniFilePath%, "Macro", "fishingFailsafeTime"
+    IniRead, tempFishingFailsafe, %iniFilePath%, Macro, fishingFailsafeTime
     if (tempFishingFailsafe != "ERROR" && tempFishingFailsafe > 0)
     {
         fishingFailsafeTime := tempFishingFailsafe
     }
-    IniRead, tempPathingFailsafe, %iniFilePath%, "Macro", "pathingFailsafeTime"
+    IniRead, tempPathingFailsafe, %iniFilePath%, Macro, pathingFailsafeTime
     if (tempPathingFailsafe != "ERROR" && tempPathingFailsafe > 0)
     {
         pathingFailsafeTime := tempPathingFailsafe
     }
-    IniRead, tempAutoRejoinFailsafe, %iniFilePath%, "Macro", "autoRejoinFailsafeTime"
+    IniRead, tempAutoRejoinFailsafe, %iniFilePath%, Macro, autoRejoinFailsafeTime
     if (tempAutoRejoinFailsafe != "ERROR" && tempAutoRejoinFailsafe > 0)
     {
         autoRejoinFailsafeTime := tempAutoRejoinFailsafe
     }
-    IniRead, tempAutoUnequip, %iniFilePath%, "Macro", "autoUnequip"
+    IniRead, tempAutoUnequip, %iniFilePath%, Macro, autoUnequip
     if (tempAutoUnequip != "ERROR")
     {
         autoUnequip := (tempAutoUnequip = "true" || tempAutoUnequip = "1")
     }
-    IniRead, tempUseNothing, %iniFilePath%, "Macro", "useNothing"
+    IniRead, tempUseNothing, %iniFilePath%, Macro, useNothing
     if (tempUseNothing != "ERROR")
     {
         useNothing := (tempUseNothing = "true" || tempUseNothing = "1")
     }
-    IniRead, tempWebhook, %iniFilePath%, "Macro", "webhookURL"
+    IniRead, tempWebhook, %iniFilePath%, Macro, webhookURL
     if (tempWebhook != "ERROR")
     {
         webhookURL := tempWebhook
@@ -161,7 +162,7 @@ if (FileExist(iniFilePath)) {
 
     IniRead, tempTransArea, %iniFilePath%, Macro, transArea
     if (tempTransArea != "ERROR")
-    transArea := (tempTransAreao = "true" || tempTransArea = "1")
+    transArea := (tempTransArea = "true" || tempTransArea = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, "Macro", "advancedFishingThreshold"
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -169,6 +170,7 @@ if (FileExist(iniFilePath)) {
         advancedFishingThreshold := tempAdvancedThreshold
     }
 }
+
 
 version := "Aery's v1.7"
 code := ""
@@ -417,7 +419,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation, Frostveil and Winter Garden. (their cutscenes end with a flash) May clip Equinox.
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation with max graphics, Frostveil and Winter Garden. (their cutscenes end with a flash)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -981,7 +983,6 @@ ToggleDetectTranscendents:
         SetTimer, CheckPixel2, Off
     }
     IniWrite, % (detectTranscendents ? "true" : "false"), %iniFilePath%, Macro, detectTranscendents
-    UpdateTransBox()
 return
 
 
@@ -1001,7 +1002,6 @@ ToggleNvidiaReplay:
     }
 
     IniWrite, % (nvidiaReplay ? "true" : "false"), %iniFilePath%, Macro, nvidiaReplay
-    UpdateGlobalBox()
 return
 
 
@@ -1047,9 +1047,9 @@ UpdateGlobalBox() {
     global globalArea, nvidiaReplay
 
     if (globalArea && nvidiaReplay) {
-        ShowTranscendentOutline()
+        ShowGlobalOutline()
     } else {
-        HideTranscendentOutline()
+        HideGlobalOutline()
     }
 }
 
@@ -1057,9 +1057,9 @@ UpdateTransBox() {
     global transArea, detectTranscendents
 
     if (transArea && detectTranscendents) {
-        ShowGlobalOutline()
+        ShowTranscendentOutline()
     } else {
-        HideGlobalOutline()
+        HideTranscendentOutline()
     }
 }
 
@@ -1067,8 +1067,8 @@ ShowGlobalOutline() {
     size := 40
     thickness := 2
 
-    x := 1050 - size//2
-    y := 40 - size//2
+    x := 950 - size//2
+    y := 80 - size//2
 
     yBottom := y + size - thickness
     xRight  := x + size - thickness
@@ -1152,7 +1152,7 @@ CheckPixel:
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, color, 1050, 40, RGB
+    PixelGetColor, color, 950, 80, RGB
     if (color = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
     }
@@ -1224,7 +1224,7 @@ return
 UpdateWebhook:
 Gui, Submit, nohide
 webhookURL := WebhookInput
-IniWrite, %webhookURL%, %iniFilePath%, "Macro", "webhookURL"
+IniWrite, %webhookURL%, %iniFilePath%, Macro, webhookURL
 return
 
 UpdateUserID:
@@ -1295,7 +1295,7 @@ Warnings:
   (for example, if someone else rolls a global)
 - Some Transcendent cutscenes may not be detected correctly
 - Luminosity can cause Transcendent Replay to trigger more than once
-- This feature is BETA — false detections may occur
+- This feature is BETA - false detections may occur
 
 Disclaimer:
 Global Replay will NOT detect any global rolled under 99m.
@@ -1307,7 +1307,7 @@ Status: (+ = true | - = false)
 All Globals: +
 Limbo Globals: -
 Nyctophobia: -
-Pixelation: +
+Pixelation: + (MAX GRAPHICS TO ENSURE DETECTION) understandable if u dont wanna
 Luminosity: +
 Winter Garden: +
 Dream Traveler: +
