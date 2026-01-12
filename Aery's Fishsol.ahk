@@ -1395,9 +1395,9 @@ if (!toggle) {
     if (cycleCount = "") {
         cycleCount := 0
     }
-    IniWrite, %res%, %iniFilePath%, "Macro", "resolution"
-    IniWrite, %maxLoopCount%, %iniFilePath%, "Macro", "maxLoopCount"
-    IniWrite, %fishingLoopCount%, %iniFilePath%, "Macro", "fishingLoopCount"
+    IniWrite, %res%, %iniFilePath%, Macro, resolution
+    IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
+    IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
     WinActivate, ahk_exe RobloxPlayerBeta.exe
     ManualGUIUpdate()
     SetTimer, UpdateGUI, 1000
