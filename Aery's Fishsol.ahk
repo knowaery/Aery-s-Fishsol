@@ -38,6 +38,8 @@ ClipWebhook := false
 onoffWebhook := false
 GlobalArea := false
 TransArea := false
+doPing := false
+doPing2 := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -164,7 +166,15 @@ if (FileExist(iniFilePath)) {
     if (tempTransArea != "ERROR")
     transArea := (tempTransArea = "true" || tempTransArea = "1")
 
-    IniRead, tempAdvancedThreshold, %iniFilePath%, "Macro", "advancedFishingThreshold"
+    IniRead, tempDoPing, %iniFilePath%, Macro, doPing
+    if (tempDoPing != "ERROR")
+    doPing := (tempDoPing = "true" || tempDoPing = "1")
+
+    IniRead, tempDoPing2, %iniFilePath%, Macro, doPing2
+    if (tempDoPing2 != "ERROR")
+    doPing2 := (tempDoPing2 = "true" || tempDoPing2 = "1")
+
+    IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
         advancedFishingThreshold := tempAdvancedThreshold
@@ -360,7 +370,7 @@ Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, Live Statistics
 Gui, Color, 0x1E1E1E
 Gui, Font, s11 cWhite Bold, Segoe UI
 
-Gui, Add, GroupBox, x250 y345 w315 h170 cWhite, Extra
+Gui, Add, GroupBox, x250 y343 w315 h172 cWhite, Extra
 Gui, Add, Text, x270 y370 w400 h30 BackgroundTrans, Biome/Strange Controller:
 Gui, Font, s11 c0xFF2C00 Bold
 
@@ -372,11 +382,10 @@ Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
-Gui, Add, GroupBox, x30 y520 w535 h85 cWhite, Important
 
 
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x50 y545 w500 h20 BackgroundTrans, Requirements: Roblox MUST be in fullscreen mode
+Gui, Font, s10 c0xCCCCCC Bold
+Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
 
 Gui, Tab, Misc
 
@@ -485,15 +494,27 @@ Gui, Add, Edit, x50 y250 w500 h25 vUserIDInput gUpdateUserID Background0xD3D3D3 
 Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y280 w500 h15 BackgroundTrans, Paste your Discord USERID here to be pinged of actions happening in real time.
 
-Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x60 y391 w500 h40 BackgroundTrans c0xCCCCCC, Messages and pings if anything has been clipped via Webhook.
-Gui, Add, Text, x60 y331 w500 h40 BackgroundTrans c0xCCCCCC, OFF = no message and ping if macro has started/ended.
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x60 y366 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
-Gui, Add, Text, x150 y370 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
-Gui, Add, Button, x60 y306 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
-Gui, Add, Text, x150 y310 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
+Gui, Add, GroupBox, x33 y295 w534 h65 cWhite, Macro Message De/Activation
+Gui, Add, Button, x60 y320 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
+Gui, Add, Text, x150 y324 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
+Gui, Add, Button, x320 y320 w80 h25 gToggledoPing vDoPingBtn, Toggle
+Gui, Add, Text, x410 y324 w60 h25 vDoPingStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Normal
+Gui, Add, Text, x250 y324 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Message if Clip
+Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
+Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
+Gui, Add, Button, x320 y390 w80 h25 gToggledoPing2 vDoPing2Btn, Toggle
+Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
+Gui, Font, s10 cWhite Normal
+Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
+Gui, Font, s7 cWhite Normal
+Gui, Add, Text, x465 y376 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
+
 
 Gui, Tab, Failsafes
 
@@ -734,6 +755,21 @@ if (transArea) {
     GuiControl,, TransAreaStatus, OFF
     GuiControl, +c0xFF4444, TransAreaStatus
 }
+if (doPing) {
+    GuiControl,, DoPingStatus, ON
+    GuiControl, +c0x00DD00, DoPingStatus
+} else {
+    GuiControl,, DoPingStatus, OFF
+    GuiControl, +c0xFF4444, DoPingStatus
+}
+if (doPing2) {
+    GuiControl,, DoPing2Status, ON
+    GuiControl, +c0x00DD00, DoPing2Status
+} else {
+    GuiControl,, DoPing2Status, OFF
+    GuiControl, +c0xFF4444, DoPing2Status
+}
+
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -873,6 +909,31 @@ ToggleClipWebhook:
     }
     IniWrite, % (clipWebhook ? "true" : "false"), %iniFilePath%, Macro, clipWebhook
 return
+
+ToggleDoPing:
+    doPing := !doPing
+    if (doPing) {
+        GuiControl,, DoPingStatus, ON
+        GuiControl, +c0x00DD00, DoPingStatus
+    } else {
+        GuiControl,, DoPingStatus, OFF
+        GuiControl, +c0xFF4444, DoPingStatus
+    }
+    IniWrite, % (doPing ? "true" : "false"), %iniFilePath%, Macro, doPing
+return
+
+ToggleDoPing2:
+    doPing2 := !doPing2
+    if (doPing2) {
+        GuiControl,, DoPing2Status, ON
+        GuiControl, +c0x00DD00, DoPing2Status
+    } else {
+        GuiControl,, DoPing2Status, OFF
+        GuiControl, +c0xFF4444, DoPing2Status
+    }
+    IniWrite, % (doPing2 ? "true" : "false"), %iniFilePath%, Macro, doPing2
+return
+
 
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
@@ -1200,25 +1261,23 @@ return
 
 DoClip:
 if (clipWebhook) {
-    ping := (webhookID != "" ? "<@" webhookID "> " : "")
-    try SendWebhook(":warning: A Global has been clipped! (or pixel, frostveil, and or winter garden... :face_holding_back_tears:)", 16753920)
+    try SendWebhook(":warning: A Global has been clipped! (or pixel, frostveil, and/or winter garden... :face_holding_back_tears:)", 16777215)
+    Send, !{F10}
+} else {
     Send, !{F10}
 }
- else {
-        Send, !{F10}
-    }
 return
+
 
 DoClip2:
 if (clipWebhook) {
-    ping := (webhookID != "" ? "<@" webhookID "> " : "")
-    try SendWebhook(":warning: A Transcendent has been clipped!!! :warning:", 16753920)
+    try SendWebhook(":tada: A Transcendent has been clipped! :tada:", 11393254)
+    Send, !{F10}
+} else {
     Send, !{F10}
 }
- else {
-        Send, !{F10}
-    }
 return
+
 
 
 UpdateWebhook:
@@ -1237,25 +1296,31 @@ return
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook(text, color := 16777215) {
-    global webhookURL, webhookID
+    global webhookURL, webhookID, doPing, doPing2
 
     if (!InStr(webhookURL, "discord"))
         return
 
-    ; Build ping (plain message ABOVE embed)
-    ping := ""
-    if (webhookID != "")
-        ping := "<@" webhookID ">"
-
-    ; Timestamp
     time := A_NowUTC
     timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
               . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-    ; JSON payload (AHK v1 safe)
+    content := ""
+    allowedMentions := ""
+
+    if (doPing && webhookID != "") {
+        content := "<@" webhookID ">"
+        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
+    }
+
+    if (doPing2 && webhookID != "") {
+        content := "<@" webhookID ">"
+        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
+    }
+
     json := "{"
-    . """content"": """ ping ""","
-    . """allowed_mentions"": {""users"": [""" webhookID """]},"
+    . """content"": """ content ""","
+    . allowedMentions
     . """embeds"": [{"
     . """title"": """ text ""","
     . """color"": " color ","
@@ -1272,6 +1337,8 @@ SendWebhook(text, color := 16777215) {
     http.SetRequestHeader("Content-Type", "application/json")
     http.Send(json)
 }
+
+
 
 
 
@@ -1406,10 +1473,15 @@ if (!toggle) {
     }
 }
 if (onoffWebhook) {
-ping := (webhookID != "" ? "<@" webhookID "> " : "")
+    ping := ""
+
+    if (doPing && webhookID != "")
+        ping := "<@" webhookID "> "
+
     try SendWebhook(":green_circle: Macro Started!", "7909721")
 }
 return
+
 
 
 F2::
@@ -1422,10 +1494,14 @@ ToolTip
 Return
 
 F3::
-    if (onoffWebhook) {
-        ping := (webhookID != "" ? "<@" webhookID "> " : "")
+if (onoffWebhook) {
+    ping := ""
+
+    if (doPing && webhookID != "")
+        ping := "<@" webhookID "> "
+
         try SendWebhook(":red_circle: Macro Stopped.", "14495300")
-    }
+}
     ExitApp
 return
 
@@ -1950,11 +2026,14 @@ if (!toggle) {
     if (res = "1080p") {
         SetTimer, DoMouseMove, 100
     }
-if (onoffWebhook) {
-ping := (webhookID != "" ? "<@" webhookID "> " : "")
-    try SendWebhook(":green_circle: Macro Started!", "7909721")
+    if (onoffWebhook) {
+        ping := ""
+
+        if (doPing && webhookID != "")
+            ping := "<@" webhookID "> "
+            try SendWebhook(":green_circle: Macro Started!", "7909721")
+            }
         }
-}
 return
 
 StartScript(res) {
@@ -1979,12 +2058,15 @@ StartScript(res) {
         if (res = "1080p") {
             SetTimer, DoMouseMove, 100
         }
-if (onoffWebhook) {
-ping := (webhookID != "" ? "<@" webhookID "> " : "")
-    try SendWebhook(":green_circle: Macro Started!", "7909721")
-       }
+    if (onoffWebhook) {
+        ping := ""
+
+        if (doPing && webhookID != "")
+            ping := "<@" webhookID "> "
+            try SendWebhook(":green_circle: Macro Started!", "7909721")
+            }
+        }
     }
-}
 return
 
 
@@ -1999,7 +2081,10 @@ return
 
 CloseScript:
     if (onoffWebhook) {
-            ping := (webhookID != "" ? "<@" webhookID "> " : "")
+        ping := ""
+
+        if (doPing && webhookID != "")
+            ping := "<@" webhookID "> "
             try SendWebhook(":red_circle: Macro Stopped.", "14495300")
         }
     ExitApp
