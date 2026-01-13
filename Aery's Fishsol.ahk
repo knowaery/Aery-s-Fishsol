@@ -1261,9 +1261,9 @@ return
 
 DoClip:
 if (clipWebhook) {
-    try SendWebhook(":warning: A Global has been clipped! (or pixel, frostveil, and/or winter garden... :face_holding_back_tears:)", 16777215)
+    try SendWebhook2(":warning: A Global has been clipped! (or pixel, frostveil, and/or winter garden... :face_holding_back_tears:)", 16777215)
     Send, !{F10}
-} else {
+} else if (!clipWebhook) {
     Send, !{F10}
 }
 return
@@ -1271,9 +1271,9 @@ return
 
 DoClip2:
 if (clipWebhook) {
-    try SendWebhook(":tada: A Transcendent has been clipped! :tada:", 11393254)
+    try SendWebhook2(":tada: A Transcendent has been clipped! :tada:", 11393254)
     Send, !{F10}
-} else {
+} else if (!clipWebhook) {
     Send, !{F10}
 }
 return
@@ -1313,6 +1313,39 @@ SendWebhook(text, color := 16777215) {
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
     }
 
+    json := "{"
+    . """content"": """ content ""","
+    . allowedMentions
+    . """embeds"": [{"
+    . """title"": """ text ""","
+    . """color"": " color ","
+    . """footer"": {"
+    . """text"": ""Aery's fishSol V1"","
+    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . "},"
+    . """timestamp"": """ timestamp """"
+    . "}]"
+    . "}"
+
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("POST", webhookURL, false)
+    http.SetRequestHeader("Content-Type", "application/json")
+    http.Send(json)
+}
+
+SendWebhook2(text, color := 16777215) {
+    global webhookURL, webhookID, doPing, doPing2
+
+    if (!InStr(webhookURL, "discord"))
+        return
+
+    time := A_NowUTC
+    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
+              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+    content := ""
+    allowedMentions := ""
+
     if (doPing2 && webhookID != "") {
         content := "<@" webhookID ">"
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
@@ -1337,8 +1370,6 @@ SendWebhook(text, color := 16777215) {
     http.SetRequestHeader("Content-Type", "application/json")
     http.Send(json)
 }
-
-
 
 
 
@@ -1374,7 +1405,7 @@ Status: (+ = true | - = false)
 All Globals: +
 Limbo Globals: -
 Nyctophobia: -
-Pixelation: + (MAX GRAPHICS TO ENSURE DETECTION) understandable if u dont wanna
+Pixelation: + (lowkey RNG if it clips)
 Luminosity: +
 Winter Garden: +
 Dream Traveler: +
@@ -1473,11 +1504,6 @@ if (!toggle) {
     }
 }
 if (onoffWebhook) {
-    ping := ""
-
-    if (doPing && webhookID != "")
-        ping := "<@" webhookID "> "
-
     try SendWebhook(":green_circle: Macro Started!", "7909721")
 }
 return
@@ -1495,11 +1521,6 @@ Return
 
 F3::
 if (onoffWebhook) {
-    ping := ""
-
-    if (doPing && webhookID != "")
-        ping := "<@" webhookID "> "
-
         try SendWebhook(":red_circle: Macro Stopped.", "14495300")
 }
     ExitApp
@@ -2027,10 +2048,6 @@ if (!toggle) {
         SetTimer, DoMouseMove, 100
     }
     if (onoffWebhook) {
-        ping := ""
-
-        if (doPing && webhookID != "")
-            ping := "<@" webhookID "> "
             try SendWebhook(":green_circle: Macro Started!", "7909721")
             }
         }
@@ -2059,10 +2076,6 @@ StartScript(res) {
             SetTimer, DoMouseMove, 100
         }
     if (onoffWebhook) {
-        ping := ""
-
-        if (doPing && webhookID != "")
-            ping := "<@" webhookID "> "
             try SendWebhook(":green_circle: Macro Started!", "7909721")
             }
         }
@@ -2080,11 +2093,7 @@ ToolTip
 return
 
 CloseScript:
-    if (onoffWebhook) {
-        ping := ""
-
-        if (doPing && webhookID != "")
-            ping := "<@" webhookID "> "
+if (onoffWebhook) {
             try SendWebhook(":red_circle: Macro Stopped.", "14495300")
         }
     ExitApp
