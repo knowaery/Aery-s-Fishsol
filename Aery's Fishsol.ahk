@@ -487,13 +487,11 @@ Gui, Add, Text, x535 y387 w60 h25 vUseZeusStatus BackgroundTrans, OFF
 Gui, Add, Text, x535 y416 w60 h25 vUseHadesStatus BackgroundTrans, OFF
 Gui, Add, Text, x535 y442 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x400 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
-Gui, Add, Text, x400 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
-Gui, Add, Text, x400 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
+Gui, Add, Text, x395 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
+Gui, Add, Text, x395 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
+Gui, Add, Text, x395 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
 
 
-Gui, Font, s10 cWhite Normal
-; Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x45 y285 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras. Please auto craft the desired item. MUST be inside Stella's Cauldron's UI
 
@@ -1435,7 +1433,9 @@ CheckPixel:
         return
 
     PixelGetColor, color, 950, 80, RGB
+
     if (color = 0xFFFFFF) {
+        ShowClipText()
         SetTimer, DoClip, -%triggerDelay%
     }
 return
@@ -1453,6 +1453,7 @@ CheckPixel2:
         for _, c in transcendentColors {
             if (color = c) {
                 transcendentCounters[index]++  
+                ShowClipText()
                 SetTimer, DoClip2, -%triggerDelay2%
                 break
             }
@@ -1482,6 +1483,7 @@ return
 
 DoClip:
 if (clipWebhook) {
+    ToolTip
     try SendWebhook2(":warning: A Global has been clipped! (or pixel, frostveil, and/or winter garden... :face_holding_back_tears:)", 16777215)
     Send, !{F10}
 } else if (!clipWebhook) {
@@ -1490,8 +1492,10 @@ if (clipWebhook) {
 return
 
 
+
 DoClip2:
 if (clipWebhook) {
+    ToolTip
     try SendWebhook2(":tada: A Transcendent has been clipped! :tada:", 11393254)
     Send, !{F10}
 } else if (!clipWebhook) {
@@ -1678,6 +1682,18 @@ return
 CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
+
+global ClipText
+ShowClipText() {
+    ToolTip, Clipped with Aery's Fishsol, 890, 10
+}
+
+HideClipText() {
+    ToolTip
+}
+
+
+
 
 SelectItem:
     Gui, Submit, NoHide
