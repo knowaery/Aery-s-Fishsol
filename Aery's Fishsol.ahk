@@ -513,7 +513,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation (50/50), Frostveil and Winter Garden. (their cutscenes end with a flash)
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation (50/50 Chance), Frostveil and Winter Garden. (Their cutscenes end with a flash)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -1516,7 +1516,7 @@ return
 
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
-SendWebhook(text, color := 16777215) {
+SendWebhook3(text, color := 16777215) {
     global webhookURL, webhookID, doPing, doPing2
 
     if (!InStr(webhookURL, "discord"))
@@ -1592,7 +1592,7 @@ SendWebhook2(text, color := 16777215) {
     http.Send(json)
 }
 
-SendWebhook3(text, color := 16777215) {
+SendWebhook(text, color := 16777215) {
     global webhookURL, webhookID
 
     if (!InStr(webhookURL, "discord"))
@@ -2015,79 +2015,79 @@ DoZombie:
 return
 
 DoRage:
-    MouseMove, 910, 355, 3
+    MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
     Sleep, 200
     Send, Rage Potion
     Sleep, 200
+
     MouseMove, 1150, 420, 3
     Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
     Click, Left
     Sleep, 200
-    MouseMove, 720, 581, 3
+
+    MouseMove, 740, 636, 3
     Sleep, 200
     Click, Left
     Sleep, 200
-    MouseMove, 1420, 300, 3
+
+    Send, ^a
     Sleep, 200
-    Send, {Esc}
+    Send, 10
     Sleep, 200
-    Send, r
+
+    MouseMove, 806, 636, 3
     Sleep, 200
-    Send, {Enter}
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
 return
 
 DoDiver:
-    MouseMove, 910, 355, 3
+    MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
-    Send, Fortune Potion i
-    Sleep, 200
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 720, 581, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    MouseMove, 910, 355, 3
     Sleep, 200
     Send, Diver Potion
     Sleep, 200
+
     MouseMove, 1150, 420, 3
     Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
     Click, Left
     Sleep, 200
-    MouseMove, 720, 581, 3
+
+    MouseMove, 740, 636, 3
     Sleep, 200
     Click, Left
     Sleep, 200
-    MouseMove, 1420, 300, 3
+
+    Send, ^a
     Sleep, 200
-    Send, {Esc}
+    Send, 20
     Sleep, 200
-    Send, r
+
+    MouseMove, 806, 636, 3
     Sleep, 200
-    Send, {Enter}
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
 return
 
 UpdateGUI:
@@ -2169,7 +2169,7 @@ if (!toggle) {
     }
 }
 if (onoffWebhook) {
-    try SendWebhook(":green_circle: Macro Started!", "7909721")
+    try SendWebhook3(":green_circle: Macro Started!", "7909721")
 }
 return
 
@@ -2186,7 +2186,7 @@ Return
 
 F3::
 if (onoffWebhook) {
-        try SendWebhook(":red_circle: Macro Stopped.", "14495300")
+        try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
 }
     ExitApp
 return
@@ -2203,8 +2203,8 @@ F4::
 
     autocrafting := true
 
-;   if (onoffWebhook)
-;        try SendWebhook3(":green_circle: Crafting Started", "7909721")
+   if (onoffWebhook)
+        try SendWebhook(":green_circle: Crafting Started", "7909721")
 
     SetTimer, DoCraftSelected, 500
 return
@@ -2217,8 +2217,8 @@ F5::
     autocrafting := false
     SetTimer, DoCraftSelected, Off  ; stop the timer
 
-;    if (onoffWebhook)
-;        try SendWebhook3(":red_circle: Crafting Stopped", "14495300")
+    if (onoffWebhook)
+        try SendWebhook(":red_circle: Crafting Stopped", "14495300")
 ExitApp
 return
 
@@ -2774,7 +2774,7 @@ if (!toggle) {
         SetTimer, DoMouseMove, 100
     }
     if (onoffWebhook) {
-            try SendWebhook(":green_circle: Macro Started!", "7909721")
+            try SendWebhook3(":green_circle: Macro Started!", "7909721")
             }
         }
 return
@@ -2802,7 +2802,7 @@ StartScript(res) {
             SetTimer, DoMouseMove, 100
         }
     if (onoffWebhook) {
-            try SendWebhook(":green_circle: Macro Started!", "7909721")
+            try SendWebhook3(":green_circle: Macro Started!", "7909721")
             }
         }
     }
@@ -2820,7 +2820,7 @@ return
 
 CloseScript:
 if (onoffWebhook) {
-            try SendWebhook(":red_circle: Macro Stopped.", "14495300")
+            try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
         }
     ExitApp
 return
