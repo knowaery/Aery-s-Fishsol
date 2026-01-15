@@ -40,6 +40,16 @@ GlobalArea := false
 TransArea := false
 doPing := false
 doPing2 := false
+autoCraft:= false
+autocrafting := false
+useCelestial := false
+useExotic := false
+useBounded := false
+useZeus := false
+usePoseidon := false
+useHades := false
+
+
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -173,6 +183,35 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDoPing2, %iniFilePath%, Macro, doPing2
     if (tempDoPing2 != "ERROR")
     doPing2 := (tempDoPing2 = "true" || tempDoPing2 = "1")
+
+    IniRead, tempAutoCraft, %iniFilePath%, Macro, autoCraft
+    if (tempAutoCraft != "ERROR")
+    autoCraft := (tempAutoCraft = "true" || tempAutoCraft = "1")
+
+    IniRead, tempCelestial, %iniFilePath%, Macro, useCelestial
+    if (tempCelestial != "ERROR")
+    useCelestial := (tempCelestial = "true" || tempCelestial = "1")
+
+    IniRead, tempExotic, %iniFilePath%, Macro, useExotic
+    if (tempExotic != "ERROR")
+    useExotic := (tempExotic = "true" || tempExotic = "1")
+
+    IniRead, tempBounded, %iniFilePath%, Macro, useBounded
+    if (tempBounded != "ERROR")
+    useBounded := (tempBounded = "true" || tempBounded = "1")
+
+    IniRead, tempZeus, %iniFilePath%, Macro, useZeus
+    if (tempZeus != "ERROR")
+    useZeus := (tempZeus = "true" || tempZeus = "1")
+
+    IniRead, tempPoseidon, %iniFilePath%, Macro, usePoseidon
+    if (tempPoseidon != "ERROR")
+    usePoseidon := (tempPoseidon = "true" || tempPoseidon = "1")
+
+    IniRead, tempHades, %iniFilePath%, Macro, useHades
+    if (tempHades != "ERROR")
+    useHades := (tempHades = "true" || tempHades = "1")
+
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -390,22 +429,22 @@ Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen
 Gui, Tab, Misc
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x32 y90 w260 h165 cWhite, Auto-Unequip
+Gui, Add, GroupBox, x22 y90 w260 h165 cWhite, Auto-Unequip
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x45 y110 h45 w240 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras every cycle. Prevents lag and possible macro issues.
+Gui, Add, Text, x35 y110 h45 w240 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras every cycle. Prevents lag and possible macro issues.
 Gui, Font, s9 cWhite Bold, Segoe UI
-Gui, Add, Text, x45 y195 h45 w240 BackgroundTrans, Use "Nothing" aura from Limbo.
+Gui, Add, Text, x35 y195 h45 w240 BackgroundTrans, Use "Nothing" aura from Limbo.
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y145 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
-Gui, Add, Button, x45 y215 w80 h25 gToggleUseNothing vUseNothingBtn, Toggle
+Gui, Add, Button, x35 y145 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
+Gui, Add, Button, x35 y215 w80 h25 gToggleUseNothing vUseNothingBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x140 y148 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
-Gui, Add, Text, x140 y218 w60 h25 vUseNothingStatus BackgroundTrans, OFF
+Gui, Add, Text, x130 y148 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
+Gui, Add, Text, x130 y218 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 
 
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y90 w260 h140 cWhite, Auto-Close Chat
+Gui, Add, GroupBox, x307 y90 w270 h165 cWhite, Auto-Close Chat
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x317 y110 h45 w225 BackgroundTrans c0xCCCCCC, Automatically closes chat every cycle to prevent getting stuck in collection.
 Gui, Font, s9 cWhite Bold
@@ -414,6 +453,52 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y195 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y198 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x22 y265 w554 h210 cWhite, Crafting
+; Gui, Add, GroupBox, x45 y365 w200 h100 cWhite, Watch AD
+Gui, Add, GroupBox, x28 y365 w210 h100 cWhite, Heavenly
+Gui, Add, GroupBox, x247 y365 w145 h100 cWhite, Bound
+Gui, Add, GroupBox, x400 y365 w171 h100 cWhite, Godly
+Gui, Add, Button, x60 y325 w80 h25 gToggleAutoCraft vAutoCraftBtn, Toggle
+Gui, Add, Text, x150 y329 w60 h25 vAutoCraftStatus BackgroundTrans, OFF
+Gui, Add, Text, x375 y329 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x118 y385 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
+Gui, Add, Button, x118 y425 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
+Gui, Add, Text, x203 y389 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x203 y429 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x38 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Celestial: 
+Gui, Add, Text, x38 y429 w600 h100 BackgroundTrans c0xCCCCCC, Add Exotic:
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x258 y425 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
+Gui, Add, Text, x351 y429 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x258 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Bounded:
+
+Gui, Font, s9 cWhite Bold
+Gui, Add, Button, x490 y385 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
+Gui, Add, Button, x490 y414 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
+Gui, Add, Button, x490 y440 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
+Gui, Add, Text, x545 y387 w60 h25 vUseZeusStatus BackgroundTrans, OFF
+Gui, Add, Text, x545 y416 w60 h25 vUseHadesStatus BackgroundTrans, OFF
+Gui, Add, Text, x545 y442 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x410 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
+Gui, Add, Text, x410 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
+Gui, Add, Text, x410 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
+
+
+Gui, Font, s10 cWhite Normal
+; Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x45 y285 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras. Please auto craft the desired item. MUST be inside Stella's Cauldron's UI
+
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, DropDownList, x225 y325 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
 
 Gui, Tab, Replay
@@ -428,7 +513,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation with max graphics, Frostveil and Winter Garden. (their cutscenes end with a flash)
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation (50/50), Frostveil and Winter Garden. (their cutscenes end with a flash)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -769,6 +854,55 @@ if (doPing2) {
     GuiControl,, DoPing2Status, OFF
     GuiControl, +c0xFF4444, DoPing2Status
 }
+if (autoCraft) {
+    GuiControl,, AutoCraftStatus, ON
+    GuiControl, +c0x00DD00, AutoCraftStatus
+} else {
+    GuiControl,, AutoCraftStatus, OFF
+    GuiControl, +c0xFF4444, AutoCraftStatus
+}
+if (useCelestial) {
+    GuiControl,, UseCelestialStatus, ON
+    GuiControl, +c0x00DD00, UseCelestialStatus
+} else {
+    GuiControl,, UseCelestialStatus, OFF
+    GuiControl, +c0xFF4444, UseCelestialStatus
+}
+if (useExotic) {
+    GuiControl,, UseExoticStatus, ON
+    GuiControl, +c0x00DD00, UseExoticStatus
+} else {
+    GuiControl,, UseExoticStatus, OFF
+    GuiControl, +c0xFF4444, UseExoticStatus
+}
+if (useBounded) {
+    GuiControl,, UseBoundedStatus, ON
+    GuiControl, +c0x00DD00, UseBoundedStatus
+} else {
+    GuiControl,, UseBoundedStatus, OFF
+    GuiControl, +c0xFF4444, UseBoundedStatus
+}
+if (useZeus) {
+    GuiControl,, UseZeusStatus, ON
+    GuiControl, +c0x00DD00, UseZeusStatus
+} else {
+    GuiControl,, UseZeusStatus, OFF
+    GuiControl, +c0xFF4444, UseZeusStatus
+}
+if (usePoseidon) {
+    GuiControl,, UsePoseidonStatus, ON
+    GuiControl, +c0x00DD00, UsePoseidonStatus
+} else {
+    GuiControl,, UsePoseidonStatus, OFF
+    GuiControl, +c0xFF4444, UsePoseidonStatus
+}
+if (useHades) {
+    GuiControl,, UseHadesStatus, ON
+    GuiControl, +c0x00DD00, UseHadesStatus
+} else {
+    GuiControl,, UseHadesStatus, OFF
+    GuiControl, +c0xFF4444, UseHadesStatus
+}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -934,6 +1068,19 @@ ToggleDoPing2:
     IniWrite, % (doPing2 ? "true" : "false"), %iniFilePath%, Macro, doPing2
 return
 
+ToggleAutoCraft:
+    autoCraft := !autoCraft
+    if (autoCraft) {
+        GuiControl,, AutoCraftStatus, ON
+        GuiControl, +c0x00DD00, AutoCraftStatus
+    } else {
+        GuiControl,, AutoCraftStatus, OFF
+        GuiControl, +c0xFF4444, AutoCraftStatus
+    }
+    IniWrite, % (autoCraft ? "true" : "false"), %iniFilePath%, Macro, autoCraft
+return
+
+
 
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
@@ -1010,6 +1157,80 @@ ToggleTransArea:
     IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
     UpdateTransBox()
 return
+
+ToggleUseCelestial:
+    useCelestial := !useCelestial
+    if (useCelestial) {
+        GuiControl,, UseCelestialStatus, ON
+        GuiControl, +c0x00DD00, UseCelestialStatus
+    } else {
+        GuiControl,, UseCelestialStatus, OFF
+        GuiControl, +c0xFF4444, UseCelestialStatus
+    }
+    IniWrite, % (useCelestial ? "true" : "false"), %iniFilePath%, Macro, useCelestial
+return
+
+ToggleUseExotic:
+    useExotic := !useExotic
+    if (useExotic) {
+        GuiControl,, UseExoticStatus, ON
+        GuiControl, +c0x00DD00, UseExoticStatus
+    } else {
+        GuiControl,, UseExoticStatus, OFF
+        GuiControl, +c0xFF4444, UseExoticStatus
+    }
+    IniWrite, % (useExotic ? "true" : "false"), %iniFilePath%, Macro, useExotic
+return
+
+ToggleUseBounded:
+    useBounded := !useBounded
+    if (useBounded) {
+        GuiControl,, UseBoundedStatus, ON
+        GuiControl, +c0x00DD00, UseBoundedStatus
+    } else {
+        GuiControl,, UseBoundedStatus, OFF
+        GuiControl, +c0xFF4444, UseBoundedStatus
+    }
+    IniWrite, % (useBounded ? "true" : "false"), %iniFilePath%, Macro, useBounded
+return
+
+ToggleUseZeus:
+    useZeus := !useZeus
+    if (useZeus) {
+        GuiControl,, UseZeusStatus, ON
+        GuiControl, +c0x00DD00, UseZeusStatus
+    } else {
+        GuiControl,, UseZeusStatus, OFF
+        GuiControl, +c0xFF4444, UseZeusStatus
+    }
+    IniWrite, % (useZeus ? "true" : "false"), %iniFilePath%, Macro, useZeus
+return
+
+ToggleUsePoseidon:
+    usePoseidon := !usePoseidon
+    if (usePoseidon) {
+        GuiControl,, UsePoseidonStatus, ON
+        GuiControl, +c0x00DD00, UsePoseidonStatus
+    } else {
+        GuiControl,, UsePoseidonStatus, OFF
+        GuiControl, +c0xFF4444, UsePoseidonStatus
+    }
+    IniWrite, % (usePoseidon ? "true" : "false"), %iniFilePath%, Macro, usePoseidon
+return
+
+ToggleUseHades:
+    useHades := !useHades
+    if (useHades) {
+        GuiControl,, UseHadesStatus, ON
+        GuiControl, +c0x00DD00, UseHadesStatus
+    } else {
+        GuiControl,, UseHadesStatus, OFF
+        GuiControl, +c0xFF4444, UseHadesStatus
+    }
+    IniWrite, % (useHades ? "true" : "false"), %iniFilePath%, Macro, useHades
+return
+
+
 
 ToggleDetectLimbo:
     detectLimbo := !detectLimbo
@@ -1371,6 +1592,41 @@ SendWebhook2(text, color := 16777215) {
     http.Send(json)
 }
 
+SendWebhook3(text, color := 16777215) {
+    global webhookURL, webhookID
+
+    if (!InStr(webhookURL, "discord"))
+        return
+
+    time := A_NowUTC
+    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
+              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+    content := ""
+    allowedMentions := ""
+
+
+
+    json := "{"
+    . """content"": """ content ""","
+    . allowedMentions
+    . """embeds"": [{"
+    . """title"": """ text ""","
+    . """color"": " color ","
+    . """footer"": {"
+    . """text"": ""Aery's fishSol V1"","
+    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . "},"
+    . """timestamp"": """ timestamp """"
+    . "}]"
+    . "}"
+
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("POST", webhookURL, false)
+    http.SetRequestHeader("Content-Type", "application/json")
+    http.Send(json)
+}
+
 
 
 OpenNvidiaNotes:
@@ -1423,7 +1679,416 @@ CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
 
+SelectItem:
+    Gui, Submit, NoHide
+    selectedItem := AutoCraft
+return
 
+
+
+
+
+DoHeavenly:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Heavenly Potion
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 250
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    if (useCelestial) {
+        MouseMove, 800, 682, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    if (useExotic) {
+        MouseMove, 800, 742, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+
+DoBound:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Bound Potion
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 250
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    if (useBounded) {
+        MouseMove, 800, 682, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoZeus:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Godly Zeus
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 25
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 690, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 25
+    Sleep, 200
+
+    MouseMove, 806, 690, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    if (useZeus) {
+        MouseMove, 800, 746, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoHades:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Godly Hades
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 50
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    if (useHades) {
+        MouseMove, 800, 682, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoPoseidon:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Godly Poseidon
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 50
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    if (usePoseidon) {
+        MouseMove, 800, 682, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+    }
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoJewelry:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Jewerly Potion
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 20
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoZombie:
+    MouseMove, 910, 333, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Zombie Potion
+    Sleep, 200
+
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+
+    Send, {WheelUp 6}
+    Sleep, 500
+
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 740, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    Send, ^a
+    Sleep, 200
+    Send, 10
+    Sleep, 200
+
+    MouseMove, 806, 636, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+
+    MouseMove, 585, 585, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+return
+
+DoRage:
+    MouseMove, 910, 355, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Fortune Potion i
+    Sleep, 200
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 720, 581, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 910, 355, 3
+    Sleep, 200
+    Send, Rage Potion
+    Sleep, 200
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 720, 581, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 1420, 300, 3
+    Sleep, 200
+    Send, {Esc}
+    Sleep, 200
+    Send, r
+    Sleep, 200
+    Send, {Enter}
+return
+
+DoDiver:
+    MouseMove, 910, 355, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Send, Fortune Potion i
+    Sleep, 200
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 720, 581, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 910, 355, 3
+    Sleep, 200
+    Send, Diver Potion
+    Sleep, 200
+    MouseMove, 1150, 420, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 720, 581, 3
+    Sleep, 200
+    Click, Left
+    Sleep, 200
+    MouseMove, 1420, 300, 3
+    Sleep, 200
+    Send, {Esc}
+    Sleep, 200
+    Send, r
+    Sleep, 200
+    Send, {Enter}
+return
 
 UpdateGUI:
 if (toggle) {
@@ -1525,6 +2190,67 @@ if (onoffWebhook) {
 }
     ExitApp
 return
+
+
+F4::
+    Gui, Submit, NoHide
+
+    if (!autoCraft)  ; make sure autoCraft toggle is on
+        return
+
+    if (autocrafting)  ; already running
+        return
+
+    autocrafting := true
+
+;   if (onoffWebhook)
+;        try SendWebhook3(":green_circle: Crafting Started", "7909721")
+
+    SetTimer, DoCraftSelected, 500
+return
+
+
+F5::
+    if (!autocrafting)  ; not running
+        return
+
+    autocrafting := false
+    SetTimer, DoCraftSelected, Off  ; stop the timer
+
+;    if (onoffWebhook)
+;        try SendWebhook3(":red_circle: Crafting Stopped", "14495300")
+ExitApp
+return
+
+
+DoCraftSelected:
+    if (!autocrafting)  ; stop immediately if toggle is off
+        return
+
+    ; Your crafting logic
+    if (selectedItem = "Heavenly Potion")
+        Gosub, DoHeavenly
+    else if (selectedItem = "Bound Potion")
+        Gosub, DoBound
+    else if (selectedItem = "Zeus Potion")
+        Gosub, DoZeus
+    else if (selectedItem = "Hades Potion")
+        Gosub, DoHades
+    else if (selectedItem = "Poseidon Potion")
+        Gosub, DoPoseidon
+    else if (selectedItem = "Jewelry Potion")
+        Gosub, DoJewelry
+    else if (selectedItem = "Zombie Potion")
+        Gosub, DoZombie
+    else if (selectedItem = "Rage Potion")
+        Gosub, DoRage
+    else if (selectedItem = "Diver Potion")
+        Gosub, DoDiver
+return
+
+
+
+
 
 ;1080p
 DoMouseMove:
