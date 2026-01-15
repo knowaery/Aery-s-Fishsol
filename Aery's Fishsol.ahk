@@ -458,8 +458,8 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y265 w554 h210 cWhite, Crafting
 ; Gui, Add, GroupBox, x45 y365 w200 h100 cWhite, Watch AD
 Gui, Add, GroupBox, x28 y365 w210 h100 cWhite, Heavenly
-Gui, Add, GroupBox, x247 y365 w145 h100 cWhite, Bound
-Gui, Add, GroupBox, x400 y365 w171 h100 cWhite, Godly
+Gui, Add, GroupBox, x247 y365 w130 h100 cWhite, Bound
+Gui, Add, GroupBox, x385 y365 w181 h100 cWhite, Godly
 Gui, Add, Button, x60 y325 w80 h25 gToggleAutoCraft vAutoCraftBtn, Toggle
 Gui, Add, Text, x150 y329 w60 h25 vAutoCraftStatus BackgroundTrans, OFF
 Gui, Add, Text, x375 y329 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
@@ -467,29 +467,29 @@ Gui, Add, Text, x375 y329 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x118 y385 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
 Gui, Add, Button, x118 y425 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
-Gui, Add, Text, x203 y389 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
-Gui, Add, Text, x203 y429 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Add, Text, x208 y389 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x208 y429 w60 h25 vUseExoticStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x38 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Celestial: 
 Gui, Add, Text, x38 y429 w600 h100 BackgroundTrans c0xCCCCCC, Add Exotic:
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x258 y425 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
-Gui, Add, Text, x351 y429 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Add, Text, x346 y429 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x258 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Bounded:
 
 Gui, Font, s9 cWhite Bold
-Gui, Add, Button, x490 y385 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
-Gui, Add, Button, x490 y414 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
-Gui, Add, Button, x490 y440 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
-Gui, Add, Text, x545 y387 w60 h25 vUseZeusStatus BackgroundTrans, OFF
-Gui, Add, Text, x545 y416 w60 h25 vUseHadesStatus BackgroundTrans, OFF
-Gui, Add, Text, x545 y442 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
+Gui, Add, Button, x480 y385 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
+Gui, Add, Button, x480 y414 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
+Gui, Add, Button, x480 y440 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
+Gui, Add, Text, x535 y387 w60 h25 vUseZeusStatus BackgroundTrans, OFF
+Gui, Add, Text, x535 y416 w60 h25 vUseHadesStatus BackgroundTrans, OFF
+Gui, Add, Text, x535 y442 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x410 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
-Gui, Add, Text, x410 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
-Gui, Add, Text, x410 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
+Gui, Add, Text, x400 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
+Gui, Add, Text, x400 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
+Gui, Add, Text, x400 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
 
 
 Gui, Font, s10 cWhite Normal
