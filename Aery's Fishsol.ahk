@@ -48,6 +48,7 @@ useBounded := false
 useZeus := false
 usePoseidon := false
 useHades := false
+advancedFishingThreshold := 25
 
 
 
@@ -364,12 +365,12 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x45 y240 w180 h25 BackgroundTrans, Fishing Loop Count:
 Gui, Add, Edit, x220 y238 w60 h25 vMaxLoopInput gUpdateLoopCount Number Background0xD3D3D3 cBlack, %maxLoopCount%
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x285 y242 w270 h15 BackgroundTrans, (Fishing Cycles Before Reset - default: 15)
+Gui, Add, Text, x285 y242 w270 h15 BackgroundTrans, (How many times to fish before selling. Default: 25)
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x45 y270 w180 h25 BackgroundTrans, Sell Loop Count:
 Gui, Add, Edit, x220 y268 w60 h25 vFishingLoopInput gUpdateLoopCount Number Background0xD3D3D3 cBlack, %fishingLoopCount%
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x285 y272 w270 h15 BackgroundTrans, (Sell Cycles  -  If Sell All: 22)
+Gui, Add, Text, x285 y272 w270 h15 BackgroundTrans, (There is 22 Fish in the game. Default: 22)
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x45 y301 w120 h25 BackgroundTrans, Pathing Mode:
 Gui, Font, s14 cWhite Bold
@@ -382,24 +383,31 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x510 y303 w60 h25 vAzertyPathingStatus BackgroundTrans, OFF
 
 
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x270 y410 w120 h25 BackgroundTrans, Strange Controller:
-Gui, Add, Button, x405 y405 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x500 y410 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
-
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x270 y450 w125 h25 BackgroundTrans, Biome Randomizer:
-Gui, Add, Button, x405 y445 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x500 y450 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
-
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x250 y343 w315 h180, Advanced Fishing Detection
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y445 w205 h70 cWhite, Snowman Collect
-Gui, Add, Button, x65 y474 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Add, Button, x270 y380 w80 h25 gToggleAdvancedFishingDetection vAdvancedFishingDetectionBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x160 y478 w60 h25 vSnowmanCollectStatus BackgroundTrans, OFF
+Gui, Add, Text, x360 y384 w60 h25 vAdvancedFishingDetectionStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x400 y384 w80 h25 BackgroundTrans, Pixels:
+Gui, Add, Edit, x455 y380 w75 h25 vAdvancedThresholdInput gUpdateAdvancedThreshold Number Background0xD3D3D3 cBlack, %advancedFishingThreshold%
+
+Gui, Font, s9 cWhite Bold
+Gui, Add, Text, x270 y415 w260 cWhite BackgroundTrans, Advanced Detection Threshold -
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x270 y435 w270 h40 BackgroundTrans c0xCCCCCC, Customize how many pixels are left in the fishing range before clicking.
+
+Gui, Font, s9 cWhite Bold
+Gui, Add, Text, x453 y416 w120 BackgroundTrans c0xFF4444, Max : 40 Pixels
+
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x260 y470 w285 h30 BackgroundTrans, Advanced Fishing Detection uses a system that clicks slightly before the bar exits the fish range, making the catch rate higher than ever.
+
+Gui, Font, s9 c0x00D4FF Bold
+Gui, Add, Text, x307 y503 w515 h30 BackgroundTrans c0x00D4FF, [ Recommended For Lower End Devices ]
 
 
 
@@ -408,11 +416,6 @@ Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, Live Statistics
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s11 cWhite Bold, Segoe UI
-
-Gui, Add, GroupBox, x250 y343 w315 h172 cWhite, Extra
-Gui, Add, Text, x270 y370 w400 h30 BackgroundTrans, Biome/Strange Controller:
-Gui, Font, s11 c0xFF2C00 Bold
-
 
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, Text, x50 y375 w100 h30 BackgroundTrans, Runtime:
@@ -454,15 +457,15 @@ Gui, Add, Button, x320 y195 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Togg
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y198 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
+
+
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y265 w554 h210 cWhite, Crafting
 ; Gui, Add, GroupBox, x45 y365 w200 h100 cWhite, Watch AD
-Gui, Add, GroupBox, x28 y365 w210 h100 cWhite, Heavenly
-Gui, Add, GroupBox, x247 y365 w130 h100 cWhite, Bound
-Gui, Add, GroupBox, x385 y365 w181 h100 cWhite, Godly
-Gui, Add, Button, x60 y325 w80 h25 gToggleAutoCraft vAutoCraftBtn, Toggle
-Gui, Add, Text, x150 y329 w60 h25 vAutoCraftStatus BackgroundTrans, OFF
-Gui, Add, Text, x375 y329 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
+Gui, Add, GroupBox, x28 y365 w210 h100 cWhite, Heavenly Potion
+Gui, Add, GroupBox, x247 y365 w130 h100 cWhite, Bound Potion 
+Gui, Add, GroupBox, x385 y365 w181 h100 cWhite, Godly Potions
+Gui, Add, Text, x60 y337 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x118 y385 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -470,33 +473,71 @@ Gui, Add, Button, x118 y425 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
 Gui, Add, Text, x208 y389 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
 Gui, Add, Text, x208 y429 w60 h25 vUseExoticStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x38 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Celestial: 
-Gui, Add, Text, x38 y429 w600 h100 BackgroundTrans c0xCCCCCC, Add Exotic:
+Gui, Add, Text, x38 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add 
+Gui, Add, Text, x38 y429 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Font, s9 c9B8CFF Bold, Trajan Pro
+Gui, Add, Text, x64 y389 w600 h100 BackgroundTrans, Celestial:
+Gui, Font, s9 cFF0000 Bold, Trajan Pro
+Gui, Add, Text, x64 y429 w600 h100 BackgroundTrans, Exotic:
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x258 y425 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
 Gui, Add, Text, x346 y429 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x258 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Bounded:
+Gui, Add, Text, x258 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Font, s9 c1559C9 Bold, Trajan Pro
+Gui, Add, Text, x285 y389 w600 h100 BackgroundTrans, Bounded:
 
-Gui, Font, s9 cWhite Bold
+Gui, Font, s9 cWhite Bold, Segoe UI
 Gui, Add, Button, x480 y385 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
 Gui, Add, Button, x480 y414 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
 Gui, Add, Button, x480 y440 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
 Gui, Add, Text, x535 y387 w60 h25 vUseZeusStatus BackgroundTrans, OFF
 Gui, Add, Text, x535 y416 w60 h25 vUseHadesStatus BackgroundTrans, OFF
 Gui, Add, Text, x535 y442 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x395 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add Zeus: 
-Gui, Add, Text, x395 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add Hades:
-Gui, Add, Text, x395 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add Poseidon:
+Gui, Font, s9 cWhite Normal, Trajan Pro
+Gui, Add, Text, x395 y389 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x395 y414 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x395 y440 w600 h100 BackgroundTrans c0xCCCCCC, Add  
+Gui, Font, s9 cFFD700 Bold, Trajan Pro
+Gui, Add, Text, x422 y389 w600 h100 BackgroundTrans, Zeus:
+Gui, Font, s9 cCC5500 Bold, Trajan Pro
+Gui, Add, Text, x422 y414 w600 h100 BackgroundTrans, Hades:
+Gui, Font, s9 c085A8C Bold, Trajan Pro
+Gui, Add, Text, x422 y440 w600 h100 BackgroundTrans, Poseidon:
 
-
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x45 y285 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras. Please auto craft the desired item. MUST be inside Stella's Cauldron's UI
+Gui, Add, Text, x35 y285 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Adding the auras listed below means adding them to the desired potion from your inventory.
 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, DropDownList, x225 y325 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+Gui, Add, DropDownList, x225 y335 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+
+
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x22 y476 w315 h137 cWhite, Extra
+Gui, Add, Text, x42 y498 w400 h30 BackgroundTrans, Biome/Strange Controller:
+Gui, Font, s11 c0xFF2C00 Bold
+
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Text, x42 y525 w120 h25 BackgroundTrans, Strange Controller:
+Gui, Add, Button, x177 y525 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x277 y530 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Text, x42 y570 w125 h25 BackgroundTrans, Biome Randomizer:
+Gui, Add, Button, x177 y570 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x277 y573 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
+
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x345 y476 w231 h70 cWhite, Snowman Collect
+Gui, Add, Button, x380 y504 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x475 y508 w60 h25 vSnowmanCollectStatus BackgroundTrans, OFF
+
 
 
 Gui, Tab, Replay
@@ -511,7 +552,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation (50/50 Chance), Frostveil and Winter Garden. (Their cutscenes end with a flash)
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation (most of the time), Frostveil and Winter Garden. (Their cutscenes end with a flash)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -557,10 +598,10 @@ Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
 Gui, Add, Text, x173 y566 w520 h145 BackgroundTrans, (Globals)
 Gui, Add, Text, x470 y566 w520 h145 BackgroundTrans, (Transcendents)
-Gui, Font, s9 cWhite Bold, Segoe UI
+Gui, Font, s9 cWhite Bold
 Gui, Add, Button, x45 y561 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
 Gui, Add, Button, x345 y561 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
-Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s9 c0xCCCCCC Bold
 Gui, Add, Text, x143 y566 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
 Gui, Add, Text, x440 y566 w60 h25 vTransAreaStatus BackgroundTrans, OFF
 
@@ -572,14 +613,14 @@ Gui, Add, Edit, x50 y150 w500 h25 vWebhookInput gUpdateWebhook Background0xD3D3D
 Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y180 w500 h15 BackgroundTrans, Paste your Discord webhook URL here to be notified of actions happening in real time.
 Gui, Font, s10 cWhite Normal Bold
-Gui, Add, Text, x50 y225 w200 h25 BackgroundTrans, Discord USERID:
-Gui, Add, Edit, x50 y250 w500 h25 vUserIDInput gUpdateUserID Background0xD3D3D3 cBlack, %webhookID%
+Gui, Add, Text, x50 y205 w200 h25 BackgroundTrans, Discord USERID:
+Gui, Add, Edit, x50 y230 w500 h25 vUserIDInput gUpdateUserID Background0xD3D3D3 cBlack, %webhookID%
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y280 w500 h15 BackgroundTrans, Paste your Discord USERID here to be pinged of actions happening in real time.
+Gui, Add, Text, x50 y260 w500 h15 BackgroundTrans, Paste your Discord USERID here to be pinged of actions happening in real time.
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y295 w534 h65 cWhite, Macro Message De/Activation
+Gui, Add, GroupBox, x33 y295 w534 h65 cWhite, Macro De/Activation Message
 Gui, Add, Button, x60 y320 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
 Gui, Add, Text, x150 y324 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
 Gui, Add, Button, x320 y320 w80 h25 gToggledoPing vDoPingBtn, Toggle
@@ -588,7 +629,7 @@ Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x250 y324 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Message if Clip
+Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Clip Message
 Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
 Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 Gui, Add, Button, x320 y390 w80 h25 gToggledoPing2 vDoPing2Btn, Toggle
@@ -695,7 +736,7 @@ Gui, Add, Text, x110 y300 w300 h15 BackgroundTrans c0x0088FF gDev3LinkClick, %de
 Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y325 w480 h1 0x10 BackgroundTrans
 
-url := "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/refs/heads/main/DONATORS.txt"
+url := "https://raw.githubusercontent.com/ivelchampion249/FishSol-Macro/refs/heads/main/DONATORS.txt"
 
 Http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 Http.Open("GET", url, false)
@@ -704,7 +745,7 @@ Http.Send()
 content := Http.ResponseText
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x50 y345 w2000 h20 BackgroundTrans, Thank you to our donators! and noaery
+Gui, Add, Text, x50 y345 w2000 h20 BackgroundTrans, Hope you enjoy my fishSol! Donators of Original fishSol:
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Edit, x50 y370 w480 h95 vDonatorsList -Wrap +ReadOnly +VScroll -WantReturn -E0x200 Background0x2D2D2D c0xCCCCCC, %content%
 
@@ -735,12 +776,12 @@ if (sellAllToggle) {
     GuiControl, +c0xFF4444, SellAllStatus
 }
 
-if (advancedFishingToggle) {
-    GuiControl,, AdvancedFishingStatus, ON
-    GuiControl, +c0x00DD00, AdvancedFishingStatus
+if (advancedFishingDetection) {
+    GuiControl,, AdvancedFishingDetectionStatus, ON
+    GuiControl, +c0x00DD00, AdvancedFishingDetectionStatus
 } else {
-    GuiControl,, AdvancedFishingStatus, OFF
-    GuiControl, +c0xFF4444, AdvancedFishingStatus
+    GuiControl,, AdvancedFishingDetectionStatus, OFF
+    GuiControl, +c0xFF4444, AdvancedFishingDetectionStatus
 }
 
 if (pathingMode = "Vip Pathing") {
@@ -970,16 +1011,16 @@ ToggleSellAll:
     IniWrite, % (sellAllToggle ? "true" : "false"), %iniFilePath%, Macro, sellAllToggle
 return
 
-ToggleAdvancedFishing:
-    advancedFishingToggle := !advancedFishingToggle
-    if (advancedFishingToggle) {
-        GuiControl,, AdvancedFishingStatus, ON
-        GuiControl, +c0x00DD00, AdvancedFishingStatus
+ToggleAdvancedFishingDetection:
+    advancedFishingDetection := !advancedFishingDetection
+    if (advancedFishingDetection) {
+        GuiControl,, AdvancedFishingDetectionStatus, ON
+        GuiControl, +c0x00DD00, AdvancedFishingDetectionStatus
     } else {
-        GuiControl,, AdvancedFishingStatus, OFF
-        GuiControl, +c0xFF4444, AdvancedFishingStatus
+        GuiControl,, AdvancedFishingDetectionStatus, OFF
+        GuiControl, +c0xFF4444, AdvancedFishingDetectionStatus
     }
-    IniWrite, % (advancedFishingToggle ? "true" : "false"), %iniFilePath%, Macro, advancedFishingToggle
+    IniWrite, % (advancedFishingDetection ? "true" : "false"), %iniFilePath%, Macro, advancedFishingDetection
 return
 
 ToggleAutoUnequip:
@@ -1316,10 +1357,10 @@ UpdateAutoRejoinFailsafe:
 return
 
 UpdateAdvancedThreshold:
-    Gui, Submit, NoHide
+    Gui, Submit, nohide
     if (AdvancedThresholdInput >= 0 && AdvancedThresholdInput <= 40) {
         advancedFishingThreshold := AdvancedThresholdInput
-        IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro, advancedFishingThreshold
+        IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro advancedFishingThreshold
     }
 return
 
@@ -1545,7 +1586,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1"","
+    . """text"": ""Aery's fishSol V1.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1583,7 +1624,7 @@ SendWebhook2(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1"","
+    . """text"": ""Aery's fishSol V1.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1618,7 +1659,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1"","
+    . """text"": ""Aery's fishSol V1.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1647,6 +1688,7 @@ Requirements:
 - Replay length should be set between 2-5 minutes
 - Global Replay may be triggered by cutscenes between 99k-999k. 
 To avoid unwanted clips, ensure aura cutscenes are above 1M+.
+- Set Graphics to the lowest to avoid accidental detection.
 
 Warnings:
 - Other global white flashes may trigger a clip
@@ -1665,7 +1707,7 @@ Status: (+ = true | - = false)
 All Globals: +
 Limbo Globals: -
 Nyctophobia: -
-Pixelation: + (lowkey RNG if it clips)
+Pixelation: + (9 Times out of 10 it will)
 Luminosity: +
 Winter Garden: +
 Dream Traveler: +
@@ -1688,10 +1730,6 @@ ShowClipText() {
     ToolTip, Clipped with Aery's Fishsol, 890, 10
 }
 
-HideClipText() {
-    ToolTip
-}
-
 
 
 
@@ -1704,7 +1742,7 @@ return
 
 
 
-DoHeavenly:
+CraftHeavenly:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1755,11 +1793,11 @@ DoHeavenly:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
 
-DoBound:
+CraftBound:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1801,10 +1839,10 @@ DoBound:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoZeus:
+CraftZeus:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1861,10 +1899,10 @@ DoZeus:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoHades:
+CraftHades:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1906,10 +1944,10 @@ DoHades:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoPoseidon:
+CraftPoseidon:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1951,10 +1989,10 @@ DoPoseidon:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoJewelry:
+CraftJewerly:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1989,10 +2027,10 @@ DoJewelry:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoZombie:
+CraftZombie:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2027,10 +2065,10 @@ DoZombie:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoRage:
+CraftRage:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2065,10 +2103,10 @@ DoRage:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
-DoDiver:
+CraftDiver:
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2103,7 +2141,7 @@ DoDiver:
     MouseMove, 585, 585, 3
     Sleep, 200
     Click, Left
-    Sleep, 200
+    Sleep, 5000
 return
 
 UpdateGUI:
@@ -2211,10 +2249,10 @@ return
 F4::
     Gui, Submit, NoHide
 
-    if (!autoCraft)  ; make sure autoCraft toggle is on
+    if (!autoCraft)
         return
 
-    if (autocrafting)  ; already running
+    if (autocrafting)
         return
 
     autocrafting := true
@@ -2222,16 +2260,16 @@ F4::
    if (onoffWebhook)
         try SendWebhook(":green_circle: Crafting Started", "7909721")
 
-    SetTimer, DoCraftSelected, 500
+    SetTimer, CraftSelected, 5000
 return
 
 
 F5::
-    if (!autocrafting)  ; not running
+    if (!autocrafting)
         return
 
     autocrafting := false
-    SetTimer, DoCraftSelected, Off  ; stop the timer
+    SetTimer, CraftSelected, Off
 
     if (onoffWebhook)
         try SendWebhook(":red_circle: Crafting Stopped", "14495300")
@@ -2239,29 +2277,28 @@ ExitApp
 return
 
 
-DoCraftSelected:
-    if (!autocrafting)  ; stop immediately if toggle is off
+CraftSelected:
+    if (!autocrafting)
         return
 
-    ; Your crafting logic
     if (selectedItem = "Heavenly Potion")
-        Gosub, DoHeavenly
+        Gosub, CraftHeavenly
     else if (selectedItem = "Bound Potion")
-        Gosub, DoBound
+        Gosub, CraftBound
     else if (selectedItem = "Zeus Potion")
-        Gosub, DoZeus
+        Gosub, CraftZeus
     else if (selectedItem = "Hades Potion")
-        Gosub, DoHades
+        Gosub, CraftHades
     else if (selectedItem = "Poseidon Potion")
-        Gosub, DoPoseidon
+        Gosub, CraftPoseidon
     else if (selectedItem = "Jewelry Potion")
-        Gosub, DoJewelry
+        Gosub, CraftJewerly
     else if (selectedItem = "Zombie Potion")
-        Gosub, DoZombie
+        Gosub, CraftZombie
     else if (selectedItem = "Rage Potion")
-        Gosub, DoRage
+        Gosub, CraftRage
     else if (selectedItem = "Diver Potion")
-        Gosub, DoDiver
+        Gosub, CraftDiver
 return
 
 
@@ -2301,9 +2338,9 @@ if (toggle) {
         sleep 2600
         if (autoCloseChat) {
             sleep 300
-            Send {/}
+            MouseMove, 145, 40, 3
             sleep 300
-            MouseMove, 149, 40, 3
+            MouseClick, Left
             sleep 300
             MouseClick, Left
             sleep 300
@@ -2735,12 +2772,39 @@ if (snowmanCollect) {
         if (A_TickCount - startTime > 9000)
         break
 
-        ErrorLevel := 0
-        PixelSearch, FoundX, FoundY, 757, 762, 1161, 782, barColor, 5, Fast RGB
-
-        if (ErrorLevel = 0) {
+        ; Advanced detection
+        if (advancedFishingDetection) {
+            ErrorLevel := 0
+            PixelSearch, leftX, leftY, 757, 767, 1161, 767, barColor, 5, Fast RGB
+            if (ErrorLevel = 0) {
+                rightX := leftX
+                Loop {
+                    testX := rightX + 1
+                    if (testX > 1161)
+                        break
+                    PixelGetColor, testColor, %testX%, 767, RGB
+                    if (Abs((testColor & 0xFF) - (barColor & 0xFF)) <= 10 && Abs(((testColor >> 8) & 0xFF) - ((barColor >> 8) & 0xFF)) <= 10 && Abs(((testColor >> 16) & 0xFF) - ((barColor >> 16) & 0xFF)) <= 10) {
+                        rightX := testX
+                    } else {
+                        break
+                    }
+                }
+                barWidth := rightX - leftX
+                if (barWidth < advancedFishingThreshold) {
+                    MouseClick, left
+                    sleep 25
+                }
+            } else {
+                MouseClick, left
+            }
+            sleep 10
         } else {
-        MouseClick, left
+            ErrorLevel := 0
+            PixelSearch, FoundX, FoundY, 757, 762, 1161, 782, barColor, 5, Fast RGB
+            if (ErrorLevel = 0) {
+            } else {
+                MouseClick, left
+            }
         }
         }
         sleep 300
@@ -2760,8 +2824,8 @@ if (snowmanCollect) {
         MouseClick, Left
         sleep 300
         cycleCount++
-        }
     }
+}
 Return
 
 
