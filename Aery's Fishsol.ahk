@@ -451,7 +451,7 @@ Gui, Add, GroupBox, x307 y90 w270 h165 cWhite, Auto-Close Chat
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x317 y110 h45 w225 BackgroundTrans c0xCCCCCC, Automatically closes chat every cycle to prevent getting stuck in collection.
 Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x317 y150 h150 w250 BackgroundTrans,! Doesn't work if your chat is opened to "Server Message" !  
+; Gui, Add, Text, x317 y150 h150 w250 BackgroundTrans, Screenshot Message
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y195 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -1360,7 +1360,7 @@ UpdateAdvancedThreshold:
     Gui, Submit, nohide
     if (AdvancedThresholdInput >= 0 && AdvancedThresholdInput <= 40) {
         advancedFishingThreshold := AdvancedThresholdInput
-        IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro advancedFishingThreshold
+        IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro, advancedFishingThreshold
     }
 return
 
@@ -2251,8 +2251,9 @@ F4::
 
     if (!autoCraft)
         return
-
     if (autocrafting)
+        return
+     if (toggle)
         return
 
     autocrafting := true
@@ -2267,13 +2268,15 @@ return
 F5::
     if (!autocrafting)
         return
+    if (!toggle) 
+        return
 
     autocrafting := false
     SetTimer, CraftSelected, Off
 
     if (onoffWebhook)
         try SendWebhook(":red_circle: Crafting Stopped", "14495300")
-ExitApp
+    ExitApp
 return
 
 
