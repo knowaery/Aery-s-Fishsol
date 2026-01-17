@@ -1685,7 +1685,7 @@ Status: (+ = true | - = false)
 All Globals: +
 Limbo Globals: -
 Nyctophobia: -
-Pixelation: + (99%)
+Pixelation: + (99 Percent)
 Luminosity: +
 Winter Garden: +
 Leviathan (Unsure)
