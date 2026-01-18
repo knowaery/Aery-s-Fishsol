@@ -2627,63 +2627,37 @@ if (toggle) {
             Send, {WheelDown 25}
             Sleep, 800
 
-            ; Divnus Angel (15)
+            ; Divnus Angel (7)
             MouseMove, 800, 770, 3
             Sleep, 250
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 1000
+            Sleep, 250
 
-            ; Hope (10)
+            ; Hope (5)
             MouseMove, 800, 720, 3
             Sleep, 250
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
+            Sleep, 500
             Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 100
-            Click, Left
-            Sleep, 1000
+            Sleep, 250
 
             ; Faith (1)
             MouseMove, 800, 665, 3
