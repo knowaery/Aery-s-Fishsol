@@ -58,7 +58,7 @@ useZeus := false
 usePoseidon := false
 useHades := false
 advancedFishingThreshold := 25
-
+archDevice := false
 
 
 if (FileExist(iniFilePath)) {
@@ -219,6 +219,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempHades, %iniFilePath%, Macro, useHades
     if (tempHades != "ERROR")
     useHades := (tempHades = "true" || tempHades = "1")
+
+    IniRead, tempArchDevice, %iniFilePath%, Macro, archDevice
+    if (tempArchDevice != "ERROR")
+    archDevice := (tempArchDevice = "true" || tempArchDevice = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -389,7 +393,7 @@ Gui, Add, Text, x510 y303 w60 h25 vAzertyPathingStatus BackgroundTrans, OFF
 
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x250 y343 w315 h180, Advanced Fishing Detection
+Gui, Add, GroupBox, x250 y343 w315 h197, Advanced Fishing Detection
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x270 y380 w80 h25 gToggleAdvancedFishingDetection vAdvancedFishingDetectionBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -418,6 +422,15 @@ Gui, Add, Text, x50 y375 w100 h30 BackgroundTrans, Runtime:
 Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, Craft Angel Device
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x45 y465 w190 h60 BackgroundTrans, Automatically adds auras to the Angel Device (!Temporary!)
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x45 y505 w80 h25 gToggleArchDevice vArchDeviceBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x145 y509 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
 
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
@@ -919,6 +932,13 @@ if (useHades) {
     GuiControl,, UseHadesStatus, OFF
     GuiControl, +c0xFF4444, UseHadesStatus
 }
+if (archDevice) {
+    GuiControl,, ArchDeviceStatus, ON
+    GuiControl, +c0x00DD00, ArchDeviceStatus
+} else {
+    GuiControl,, ArchDeviceStatus, OFF
+    GuiControl, +c0xFF4444, ArchDeviceStatus
+}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1242,6 +1262,18 @@ ToggleUseHades:
         GuiControl, +c0xFF4444, UseHadesStatus
     }
     IniWrite, % (useHades ? "true" : "false"), %iniFilePath%, Macro, useHades
+return
+
+ToggleArchDevice:
+    archDevice := !archDevice
+    if (archDevice) {
+        GuiControl,, ArchDeviceStatus, ON
+        GuiControl, +c0x00DD00, ArchDeviceStatus
+    } else {
+        GuiControl,, ArchDeviceStatus, OFF
+        GuiControl, +c0xFF4444, ArchDeviceStatus
+    }
+    IniWrite, % (archDevice ? "true" : "false"), %iniFilePath%, Macro, archDevice
 return
 
 ToggleDetectLimbo:
@@ -2515,14 +2547,154 @@ if (toggle) {
             Sleep, 50
 
             Send, {Esc}
-            Sleep, 300
+            Sleep, 500
 
             Send, r
-            Sleep, 300
+            Sleep, 500
 
             Send, {Enter}
-            Sleep, 2000
+            Sleep, 5000
         }
+
+        if (archDevice) {
+            Send, {a Down}
+            Sleep, 3000
+            Send, {a Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 5000
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {a Down}
+            Sleep, 1100
+            Send, {a Up}
+            Sleep, 200
+
+            Send, {w Down}
+            Sleep, 100
+            Send, {w Up}
+            Sleep, 50
+
+            Send, {Space Down}
+            Sleep, 50
+            Send, {Space Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 2250
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {d Down}
+            Sleep, 1800
+            Send, {d Up}
+            Sleep, 50
+
+            Send, e
+            Sleep, 5000
+            MouseMove, 670, 949, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 800
+            MouseMove, 900, 365, 3
+            Sleep, 350
+            Click, Left
+            Sleep, 350
+            Send, Angel Device
+            Sleep, 350
+            MouseMove, 1111, 444, 3
+            Sleep, 250
+            Send, {WheelUp 25}
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            MouseMove, 600, 700, 3
+            Sleep, 400
+            Send, {WheelUp 25}
+            Sleep, 800
+            Send, {WheelDown 25}
+            Sleep, 800
+
+            ; Divnus Angel (15)
+            MouseMove, 800, 770, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 1000
+
+            ; Hope (10)
+            MouseMove, 800, 720, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 100
+            Click, Left
+            Sleep, 1000
+
+            ; Faith (1)
+            MouseMove, 800, 665, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 1000
+            MouseMove, 1420, 302, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 500
+
+            Send, {Esc}
+            Sleep, 500
+            Send, r
+            Sleep, 500
+            Send, {Enter}
+            Sleep, 2500
+        }
+
+
+
 
         if (pathingMode = "Vip Pathing") {
             ; VIP Pathing
