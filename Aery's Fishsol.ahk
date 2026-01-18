@@ -962,7 +962,7 @@ if (detectTranscendents) {
 if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
-    triggerDelay := 17500
+    triggerDelay := 10000
     SetTimer, CheckPixel, 50
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
@@ -1317,7 +1317,7 @@ ToggleNvidiaReplay:
     if (nvidiaReplay) {
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
-        triggerDelay := 17500
+        triggerDelay := 10000
         SetTimer, CheckPixel, 50
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
@@ -2339,12 +2339,12 @@ if (toggle) {
         Send, R
         Sleep, 650
         Send, {Enter}
-        sleep 2600
+        sleep 3000
         if (autoCloseChat) {
             sleep 300
-            MouseMove, 145, 40, 3
+            Send {/}
             sleep 300
-            MouseClick, Left
+            MouseMove, 145, 40, 3
             sleep 300
             MouseClick, Left
             sleep 300
@@ -2369,9 +2369,9 @@ if (toggle) {
             MouseMove, 634, 638, 3
             sleep 150
             Click, Left
-            sleep 1200
+            sleep 700
             Click, Left
-            sleep 150
+            Sleep, 250
             MouseMove, 1425, 303, 3
             sleep 150
             Click, Left
@@ -2394,7 +2394,7 @@ if (toggle) {
             Click, Left
             sleep 1200
             Click, Left
-            sleep 158
+            sleep 150
             MouseMove, 1425, 303, 3
             sleep 150
             Click, Left
@@ -2553,7 +2553,7 @@ if (toggle) {
             Sleep, 500
 
             Send, {Enter}
-            Sleep, 5000
+            Sleep, 3000
         }
 
         if (archDevice) {
@@ -2587,13 +2587,23 @@ if (toggle) {
             Send, {s Up}
             Sleep, 50
 
+            Send, {Shift}
+            Sleep, 250
+
             Send, {d Down}
             Sleep, 1800
             Send, {d Up}
-            Sleep, 50
+            Sleep, 250
+
+            Send, {Shift}
+            Sleep, 250
 
             Send, e
-            Sleep, 5000
+            Sleep, 600
+            MouseMove, 960, 800, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 600
             MouseMove, 670, 949, 3
             Sleep, 250
             Click, Left
@@ -2690,7 +2700,7 @@ if (toggle) {
             Send, r
             Sleep, 500
             Send, {Enter}
-            Sleep, 2500
+            Sleep, 3500
         }
 
 
