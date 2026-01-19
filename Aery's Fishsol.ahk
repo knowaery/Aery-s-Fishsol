@@ -589,7 +589,7 @@ Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Ede
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y479 w400 h135 BackgroundTrans, 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
+Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, DOES NOT WORK
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
