@@ -28,10 +28,11 @@ transcendentColorNames[0x060908] := "Equinox1"
 transcendentColorNames[0xC2C2C2] := "Equinox2"
 transcendentColorNames[0xFEFEFE] := "Equinox3"
 transcendentColorNames[0x566980] := "Luminosity1"
-; transcendentColorNames[0x010105] := "Luminosity2"
-; transcendentColorNames[0x010103] := "Luminoisty3"
+; transcendentColorNames[] := "Pixelation1"
+; transcendentColorNames[] := "Breakthrough"
 transcendentColorNames[0x000201] := "Leviathan1"
 lastTranscendentColor := ""
+lastTranscendentColor2 := ""
 snowmanCollect := false
 strangeController := false
 biomeRandomizer := false
@@ -59,6 +60,9 @@ usePoseidon := false
 useHades := false
 advancedFishingThreshold := 25
 archDevice := false
+lastColor2 := ""
+lastColor3 := ""
+
 
 
 if (FileExist(iniFilePath)) {
@@ -556,7 +560,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation, Frostveil, Winter Garden, Breakthrough and Dream Traveler. (Cutscenes have a flash)
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation, Frostveil, Winter Garden, and Dream Traveler. (Cutscenes have a flash)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -589,11 +593,11 @@ Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Ede
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y479 w400 h135 BackgroundTrans, 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, DOES NOT WORK
+; Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
+; Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
+; Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
 
 
 ; Highlight Area
@@ -826,7 +830,7 @@ if (detectLimbo) {
     GuiControl,, DetectLimboStatus, ON
     GuiControl, +c0x00DD00, DetectLimboStatus
     triggerDelay3 := 20000
-    SetTimer, CheckPixel, 50
+    SetTimer, CheckPixel3, 50
 } else {
     GuiControl,, DetectLimboStatus, OFF
     GuiControl, +c0xFF4444, DetectLimboStatus
@@ -1286,7 +1290,7 @@ ToggleDetectLimbo:
         GuiControl,, DetectLimboStatus, ON
         GuiControl, +c0x00DD00, DetectLimboStatus
         triggerDelay3 := 20000
-        SetTimer, CheckPixel, 50
+        SetTimer, CheckPixel3, 50
     } else {
         GuiControl,, DetectLimboStatus, OFF
         GuiControl, +c0xFF4444, DetectLimboStatus
@@ -1492,10 +1496,12 @@ return
 
 CheckPixel2:
     global detectTranscendents, transcendentPixels, transcendentColors
-    global triggerDelay2, transcendentCounters
+    global triggerDelay2, triggerDelay, transcendentCounters
+    global lastColor2, lastColor3, lastTranscendentColor2
 
     if (!detectTranscendents)
         return
+    
 
     for index, pos in transcendentPixels {
         PixelGetColor, color, % pos.x, % pos.y, RGB
@@ -1506,9 +1512,52 @@ CheckPixel2:
             lastTranscendentColor := color 
             ShowClipText()
             SetTimer, DoClip2, -%triggerDelay2%
-            break
         }
     }
+    }
+
+    PixelGetColor, color, 950, 180, RGB
+
+    if (color = 0xFFFFFF) {
+        ShowClipText()
+        PixelGetColor, lastColor2, 1200, 500, RGB
+        if (lastColor2 = 0x000000) {
+            lastTranscendentColor2 := "Breakthrough"
+            SetTimer, DoClip2, -%triggerDelay2%
+            return
+        } else if (lastColor2 = !0x000000 && !nvidiaReplay) {
+            ToolTip
+        }
+    }
+return
+
+DoClip2:
+if (clipWebhook) {
+    global lastTranscendentColor, transcendentColorNames
+    global lastTranscendentColor2
+
+    colorHex := Format("0x{:06X}", lastTranscendentColor)
+    colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+        ? transcendentColorNames[lastTranscendentColor]
+        : "Unknown Color"
+
+    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
+        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+    } else if (colorName = "Luminosity1") {
+        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+    } else if (colorName = "Leviathan1") {
+        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Leviathan.png")
+
+    } else if (lastTranscendentColor2 = "Breakthrough") {
+        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: Breakthrough", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+
+    } else if (lastTranscendentColor2 = "Pixelation") {
+        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: Pixelation", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Pixelation.png")
+    }
+    ToolTip
+    Send, !{F10}
 }
 return
 
@@ -1531,32 +1580,6 @@ if (clipWebhook) {
     try SendWebhook2(":warning: A Global has been clipped! (or pixel, frostveil, winter garden, and/or breakthrough... :face_holding_back_tears:)", 16777215)
     Send, !{F10}
 } else if (!clipWebhook) {
-    ToolTip
-    Send, !{F10}
-}
-return
-
-DoClip2:
-if (clipWebhook) {
-    global lastTranscendentColor, transcendentColorNames
-
-    colorHex := Format("0x{:06X}", lastTranscendentColor)
-    colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-        ? transcendentColorNames[lastTranscendentColor]
-        : "Unknown Color"
-
-        if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
-            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Equniox.png")
-
-        } else if (colorName = "Luminosity1") {
-            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Luminosity.png")
-
-        } else if (colorName = "Leviathan") {
-            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Leviathan.png")
-        }
-    ToolTip
-    Send, !{F10}
-} else {
     ToolTip
     Send, !{F10}
 }
@@ -1770,7 +1793,7 @@ Status: (+ = true | - = false)
 All Globals: +
 Limbo Globals: -
 Nyctophobia: -
-Pixelation: + (99 Percent)
+Pixelation: +
 Luminosity: +
 Winter Garden: +
 Leviathan (Unsure)
