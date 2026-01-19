@@ -28,8 +28,6 @@ transcendentColorNames[0x060908] := "Equinox1"
 transcendentColorNames[0xC2C2C2] := "Equinox2"
 transcendentColorNames[0xFEFEFE] := "Equinox3"
 transcendentColorNames[0x566980] := "Luminosity1"
-; transcendentColorNames[] := "Pixelation1"
-; transcendentColorNames[] := "Breakthrough"
 transcendentColorNames[0x000201] := "Leviathan1"
 lastTranscendentColor := ""
 lastTranscendentColor2 := ""
@@ -61,7 +59,6 @@ useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 lastColor2 := ""
-lastColor3 := ""
 
 
 
@@ -1496,8 +1493,8 @@ return
 
 CheckPixel2:
     global detectTranscendents, transcendentPixels, transcendentColors
-    global triggerDelay2, triggerDelay, transcendentCounters
-    global lastColor2, lastColor3, lastTranscendentColor2
+    global triggerDelay2, transcendentCounters
+    global lastColor2, lastTranscendentColor2
 
     if (!detectTranscendents)
         return
@@ -1525,7 +1522,7 @@ CheckPixel2:
             lastTranscendentColor2 := "Breakthrough"
             SetTimer, DoClip2, -%triggerDelay2%
             return
-        } else if (lastColor2 = !0x000000 && !nvidiaReplay) {
+        } else if (color = 0xFFFFFF && lastColor2 = !0x000000 && !nvidiaReplay) {
             ToolTip
         }
     }
@@ -1577,7 +1574,7 @@ return
 DoClip:
 if (clipWebhook) {
     ToolTip
-    try SendWebhook2(":warning: A Global has been clipped! (or pixel, frostveil, winter garden, and/or breakthrough... :face_holding_back_tears:)", 16777215)
+    try SendWebhook2(":warning: A Global has been clipped!", 16777215)
     Send, !{F10}
 } else if (!clipWebhook) {
     ToolTip
