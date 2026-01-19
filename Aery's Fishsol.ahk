@@ -581,13 +581,15 @@ Gui, Add, Text, x143 y348 w70 h25 vDetectTranscendentsStatus BackgroundTrans, OF
 ; Limbo Gloabls
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y390 w534 h120 cWhite, Clip Limbo Globals
+Gui, Add, GroupBox, x33 y390 w534 h120 cWhite, Detect and Contract Eden
+Gui, Font, s8 c0xCCCCCC Normal
+Gui, Add, Text, x45 y440 w520 h145 BackgroundTrans, Temporary until I find the motivation to be able to clip all the Limbo Globals
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Limbo Global's star/cutscene. Less reliable to detect if a global is rolled. Does not detect Nyctophobia.
+Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it.
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y479 w400 h135 BackgroundTrans, 
-Gui, Font, s12 cWhite Bold
-Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, DOES NOT WORK
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -823,6 +825,8 @@ if (snowmanCollect) {
 if (detectLimbo) {
     GuiControl,, DetectLimboStatus, ON
     GuiControl, +c0x00DD00, DetectLimboStatus
+    triggerDelay3 := 20000
+    SetTimer, CheckPixel, 50
 } else {
     GuiControl,, DetectLimboStatus, OFF
     GuiControl, +c0xFF4444, DetectLimboStatus
@@ -1281,6 +1285,8 @@ ToggleDetectLimbo:
     if (detectLimbo) {
         GuiControl,, DetectLimboStatus, ON
         GuiControl, +c0x00DD00, DetectLimboStatus
+        triggerDelay3 := 20000
+        SetTimer, CheckPixel, 50
     } else {
         GuiControl,, DetectLimboStatus, OFF
         GuiControl, +c0xFF4444, DetectLimboStatus
@@ -1506,25 +1512,18 @@ CheckPixel2:
 }
 return
 
-;CheckPixel3:
-    ; global detectLimbo, limboPixels, limboColors
-    ; global triggerDelay3, limboCounters
+CheckPixel3:
+    global global detectLimbo, triggerDelay3
 
-    ; if (!detectLimbo)
-    ;     return
+    if (!detectLimbo)
+        return
 
-    ; for index, pos in limboPixels {
-    ;    PixelGetColor, color, % pos.x, % pos.y, RGB
+    PixelGetColor, color, 920, 400, RGB
 
-    ;    for _, c in limboColors {
-    ;        if (color = c) {
-    ;            limbo[index]++  
-    ;            SetTimer, DoClip, -%triggerDelay3%
-    ;            break
-    ;       }
-    ;    }
-    ;}
-; return
+    if (color = 0xFFFFFF) {
+        SetTimer, DoContract, -%triggerDelay3%
+    }
+return
 
 DoClip:
 if (clipWebhook) {
@@ -1546,10 +1545,15 @@ if (clipWebhook) {
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    message := ":tada: **Transcendent Clipped!**`n"
-    message .= "Color detected: **" colorName " (" colorHex ")**"
+        if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
+            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Equniox.png")
 
-    try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                                                               Color detected: " colorName " (" colorHex ")", 11393254)
+        } else if (colorName = "Luminosity1") {
+            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Luminosity.png")
+
+        } else if (colorName = "Leviathan") {
+            try SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/Leviathan.png")
+        }
     ToolTip
     Send, !{F10}
 } else {
@@ -1557,6 +1561,45 @@ if (clipWebhook) {
     Send, !{F10}
 }
 return
+
+DoContract:
+if (clipWebhook) {
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 200
+    MouseMove, 800, 800, 3
+    sleep, 300
+    Click, Left
+    sleep, 800
+    MouseMove, 720, 930, 3
+    sleep, 200
+    Click, Left
+    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
+    sleep, 1000
+    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
+    sleep, 1000
+    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
+} else {
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 200
+    MouseMove, 800, 800, 3
+    sleep, 300
+    Click, Left
+    sleep, 800
+    MouseMove, 720, 930, 3
+    sleep, 200
+    Click, Left
+    }
+return
+
+
 
 UpdateWebhook:
 Gui, Submit, nohide
@@ -1609,8 +1652,8 @@ SendWebhook3(text, color := 16777215) {
     http.Send(json)
 }
 
-SendWebhook2(text, color := 16777215) {
-    global webhookURL, webhookID, doPing, doPing2
+SendWebhook2(text, color := 16777215, imageURL := "") {
+    global webhookURL, webhookID, doPing2
 
     if (!InStr(webhookURL, "discord"))
         return
@@ -1627,12 +1670,18 @@ SendWebhook2(text, color := 16777215) {
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
     }
 
+    imageBlock := ""
+    if (imageURL != "") {
+        imageBlock := """image"": {""url"": """ imageURL """},"
+    }
+
     json := "{"
     . """content"": """ content ""","
     . allowedMentions
     . """embeds"": [{"
     . """title"": """ text ""","
     . """color"": " color ","
+    . imageBlock
     . """footer"": {"
     . """text"": ""Aery's fishSol V1.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
@@ -1646,6 +1695,10 @@ SendWebhook2(text, color := 16777215) {
     http.SetRequestHeader("Content-Type", "application/json")
     http.Send(json)
 }
+
+
+
+
 
 SendWebhook(text, color := 16777215) {
     global webhookURL, webhookID
