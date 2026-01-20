@@ -11,12 +11,16 @@ https://github.com/ivelchampion249/FishSol-Macro
 (Setup/Tutorial)
 https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 
-if you want the latest aery fishsol just copy the script and replace it with the one in the release version, ill update it eventually
 
 # Features
 Clip Globals via Nvidia Replay
+
 Clips Transcendents via Nvidia Replay
+
 Auto Craft
+
 Biome/Strange Controller Usage
+
 Snowman Collect (Temporary)
+
 Auto Add auras to Angel Device (Temporary)
