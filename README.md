@@ -13,14 +13,14 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 
 
 # Features
-Clip Globals via Nvidia Replay
+• Clip Globals via Nvidia Replay
 
-Clips Transcendents via Nvidia Replay
+• Clips Transcendents via Nvidia Replay
 
-Auto Craft
+• Auto Craft
 
-Biome/Strange Controller Usage
+• Biome/Strange Controller Usage
 
-Snowman Collect (Temporary)
+• Snowman Collect (Temporary)
 
-Auto Add auras to Angel Device (Temporary)
+• Auto Add auras to Angel Device (Temporary)
