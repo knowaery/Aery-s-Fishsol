@@ -23,10 +23,10 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 • Auto Add auras to Angel Device
 
 # Credits
-https://github.com/ivelchampion249/FishSol-Macro (Original fishSol)
+(Original fishSol) https://github.com/ivelchampion249/FishSol-Macro
 
-https://www.youtube.com/watch?v=9N3FhGT0Mlc (Breakthrough Cutscene Image)
+(Breakthrough Cutscene Image) https://www.youtube.com/watch?v=9N3FhGT0Mlc 
 
-https://www.youtube.com/watch?v=dtTOPCvqvjA (Leviathan Cutscene Image)
+(Leviathan Cutscene Image) https://www.youtube.com/watch?v=dtTOPCvqvjA
 
-https://www.youtube.com/watch?v=o-u3_KUMKgk (Equinox Cutscene Image)
+(Equinox Cutscene Image) https://www.youtube.com/watch?v=o-u3_KUMKgk
