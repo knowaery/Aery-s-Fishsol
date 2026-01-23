@@ -23,7 +23,7 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 • Auto Add auras to Angel Device
 
 # Credits
-https://github.com/ivelchampion249/FishSol-Macro (Original fishSol
+https://github.com/ivelchampion249/FishSol-Macro (Original fishSol)
 
 https://www.youtube.com/watch?v=9N3FhGT0Mlc (Breakthrough Cutscene Image)
 
