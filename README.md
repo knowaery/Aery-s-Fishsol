@@ -3,10 +3,7 @@ ALL CREDIT GOES TO FISHSOL DEVS.
 I only added stuff that I wanted (Nvidia Replay)
 
 
-Original fishSol and tutorial on how to use fishSol: 
-
-(Original)
-https://github.com/ivelchampion249/FishSol-Macro
+Tutorial on how to use fishSol: 
 
 (Setup/Tutorial)
 https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
@@ -24,3 +21,12 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 • Snowman Collect (Temporary)
 
 • Auto Add auras to Angel Device
+
+# Credits
+https://github.com/ivelchampion249/FishSol-Macro (Original fishSol
+
+https://www.youtube.com/watch?v=9N3FhGT0Mlc (Breakthrough Cutscene Image)
+
+https://www.youtube.com/watch?v=dtTOPCvqvjA (Leviathan Cutscene Image)
+
+https://www.youtube.com/watch?v=o-u3_KUMKgk (Equinox Cutscene Image)
