@@ -10,8 +10,8 @@ if (FileExist(iconFilePath)) {
 }
 
 res := "1080p"
-maxLoopCount := 15
-fishingLoopCount := 15
+maxLoopCount := 30
+fishingLoopCount := 30
 sellAllToggle := false
 advancedFishingToggle := false
 pathingMode := "Vip Pathing"
@@ -22,13 +22,11 @@ nvidiaReplay := false
 detectLimbo := false
 detectTranscendents :=false
 transcendentCounters := {}
-transcendentColors := [0x060908, 0xC2C2C2, 0xFEFEFE, 0x566980, 0x000201]
+transcendentColors := [0x060908, 0xC2C2C2, 0x566980]
 transcendentColorNames := {}
 transcendentColorNames[0x060908] := "Equinox1"
 transcendentColorNames[0xC2C2C2] := "Equinox2"
-transcendentColorNames[0xFEFEFE] := "Equinox3"
 transcendentColorNames[0x566980] := "Luminosity1"
-transcendentColorNames[0x000201] := "Leviathan1"
 lastTranscendentColor := ""
 lastTranscendentColor2 := ""
 snowmanCollect := false
@@ -48,7 +46,6 @@ GlobalArea := false
 TransArea := false
 doPing := false
 doPing2 := false
-autoCraft:= false
 autocrafting := false
 useCelestial := false
 useExotic := false
@@ -59,7 +56,9 @@ useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 lastColor2 := ""
-
+steampunkAura := false
+global ClipPending := false
+global ClipType := ""
 
 
 if (FileExist(iniFilePath)) {
@@ -193,10 +192,6 @@ if (FileExist(iniFilePath)) {
     if (tempDoPing2 != "ERROR")
     doPing2 := (tempDoPing2 = "true" || tempDoPing2 = "1")
 
-    IniRead, tempAutoCraft, %iniFilePath%, Macro, autoCraft
-    if (tempAutoCraft != "ERROR")
-    autoCraft := (tempAutoCraft = "true" || tempAutoCraft = "1")
-
     IniRead, tempCelestial, %iniFilePath%, Macro, useCelestial
     if (tempCelestial != "ERROR")
     useCelestial := (tempCelestial = "true" || tempCelestial = "1")
@@ -225,6 +220,10 @@ if (FileExist(iniFilePath)) {
     if (tempArchDevice != "ERROR")
     archDevice := (tempArchDevice = "true" || tempArchDevice = "1")
 
+    IniRead, tempSteampunkAura, %iniFilePath%, Macro, steampunkAura
+    if (tempSteampunkAura != "ERROR")
+    steampunkAura := (tempSteampunkAura = "true" || tempSteampunkAura = "1")
+
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -234,7 +233,7 @@ if (FileExist(iniFilePath)) {
 }
 
 
-version := "Aery's v1.1"
+version := "Aery's v1.2"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -335,12 +334,12 @@ if (dev3_name = "ivelchampion249") {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.1
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.2
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
 Gui, Font, s10 cWhite Normal, Segoe UI
-Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, Main|Misc|Replay|Webhook|Failsafes|About
+Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, Main|Misc|Replay|Webhook|Crafting|Failsafes|About
 
 Gui, Tab, Main
 Gui, Font, s9 cWhite Normal, Segoe UI
@@ -424,15 +423,6 @@ Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, Craft Angel Device
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y465 w190 h60 BackgroundTrans, Automatically adds auras to the Angel Device (!Temporary!)
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x45 y505 w80 h25 gToggleArchDevice vArchDeviceBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x145 y509 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
-
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
 
@@ -472,76 +462,21 @@ Gui, Add, Text, x317 y210 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's sn
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y285 w554 h210 cWhite, Crafting
-; Gui, Add, GroupBox, x45 y385 w200 h100 cWhite, Watch AD
-Gui, Add, GroupBox, x30 y385 w210 h100 cWhite, Heavenly Potion
-Gui, Add, GroupBox, x247 y385 w130 h100 cWhite, Bound Potion 
-Gui, Add, GroupBox, x385 y385 w181 h100 cWhite, Godly Potions
-Gui, Add, Text, x60 y357 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x118 y405 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
-Gui, Add, Button, x118 y445 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
-Gui, Add, Text, x208 y409 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
-Gui, Add, Text, x208 y449 w60 h25 vUseExoticStatus BackgroundTrans, OFF
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x38 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add 
-Gui, Add, Text, x38 y449 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Font, s9 c9B8CFF Bold, Trajan Pro
-Gui, Add, Text, x64 y409 w600 h100 BackgroundTrans, Celestial:
-Gui, Font, s9 cFF0000 Bold, Trajan Pro
-Gui, Add, Text, x64 y449 w600 h100 BackgroundTrans, Exotic:
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x258 y445 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
-Gui, Add, Text, x346 y449 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x258 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Font, s9 c1559C9 Bold, Trajan Pro
-Gui, Add, Text, x285 y409 w600 h100 BackgroundTrans, Bounded:
-
-Gui, Font, s9 cWhite Bold, Segoe UI
-Gui, Add, Button, x480 y405 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
-Gui, Add, Button, x480 y434 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
-Gui, Add, Button, x480 y460 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
-Gui, Add, Text, x535 y407 w60 h25 vUseZeusStatus BackgroundTrans, OFF
-Gui, Add, Text, x535 y436 w60 h25 vUseHadesStatus BackgroundTrans, OFF
-Gui, Add, Text, x535 y462 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
-Gui, Font, s9 cWhite Normal, Trajan Pro
-Gui, Add, Text, x395 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Add, Text, x395 y434 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Add, Text, x395 y460 w600 h100 BackgroundTrans c0xCCCCCC, Add  
-Gui, Font, s9 cFFD700 Bold, Trajan Pro
-Gui, Add, Text, x422 y409 w600 h100 BackgroundTrans, Zeus:
-Gui, Font, s9 cCC5500 Bold, Trajan Pro
-Gui, Add, Text, x422 y434 w600 h100 BackgroundTrans, Hades:
-Gui, Font, s9 c085A8C Bold, Trajan Pro
-Gui, Add, Text, x422 y460 w600 h100 BackgroundTrans, Poseidon:
-
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y305 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Adding the auras listed below means adding them to the desired potion from your inventory.
-
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, DropDownList, x245 y355 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
-
-
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y496 w300 h137 cWhite, Biome/Strange Controller:
+Gui, Add, GroupBox, x22 y296 w300 h150 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x42 y518 w280 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
+Gui, Add, Text, x42 y318 w280 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x42 y555 w120 h25 BackgroundTrans, Strange Controller:
-Gui, Add, Button, x177 y555 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
+Gui, Add, Text, x42 y355 w120 h25 BackgroundTrans, Strange Controller:
+Gui, Add, Button, x177 y355 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x277 y560 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
+Gui, Add, Text, x277 y360 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x42 y595 w125 h25 BackgroundTrans, Biome Randomizer:
-Gui, Add, Button, x177 y595 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
+Gui, Add, Text, x42 y395 w125 h25 BackgroundTrans, Biome Randomizer:
+Gui, Add, Button, x177 y395 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x277 y598 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
+Gui, Add, Text, x277 y398 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
 
 
@@ -557,7 +492,7 @@ Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, Clips Pixelation, Frostveil, Winter Garden, and Dream Traveler. (Cutscenes have a flash)
+Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, May clip Pixelation too.
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -570,7 +505,7 @@ Gui, Add, Text, x143 y211 w70 h25 vNvidiaReplayStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y265 w534 h120 cWhite, Clip Transcendents
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y285 w515 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's cutscene. Not guaranteed to work. Works for Luminosity, Equinox and Hopefully Leviathan
+Gui, Add, Text, x45 y285 w515 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's cutscene. Not guaranteed to work. Works for Pixelation, Luminosity, Breakthrough, Equinox and Leviathan
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y350 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -586,15 +521,15 @@ Gui, Add, GroupBox, x33 y390 w534 h120 cWhite, Detect and Contract Eden
 Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x45 y440 w520 h145 BackgroundTrans, Temporary until I find the motivation to be able to clip all the Limbo Globals
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it.
+Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Not even tested lol)
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y479 w400 h135 BackgroundTrans, 
 Gui, Font, s10 cWhite Bold
-; Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
+Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
-; Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
+Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-; Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
 
 
 ; Highlight Area
@@ -646,6 +581,82 @@ Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User:
 Gui, Font, s7 cWhite Normal
 Gui, Add, Text, x465 y376 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
 
+Gui, Tab, Crafting
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
+; Gui, Add, GroupBox, x45 y385 w200 h100 cWhite, Watch AD
+Gui, Add, GroupBox, x30 y185 w210 h100 cWhite, Heavenly Potion
+Gui, Add, GroupBox, x247 y185 w130 h100 cWhite, Bound Potion 
+Gui, Add, GroupBox, x385 y185 w181 h100 cWhite, Godly Potions
+Gui, Add, Text, x60 y157 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x118 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
+Gui, Add, Button, x118 y245 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
+Gui, Add, Text, x208 y209 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x208 y249 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x38 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add 
+Gui, Add, Text, x38 y249 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Font, s9 c9B8CFF Bold, Trajan Pro
+Gui, Add, Text, x64 y209 w600 h100 BackgroundTrans, Celestial:
+Gui, Font, s9 cFF0000 Bold, Trajan Pro
+Gui, Add, Text, x64 y249 w600 h100 BackgroundTrans, Exotic:
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x258 y245 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
+Gui, Add, Text, x346 y249 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x258 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Font, s9 c1559C9 Bold, Trajan Pro
+Gui, Add, Text, x285 y209 w600 h100 BackgroundTrans, Bounded:
+
+Gui, Font, s9 cWhite Bold, Segoe UI
+Gui, Add, Button, x480 y205 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
+Gui, Add, Button, x480 y234 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
+Gui, Add, Button, x480 y260 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
+Gui, Add, Text, x535 y207 w60 h25 vUseZeusStatus BackgroundTrans, OFF
+Gui, Add, Text, x535 y236 w60 h25 vUseHadesStatus BackgroundTrans, OFF
+Gui, Add, Text, x535 y262 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal, Trajan Pro
+Gui, Add, Text, x395 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x395 y234 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x395 y260 w600 h100 BackgroundTrans c0xCCCCCC, Add  
+Gui, Font, s9 cFFD700 Bold, Trajan Pro
+Gui, Add, Text, x422 y209 w600 h100 BackgroundTrans, Zeus:
+Gui, Font, s9 cCC5500 Bold, Trajan Pro
+Gui, Add, Text, x422 y234 w600 h100 BackgroundTrans, Hades:
+Gui, Font, s9 c085A8C Bold, Trajan Pro
+Gui, Add, Text, x422 y260 w600 h100 BackgroundTrans, Poseidon:
+
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Adding the auras listed below means adding them to the desired potion from your inventory.
+
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, DropDownList, x245 y155 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+
+
+
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x300 y300 w276 h95 cWhite, Craft Angel Device
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x315 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
+Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x315 y360 w70 h20 gToggleArchDevice vArchDeviceBtn, Toggle
+Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x403 y364 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Matrix: Steampunk
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x37 y320 w260 h60 BackgroundTrans, Automatically adds auras to Matrix: Steampunk before going to the fish sell shop.
+Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x37 y360 w70 h20 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
+Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x120 y364 w60 h25 vSteampunkAuraStatus BackgroundTrans, OFF
+
 
 Gui, Tab, Failsafes
 
@@ -691,7 +702,7 @@ Gui, Add, Edit, x400 y411 w150 h25 vPathingFailsafeInput gUpdatePathingFailsafe 
 Gui, Tab, About
 
 Gui, Font, s14 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0x00D4FF, fishSol Development Team
+Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0x00D4FF, Original fishSol Creators
 
 Gui, Add, Picture, x50 y130 w50 h50, %dev1_img%
 Gui, Font, s11 cWhite Bold
@@ -746,9 +757,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.1 
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.2
+Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishSol v1.1
+Gui, Show, w600 h670,  Aery's fishSol v1.2
 
 if (res = "1080p") {
     GuiControl, Choose, Resolution, 1
@@ -831,6 +843,7 @@ if (detectLimbo) {
 } else {
     GuiControl,, DetectLimboStatus, OFF
     GuiControl, +c0xFF4444, DetectLimboStatus
+    SetTimer, CheckPixel3, Off
 }
 if (biomeRandomizer) {
     GuiControl,, BiomeRandomizerStatus, ON
@@ -863,9 +876,11 @@ if (onoffWebhook) {
 if (globalArea) {
     GuiControl,, GlobalAreaStatus, ON
     GuiControl, +c0x00DD00, GlobalAreaStatus
+    ShowGlobalOutline()
 } else {
     GuiControl,, GlobalAreaStatus, OFF
     GuiControl, +c0xFF4444, GlobalAreaStatus
+    HideGlobalOutline()
 }
 if (transArea) {
     GuiControl,, TransAreaStatus, ON
@@ -887,13 +902,6 @@ if (doPing2) {
 } else {
     GuiControl,, DoPing2Status, OFF
     GuiControl, +c0xFF4444, DoPing2Status
-}
-if (autoCraft) {
-    GuiControl,, AutoCraftStatus, ON
-    GuiControl, +c0x00DD00, AutoCraftStatus
-} else {
-    GuiControl,, AutoCraftStatus, OFF
-    GuiControl, +c0xFF4444, AutoCraftStatus
 }
 if (useCelestial) {
     GuiControl,, UseCelestialStatus, ON
@@ -944,6 +952,13 @@ if (archDevice) {
     GuiControl,, ArchDeviceStatus, OFF
     GuiControl, +c0xFF4444, ArchDeviceStatus
 }
+if (steampunkAura) {
+    GuiControl,, SteampunkAuraStatus, ON
+    GuiControl, +c0x00DD00, SteampunkAuraStatus
+} else {
+    GuiControl,, SteampunkAuraStatus, OFF
+    GuiControl, +c0xFF4444, SteampunkAuraStatus
+}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -968,7 +983,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 50
+    SetTimer, CheckPixel, 10
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1109,18 +1124,6 @@ ToggleDoPing2:
     IniWrite, % (doPing2 ? "true" : "false"), %iniFilePath%, Macro, doPing2
 return
 
-ToggleAutoCraft:
-    autoCraft := !autoCraft
-    if (autoCraft) {
-        GuiControl,, AutoCraftStatus, ON
-        GuiControl, +c0x00DD00, AutoCraftStatus
-    } else {
-        GuiControl,, AutoCraftStatus, OFF
-        GuiControl, +c0xFF4444, AutoCraftStatus
-    }
-    IniWrite, % (autoCraft ? "true" : "false"), %iniFilePath%, Macro, autoCraft
-return
-
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
     if (onoffWebhook) {
@@ -1175,13 +1178,14 @@ ToggleGlobalArea:
     if (globalArea) {
         GuiControl,, GlobalAreaStatus, ON
         GuiControl, +c0x00DD00, GlobalAreaStatus
+        ShowGlobalOutline()
     } else {
         GuiControl,, GlobalAreaStatus, OFF
         GuiControl, +c0xFF4444, GlobalAreaStatus
+        HideGlobalOutline()
     }
 
     IniWrite, % (globalArea ? "true" : "false"), %iniFilePath%, Macro, globalArea
-    UpdateGlobalBox()
 return
 
 ToggleTransArea:
@@ -1194,7 +1198,6 @@ ToggleTransArea:
         GuiControl, +c0xFF4444, TransAreaStatus
     }
     IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
-    UpdateTransBox()
 return
 
 ToggleUseCelestial:
@@ -1281,16 +1284,29 @@ ToggleArchDevice:
     IniWrite, % (archDevice ? "true" : "false"), %iniFilePath%, Macro, archDevice
 return
 
+ToggleSteampunkAura:
+    steampunkAura := !steampunkAura
+    if (steampunkAura) {
+        GuiControl,, SteampunkAuraStatus, ON
+        GuiControl, +c0x00DD00, SteampunkAuraStatus
+    } else {
+        GuiControl,, SteampunkAuraStatus, OFF
+        GuiControl, +c0xFF4444, SteampunkAuraStatus
+    }
+    IniWrite, % (steampunkAura ? "true" : "false"), %iniFilePath%, Macro, steampunkAura
+return
+
 ToggleDetectLimbo:
     detectLimbo := !detectLimbo
     if (detectLimbo) {
         GuiControl,, DetectLimboStatus, ON
         GuiControl, +c0x00DD00, DetectLimboStatus
         triggerDelay3 := 20000
-        SetTimer, CheckPixel3, 50
+        SetTimer, CheckPixel3, 25
     } else {
         GuiControl,, DetectLimboStatus, OFF
         GuiControl, +c0xFF4444, DetectLimboStatus
+        SetTimer, CheckPixel3, Off
     }
     IniWrite, % (detectLimbo ? "true" : "false"), %iniFilePath%, Macro, detectLimbo
 return
@@ -1325,7 +1341,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 50
+        SetTimer, CheckPixel, 10
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1374,32 +1390,12 @@ UpdateAdvancedThreshold:
     }
 return
 
-UpdateGlobalBox() {
-    global globalArea
-
-    if (globalArea) {
-        ShowGlobalOutline()
-    } else {
-        HideGlobalOutline()
-    }
-}
-
-UpdateTransBox() {
-    global transArea
-
-    if (transArea) {
-        ShowTranscendentOutline()
-    } else {
-        HideTranscendentOutline()
-    }
-}
-
 ShowGlobalOutline() {
     size := 40
     thickness := 2
 
-    x := 950 - size//2
-    y := 140 - size//2
+    x := 1111 - size//2
+    y := 80 - size//2
 
     yBottom := y + size - thickness
     xRight  := x + size - thickness
@@ -1472,159 +1468,211 @@ HideTranscendentOutline() {
     Gui, TBoxRight:Destroy
 }
 
-GetPingText() {
-    global webhookID
-    return webhookID != "" ? "<@" webhookID ">" : ""
-}
-
 CheckPixel:
-    global nvidiaReplay, triggerDelay
+    global nvidiaReplay, clipWebhook, triggerDelay, ClipPending, ClipType
 
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, color, 950, 180, RGB
+    PixelGetColor, color, 1111, 80, RGB
 
-    if (color = 0xFFFFFF) {
+    if (color = 0xFFFFFF && !ClipPending) {
+        ClipPending := true
+        ClipType := "global"
         ShowClipText()
         SetTimer, DoClip, -%triggerDelay%
     }
 return
 
+
 CheckPixel2:
-    global detectTranscendents, transcendentPixels, transcendentColors
-    global triggerDelay2, transcendentCounters
-    global lastColor2, lastTranscendentColor2
+    global detectTranscendents, transcendentPixels, transcendentColors, lastTranscendentColor2
+    global triggerDelay2, transcendentCounters, nvidiaReplay
 
     if (!detectTranscendents)
         return
     
 
     for index, pos in transcendentPixels {
-        PixelGetColor, color, % pos.x, % pos.y, RGB
+        PixelGetColor, colort, % pos.x, % pos.y, RGB
 
         for _, c in transcendentColors {
-        if (color = c) {
+        if (colort = c) {
             transcendentCounters[index]++
-            lastTranscendentColor := color 
+            lastTranscendentColor := colort
             ShowClipText()
+
+            SetTimer, DoClip, Off
+            ClipPending := true
+            ClipType := "transcendent"
             SetTimer, DoClip2, -%triggerDelay2%
         }
     }
     }
 
-    PixelGetColor, color, 950, 180, RGB
-
-    if (color = 0xFFFFFF) {
+    if (levicolor = 0x000201) {
         ShowClipText()
-        PixelGetColor, lastColor2, 1200, 500, RGB
-        if (lastColor2 = 0x000000) {
-            lastTranscendentColor2 := "Breakthrough"
-            SetTimer, DoClip2, -%triggerDelay2%
-            return
-        } else if (color = 0xFFFFFF && lastColor2 = !0x000000 && !nvidiaReplay) {
-            ToolTip
-        }
+        lastTranscendentColor2 := "Leviathan"
+
+        SetTimer, DoClip, Off
+        ClipPending := true
+        ClipType := "transcendent"
+        SetTimer, DoClip2, -%triggerDelay2%
     }
+
+
+    PixelGetColor, colorbt, 950, 180, RGB
+    PixelGetColor, colorbt2, 1200, 500, RGB
+    PixelGetColor, colorbt3, 10, 900, RGB
+    PixelGetColor, colorbt4, 670, 750, RGB
+    if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
+        ShowClipText()
+        lastTranscendentColor2 := "Breakthrough"
+
+        SetTimer, DoClip, Off
+        ClipPending := true
+        ClipType := "transcendent"
+        SetTimer, DoClip2, -%triggerDelay2%
+    }
+return
+
+CheckPixel3:
+    global detectLimbo, triggerDelay3
+    global lastColor3, lastTranscendentColor2
+
+    if (!detectLimbo)
+        return
+
+    PixelGetColor, colorlimbo, 950, 180, RGB
+    PixelGetColor, colorlimbo2, 1200, 100, RGB
+    PixelGetColor, colorlimbo3, 676, 676, RGB
+
+    if (colorlimbo = 0xFFFFFF && colorlimbo2 = 0x000000 && colorlimbo3 = 0x000000) {
+            ShowClipText()
+            lastTranscendentColor2 := "Eden"
+            SetTimer, DoContract, -%triggerDelay3%
+            return
+        }
 return
 
 DoClip2:
 if (clipWebhook) {
     global lastTranscendentColor, transcendentColorNames
     global lastTranscendentColor2
+    Send, !{F10}
 
+    sleep, 1500
+    PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+    if (nvidiacolor = 0x76B900) {
     colorHex := Format("0x{:06X}", lastTranscendentColor)
     colorName := transcendentColorNames.HasKey(lastTranscendentColor)
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
-        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+    if (colorName = "Equinox1" || colorName = "Equinox2") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
     } else if (colorName = "Luminosity1") {
-        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
-    } else if (colorName = "Leviathan1") {
-        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: " colorName " (" colorHex ")", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Leviathan.png")
+    } else if (lastTranscendentColor2 = "Leviathan") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
     } else if (lastTranscendentColor2 = "Breakthrough") {
-        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: Breakthrough", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-
-    } else if (lastTranscendentColor2 = "Pixelation") {
-        SendWebhook2(":tada: **Transcendent Clipped!** :tada:                                             Color detected: Pixelation", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Pixelation.png")
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
     }
     ToolTip
-    Send, !{F10}
+    } else if (nvidiacolor != 0x76B900) {
+    colorHex := Format("0x{:06X}", lastTranscendentColor)
+    colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+        ? transcendentColorNames[lastTranscendentColor]
+        : "Unknown Color"
+
+    if (colorName = "Equinox1" || colorName = "Equinox2") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+    } else if (colorName = "Luminosity1") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+    } else if (lastTranscendentColor2 = "Leviathan") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+    } else if (lastTranscendentColor2 = "Breakthrough") {
+        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+    }
+    ToolTip
 }
-return
-
-CheckPixel3:
-    global global detectLimbo, triggerDelay3
-
-    if (!detectLimbo)
-        return
-
-    PixelGetColor, color, 920, 400, RGB
-
-    if (color = 0xFFFFFF) {
-        SetTimer, DoContract, -%triggerDelay3%
-    }
-return
-
-DoClip:
-if (clipWebhook) {
-    ToolTip
-    try SendWebhook2(":warning: A Global has been clipped!", 16777215)
-    Send, !{F10}
 } else if (!clipWebhook) {
     ToolTip
     Send, !{F10}
 }
+ClipPending := false
+ClipType := ""
 return
 
-DoContract:
+DoClip:
 if (clipWebhook) {
+    Send, !{F10}
+
+    sleep, 1500
+    PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+    if (nvidiacolor = 0x76B900) {
+        try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
+    }
+
+    if (nvidiacolor != 0x76B900) {
+        try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
+    }
+    ToolTip
+} else if (!clipWebhook) {
+    Send, !{F10}
+    ToolTip
+}
+ClipPending := false
+ClipType := ""
+return
+
+
+DoContract:
+global lastTranscendentColor2
     Send, e
     sleep, 100
     Send, e
     sleep, 100
     Send, e
-    sleep, 200
+    sleep, 400
     MouseMove, 800, 800, 3
     sleep, 300
     Click, Left
     sleep, 800
     MouseMove, 720, 930, 3
-    sleep, 200
+    sleep, 400
     Click, Left
-    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
-    sleep, 1000
-    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
-    sleep, 1000
-    try SendWebhook2("EDEN HAS BEEN CONTRACTED!")
-} else {
-    Send, e
-    sleep, 100
-    Send, e
-    sleep, 100
-    Send, e
-    sleep, 200
-    MouseMove, 800, 800, 3
-    sleep, 300
-    Click, Left
-    sleep, 800
-    MouseMove, 720, 930, 3
-    sleep, 200
-    Click, Left
+
+    if (clipWebhook && lastTranscendentColor2 = "Eden") {
+        try SendWebhook2(":tada: **Eden has been Contracted!** :tada:                                         White & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Eden.png")
+    }
+    if (!nvidiaReplay) {
+        ToolTip 
+    }
+    if (nvidiaReplay) {
+        Sleep, 30000
+        Send, !{F10}
+        ToolTip 
     }
 return
 
-
+GetPingText() {
+    global webhookID
+    return webhookID != "" ? "<@" webhookID ">" : ""
+}
 
 UpdateWebhook:
-Gui, Submit, nohide
-webhookURL := WebhookInput
-IniWrite, %webhookURL%, %iniFilePath%, Macro, webhookURL
+    Gui, Submit, nohide
+    webhookURL := WebhookInput
+    IniWrite, %webhookURL%, %iniFilePath%, Macro, webhookURL
 return
 
 UpdateUserID:
@@ -1659,7 +1707,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.1"","
+    . """text"": ""Aery's fishSol V1.2"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1703,7 +1751,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.1"","
+    . """text"": ""Aery's fishSol V1.2"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1715,10 +1763,6 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     http.SetRequestHeader("Content-Type", "application/json")
     http.Send(json)
 }
-
-
-
-
 
 SendWebhook(text, color := 16777215) {
     global webhookURL, webhookID
@@ -1742,7 +1786,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.1"","
+    . """text"": ""Aery's fishSol V1.2"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1763,7 +1807,7 @@ OpenNvidiaNotes:
 
     Gui, NvidiaNotes:Add, Edit, x10 y10 w550 h540 ReadOnly vNvidiaNotesText -Wrap, 
     (
-IMPORTANT - NVIDIA REPLAY DISCLAIMER
+IMPORTANT, PLEASE READ
 
 Requirements:
 - Nvidia Overlay (requires an Nvidia GPU)
@@ -1771,20 +1815,18 @@ Requirements:
 - Replay length should be set between 2-5 minutes
 - Global Replay may be triggered by cutscenes between 99k-999k. 
 To avoid unwanted clips, ensure aura cutscenes are above 1M+.
-- Set Graphics to the lowest to avoid accidental detection.
+- Set Graphics to the lowest to avoid accidental detection via auras.
 
 Warnings:
 - Other global white flashes may trigger a clip
   (for example, if someone else rolls a global)
 - Some Transcendent cutscenes may not be detected correctly
-- Luminosity can cause Transcendent Replay to trigger more than once
 - This feature is BETA - false detections may occur
 
 Disclaimer:
 Global Replay will NOT detect any global rolled under 99m.
-
 (It will clip Breakthrough Gargantua (Rolled at 430m), 
-but will NOT clip native globals or those with an active rune. (Rolled at 86m.))
+but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
 All Globals: +
@@ -1792,11 +1834,10 @@ Limbo Globals: -
 Nyctophobia: -
 Pixelation: +
 Luminosity: +
-Winter Garden: +
 Leviathan (Unsure)
 Breakthrough: + 
-Dream Traveler: +
 Equinox: +
+Eden: (Unsure)
 
 
 This Replay System can be used even if you're not using the macro
@@ -1810,11 +1851,57 @@ CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
 
-global ClipText
 ShowClipText() {
     ToolTip, Clipped with Aery's Fishsol, 890, 10
 }
 
+DoStrangeController:
+    MouseMove, 45, 521, 3
+    sleep 300
+    Click, Left
+    MouseMove, 1280, 343, 3
+    sleep 300
+    Click, Left
+    MouseMove, 820, 370, 3
+    sleep 300
+    Click, Left
+    Send, Strange Controller
+    MouseMove, 850, 485, 3
+    sleep 300
+    Click, Left            
+    MouseMove, 690, 585, 3
+    sleep 300
+    Click, Left
+    sleep 600
+    MouseMove, 45, 521, 3
+    sleep 300
+    Click, Left
+    sleep, 600
+return
+
+DoBiomeRandomizer:
+    MouseMove, 45, 521, 3
+    sleep 300
+    Click, Left
+    MouseMove, 1280, 343, 3
+    sleep 300
+    Click, Left
+    MouseMove, 820, 370, 3
+    sleep 300
+    Click, Left
+    Send, Biome Randomizer
+    MouseMove, 850, 485, 3
+    sleep 300
+    Click, Left            
+    MouseMove, 690, 585, 3
+    sleep 300
+    Click, Left
+    sleep 300
+    MouseMove, 45, 521, 3
+    sleep 300
+    Click, Left
+    sleep, 600
+return
 
 SelectItem:
     Gui, Submit, NoHide
@@ -2247,6 +2334,294 @@ CraftSelected:
         Gosub, CraftDiver
 return
 
+CollectSnowman:
+    Send, {a Down}
+    Sleep, 3000
+    Send, {a Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 5000
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {w Down}
+    Sleep, 100
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 500
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {a Down}
+    Sleep, 2350
+    Send, {a Up}
+    Sleep, 50
+
+    Send, {w Down}
+    Sleep, 200
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {e Down}
+    Sleep, 150
+    Send, {e Up}
+    Sleep, 50
+
+    Send, {Esc}
+    Sleep, 500
+
+     Send, r
+     Sleep, 500
+
+    Send, {Enter}
+     Sleep, 3000
+return
+
+CraftArchDevice:
+    Send, {a Down}
+    Sleep, 3000
+    Send, {a Up}
+    Sleep, 50
+    Send, {s Down}
+    Sleep, 5000
+    Send, {s Up}
+    Sleep, 50
+    Send, {a Down}
+    Sleep, 1100
+    Send, {a Up}
+    Sleep, 200
+    Send, {w Down}
+    Sleep, 100
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 2250
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {d Down}
+    Sleep, 1800
+    Send, {d Up}
+    Sleep, 250
+    Send, {Shift}
+    Sleep, 250
+
+    Send, e
+    Sleep, 600
+    MouseMove, 960, 800, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 600
+    MouseMove, 670, 949, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 800
+    MouseMove, 900, 365, 3
+    Sleep, 350
+    Click, Left
+    Sleep, 350
+    Send, Angel Device
+    Sleep, 350
+    MouseMove, 1111, 444, 3
+    Sleep, 250
+    Send, {WheelUp 25}
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    MouseMove, 600, 700, 3
+    Sleep, 400
+    Send, {WheelUp 25}
+    Sleep, 800
+    Send, {WheelDown 25}
+    Sleep, 800
+
+    ; Divnus Angel (7)
+    MouseMove, 800, 770, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 250
+
+    ; Hope (5)
+    MouseMove, 800, 720, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 250
+
+    ; Faith (1)
+    MouseMove, 800, 665, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 1000
+    MouseMove, 1420, 302, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 500
+
+    Send, {Esc}
+    Sleep, 500
+    Send, r
+    Sleep, 500
+    Send, {Enter}
+    Sleep, 3500
+return
+
+CraftMatrixSteampunk:
+    Send, {a Down}
+    Sleep, 3000
+    Send, {a Up}
+    Sleep, 50
+    Send, {s Down}
+    Sleep, 5000
+    Send, {s Up}
+    Sleep, 50
+    Send, {a Down}
+    Sleep, 1100
+    Send, {a Up}
+    Sleep, 200
+    Send, {w Down}
+    Sleep, 100
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 2250
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {d Down}
+    Sleep, 1800
+    Send, {d Up}
+    Sleep, 250
+    Send, {Shift}
+    Sleep, 250
+
+    Send, e
+    Sleep, 600
+    MouseMove, 960, 800, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 600
+    MouseMove, 670, 949, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 800
+
+
+    MouseMove, 1150, 340,3
+    Sleep, 250
+    Click, Left
+    MouseMove, 900, 365, 3
+    Sleep, 350
+    Click, Left
+    Sleep, 350
+    Send, Steampunk
+    Sleep, 350
+    MouseMove, 1111, 444, 3
+    Sleep, 250
+    Send, {WheelUp 25}
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    MouseMove, 600, 700, 3
+    Sleep, 400
+    Send, {WheelUp 25}
+    Sleep, 800
+
+    ; Magnetic Polarity (5)
+    MouseMove, 800, 690, 3
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+
+    ; Virtual (3)
+    MouseMove, 800, 740, 3
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+
+    ; Zeus (2)
+    Send, {WheelUp 1}
+    Sleep, 500
+    MouseMove, 800, 670, 3
+    Sleep, 300
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+
+    ; Hypervolt (1)
+    MouseMove, 800, 725, 3
+    Sleep, 300
+    Click, Left
+    Sleep, 500
+
+    MouseMove, 1400, 300, 3
+    Sleep, 300
+    Click, Left
+
+    Send, {Esc}
+    Sleep, 500
+    Send, r
+    Sleep, 500
+    Send, {Enter}
+    Sleep, 3500
+return
+
 UpdateGUI:
 if (toggle) {
     GuiControl,, StatusText, Running
@@ -2333,12 +2708,12 @@ return
 
 
 F2::
-toggle := false
-firstLoop := true
-SetTimer, DoMouseMove, Off
-SetTimer, UpdateGUI, Off
-ManualGUIUpdate()
-ToolTip
+    toggle := false
+    firstLoop := true
+    SetTimer, DoMouseMove, Off
+    SetTimer, UpdateGUI, Off
+    ManualGUIUpdate()
+    ToolTip
 Return
 
 F3::
@@ -2351,9 +2726,6 @@ return
 
 F4::
     Gui, Submit, NoHide
-
-    if (!autoCraft)
-        return
     if (autocrafting)
         return
      if (toggle)
@@ -2367,11 +2739,8 @@ F4::
     SetTimer, CraftSelected, 1000
 return
 
-
 F5::
     if (!autocrafting)
-        return
-    if (!toggle) 
         return
 
     autocrafting := false
@@ -2395,6 +2764,11 @@ if (toggle) {
     global snowmanCollect
     global strangeController
     global biomeRandomizer
+    global DoBiomeRandomizer
+    global DoStrangeController
+    global CollectSnowman
+    global CraftArchDevice
+    global CraftMatrixSteampunk
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
@@ -2422,8 +2796,7 @@ if (toggle) {
             MouseClick, Left
             sleep 300
         }
-    if (autoUnequip) {
-        if (useNothing) {
+    if (autoUnequip && useNothing) {
             MouseMove, 45, 412, 3
             sleep 150
             Click, Left
@@ -2450,10 +2823,8 @@ if (toggle) {
             Click, Left
             sleep 150
         }
-    }
 
-    if (autoUnequip) {
-        if (!useNothing) {
+    if (autoUnequip && !useNothing) {
             MouseMove, 45, 412, 3
             sleep 150
             Click, Left
@@ -2473,96 +2844,18 @@ if (toggle) {
             Click, Left
             sleep 150
         }
+
+    if (strangeController && biomeRandomizer) {
+        Gosub, DoStrangeController
+        Sleep, 500
+        Gosub, DoBiomeRandomizer
+    } else if (strangeController && !biomeRandomizer) {
+        Gosub, DoStrangeController
+    } else if (biomeRandomizer && !strangeController) {
+        Gosub, DoBiomeRandomizer
     }
 
-            if (strangeController) {
-                if (biomeRandomizer) {
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 1280, 343, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 820, 370, 3
-                    sleep 300
-                    Click, Left
-                    Send, Strange Controller
-                    MouseMove, 850, 485, 3
-                    sleep 300
-                    Click, Left            
-                    MouseMove, 690, 585, 3
-                    sleep 300
-                    Click, Left
-                    sleep 600
-                    MouseMove, 820, 370, 3
-                    sleep 300
-                    Click, Left
-                    Send, Biome Randomizer
-                    MouseMove, 850, 485, 3
-                    sleep 300
-                    Click, Left            
-                    MouseMove, 690, 585, 3
-                    sleep 300
-                    Click, Left
-                    sleep 300
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    sleep, 600
-                 }
-            }
 
-            if (strangeController) {
-                if (!biomeRandomizer) {
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 1280, 343, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 820, 370, 3
-                    sleep 300
-                    Click, Left
-                    Send, Strange Controller
-                    MouseMove, 850, 485, 3
-                    sleep 300
-                    Click, Left            
-                    MouseMove, 690, 585, 3
-                    sleep 300
-                    Click, Left
-                    sleep 600
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    sleep, 600
-                 }
-            }
-
-            if (!strangeController) {
-                if (biomeRandomizer) {
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 1280, 343, 3
-                    sleep 300
-                    Click, Left
-                    MouseMove, 820, 370, 3
-                    sleep 300
-                    Click, Left
-                    Send, Biome Randomizer
-                    MouseMove, 850, 485, 3
-                    sleep 300
-                    Click, Left            
-                    MouseMove, 690, 585, 3
-                    sleep 300
-                    Click, Left
-                    sleep 300
-                    MouseMove, 45, 521, 3
-                    sleep 300
-                    Click, Left
-                    sleep, 600
-                }
-            }
 
         MouseMove, 47, 467, 3
         sleep 220
@@ -2579,57 +2872,18 @@ if (toggle) {
 
  
         if (snowmanCollect) {
-            Send, {a Down}
-            Sleep, 3000
-            Send, {a Up}
-            Sleep, 50
-
-            Send, {s Down}
-            Sleep, 5000
-            Send, {s Up}
-            Sleep, 50
-
-            Send, {w Down}
-            Sleep, 100
-            Send, {w Up}
-            Sleep, 50
-
-            Send, {Space Down}
-            Sleep, 50
-            Send, {Space Up}
-            Sleep, 50
-
-            Send, {s Down}
-            Sleep, 500
-            Send, {s Up}
-            Sleep, 50
-
-            Send, {a Down}
-            Sleep, 2350
-            Send, {a Up}
-            Sleep, 50
-
-            Send, {w Down}
-            Sleep, 200
-            Send, {w Up}
-            Sleep, 50
-
-            Send, {e Down}
-            Sleep, 150
-            Send, {e Up}
-            Sleep, 50
-
-            Send, {Esc}
-            Sleep, 500
-
-            Send, r
-            Sleep, 500
-
-            Send, {Enter}
-            Sleep, 3000
+            Gosub, CollectSnowman
         }
 
-        if (archDevice) {
+        if (archDevice && !steampunkAura) {
+            Gosub, CraftArchDevice
+        }
+
+        if !archDevice && steampunkAura {
+            Gosub, CraftMatrixSteampunk
+        }
+
+        if archDevice && steampunkAura {
             Send, {a Down}
             Sleep, 3000
             Send, {a Up}
@@ -2681,6 +2935,10 @@ if (toggle) {
             Sleep, 250
             Click, Left
             Sleep, 800
+
+            MouseMove, 900, 340
+            Sleep, 350
+            Click, Left
             MouseMove, 900, 365, 3
             Sleep, 350
             Click, Left
@@ -2737,10 +2995,69 @@ if (toggle) {
             Sleep, 250
             Click, Left
             Sleep, 1000
-            MouseMove, 1420, 302, 3
+
+            ; Steampunk
+            MouseMove, 1150, 340,3
             Sleep, 250
             Click, Left
+            MouseMove, 900, 365, 3
+            Sleep, 350
+            Click, Left
+            Sleep, 350
+            Send, Steampunk
+            Sleep, 350
+            MouseMove, 1111, 444, 3
+            Sleep, 250
+            Send, {WheelUp 25}
             Sleep, 500
+            Click, Left
+            Sleep, 500
+            MouseMove, 600, 700, 3
+            Sleep, 400
+            Send, {WheelUp 25}
+            Sleep, 800
+
+            ; Magnetic Polarity (5)
+            MouseMove, 800, 690, 3
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+
+            ; Virtual (3)
+            MouseMove, 800, 740, 3
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+
+            ; Zeus (2)
+            Send, {WheelDown 1}
+            Sleep, 500
+            MouseMove, 800, 670, 3
+            Sleep, 300
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+
+            ; Hypervolt (1)
+            MouseMove, 800, 725, 3
+            Sleep, 300
+            Click, Left
+            Sleep, 500
+
+            MouseMove, 1400, 300, 3
+            Sleep, 300
+            Click, Left
 
             Send, {Esc}
             Sleep, 500
@@ -3088,12 +3405,12 @@ return
 
 
 PauseScript:
-toggle := false
-firstLoop := true
-SetTimer, DoMouseMove, Off
-SetTimer, UpdateGUI, Off
-ManualGUIUpdate()
-ToolTip
+    toggle := false
+    firstLoop := true
+    SetTimer, DoMouseMove, Off
+    SetTimer, UpdateGUI, Off
+    ManualGUIUpdate()
+    ToolTip
 return
 
 CloseScript:
@@ -3104,16 +3421,16 @@ if (onoffWebhook) {
 return
 
 SelectRes:
-Gui, Submit, nohide
-res := Resolution
-IniWrite, %res%, %iniFilePath%, Macro, resolution
-ManualGUIUpdate()
+    Gui, Submit, nohide
+    res := Resolution
+    IniWrite, %res%, %iniFilePath%, Macro, resolution
+    ManualGUIUpdate()
 return
 
 SelectPathing:
-Gui, Submit, nohide
-IniWrite, %PathingMode%, %iniFilePath%, Macro, pathingMode
-pathingMode := PathingMode
+    Gui, Submit, nohide
+    IniWrite, %PathingMode%, %iniFilePath%, Macro, pathingMode
+    pathingMode := PathingMode
 return
 
 Dev1NameClick:
@@ -3162,4 +3479,8 @@ if (dev3_name = "maxstellar") {
 } else if (dev3_name = "ivelchampion249") {
     Run, https://www.youtube.com/@ivelchampion
 }
+return
+
+ReleasesClick:
+    Run, https://github.com/knowaery/Aery-s-Fishsol
 return
