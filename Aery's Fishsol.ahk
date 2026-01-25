@@ -40,7 +40,7 @@ pathingFailsafeTime := 61
 autoRejoinFailsafeTime := 320
 webhookURL := ""
 webhookID := ""
-ClipWebhook := false
+clipWebhook := false
 onoffWebhook := false
 GlobalArea := false
 TransArea := false
@@ -55,7 +55,6 @@ usePoseidon := false
 useHades := false
 advancedFishingThreshold := 25
 archDevice := false
-lastColor2 := ""
 steampunkAura := false
 global ClipPending := false
 global ClipType := ""
@@ -574,7 +573,7 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Clip Message
 Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
 Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
-Gui, Add, Button, x320 y390 w80 h25 gToggledoPing2 vDoPing2Btn, Toggle
+Gui, Add, Button, x320 y390 w80 h25 gToggleDoPing2 vDoPing2Btn, Toggle
 Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
