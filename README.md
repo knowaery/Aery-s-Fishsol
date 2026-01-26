@@ -1,6 +1,6 @@
 # Aerys-Fishsol (Only Works in 1080p and VIP)
 ALL CREDIT GOES TO FISHSOL DEVS.
-I only added stuff that I wanted (Nvidia Replay)
+I only added stuff that I wanted
 
 
 Tutorial on how to use fishSol: 
@@ -21,6 +21,9 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 • Snowman Collect (Temporary)
 
 • Auto Add auras to Angel Device
+
+• Auto Add auras to Matrix: Steampunk
+
 
 # Credits
 (Original fishSol) https://github.com/ivelchampion249/FishSol-Macro
