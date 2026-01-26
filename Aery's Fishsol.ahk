@@ -444,7 +444,7 @@ Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x307 y90 w270 h100 cWhite, Auto-Close Chat
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y110 h45 w225 BackgroundTrans c0xCCCCCC, Automatically closes chat every cycle to prevent getting stuck in collection.
+Gui, Add, Text, x317 y110 h45 w225 BackgroundTrans c0xCCCCCC, Automatically detects if chat is open and if so, closes it to prevent getting stuck in collection.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y150 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -2786,15 +2786,40 @@ if (toggle) {
         Sleep, 650
         Send, {Enter}
         sleep 3000
-        if (autoCloseChat) {
-            sleep 300
-            Send {/}
-            sleep 300
-            MouseMove, 145, 40, 3
-            sleep 300
-            MouseClick, Left
-            sleep 300
+
+    if (autoCloseChat) {
+
+        PixelGetColor, chatcolor, 138, 40, RGB
+        if (chatcolor != 0x121215) {
+            Send, {Esc}
+            Sleep, 300
+            MouseMove, 800, 210, 3
+            Sleep, 300
+            Click, Left
+            MouseMove, 800, 460, 3
+            Sleep, 300
+            Click, WheelDown, 25
+            Sleep, 300
+            MouseMove, 1285, 340, 3
+            Sleep, 300
+            Click, Left
+            Sleep, 300
+            Send, {Esc}
+            Sleep, 1000
         }
+
+        PixelGetColor, chatcolor2, 138, 40, RGB
+        if (chatcolor2 = 0xF7F7F8) {
+            Sleep, 300
+            MouseMove, 145, 40, 3
+            Sleep, 300
+            MouseClick, Left
+            Sleep, 300
+        } else if (chatcolor2 = 0x121215) {
+            Sleep, 300
+        }
+    }
+
     if (autoUnequip && useNothing) {
             MouseMove, 45, 412, 3
             sleep 150
