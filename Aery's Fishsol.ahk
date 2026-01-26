@@ -444,7 +444,7 @@ Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x307 y90 w270 h100 cWhite, Auto-Close Chat
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y110 h45 w225 BackgroundTrans c0xCCCCCC, Automatically detects if chat is open and if so, closes it to prevent getting stuck in collection.
+Gui, Add, Text, x317 y110 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if chat is open and if so, closes it to prevent getting stuck in collection.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y150 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -546,6 +546,9 @@ Gui, Font, s9 c0xCCCCCC Bold
 Gui, Add, Text, x143 y566 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
 Gui, Add, Text, x440 y566 w60 h25 vTransAreaStatus BackgroundTrans, OFF
 
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x30 y618 w520 h145 BackgroundTrans, F5 to Cancel Clipping
+
 Gui, Tab, Webhook
 
 Gui, Font, s10 cWhite Normal Bold
@@ -588,7 +591,7 @@ Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
 Gui, Add, GroupBox, x30 y185 w210 h100 cWhite, Heavenly Potion
 Gui, Add, GroupBox, x247 y185 w130 h100 cWhite, Bound Potion 
 Gui, Add, GroupBox, x385 y185 w181 h100 cWhite, Godly Potions
-Gui, Add, Text, x60 y157 w220 h50 BackgroundTrans, F4 = Start | F5 = Stop
+Gui, Add, Text, x60 y157 w220 h50 BackgroundTrans, F4 = Start | F3 = Stop (ts not a typo)
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x118 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -2594,14 +2597,14 @@ CraftMatrixSteampunk:
     Sleep, 500
 
     ; Zeus (2)
-    Send, {WheelUp 1}
-    Sleep, 500
-    MouseMove, 800, 670, 3
-    Sleep, 300
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
+     Send, {WheelUp 1}
+    ; Sleep, 500
+    ; MouseMove, 800, 670, 3
+    ; Sleep, 300
+    ; Click, Left
+    ; Sleep, 500
+    ; Click, Left
+    ; Sleep, 500
 
     ; Hypervolt (1)
     MouseMove, 800, 725, 3
@@ -2716,9 +2719,12 @@ F2::
 Return
 
 F3::
-if (onoffWebhook) {
-        try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
-}
+autocrafting := false
+    SetTimer, CraftSelected, Off
+
+    if (onoffWebhook) {
+            try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
+    }
     ExitApp
 return
 
@@ -2739,16 +2745,52 @@ F4::
 return
 
 F5::
-    if (!autocrafting)
+    if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
         return
 
-    autocrafting := false
-    SetTimer, CraftSelected, Off
+    if (detectLimbo && !nvidiaReplay && detectTranscendents) {
+        SetTimer, DoContract, Off
+        ToolTip
+        if (clipWebhook)
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        return
+    } else if (detectLimbo && nvidiaReplay && !detectTranscendents) {
+        SetTimer, DoContract, Off
+        ToolTip
+        if (clipWebhook)
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        return
+    } else if (detectLimbo && !nvidiaReplay && !detectTranscendents) {
+        SetTimer, DoContract, Off
+        ToolTip
+        if (clipWebhook)
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        return
+    }
 
-    if (onoffWebhook)
-        try SendWebhook(":red_circle: Crafting Stopped", "14495300")
-    ExitApp
+    if (nvidiaReplay && !detectLimbo) {
+        SetTimer, DoClip, Off
+
+        if (detectTranscendents)
+            SetTimer, DoClip2, Off
+
+        ToolTip
+        if (clipWebhook)
+            try SendWebhook(":warning: Clipping Canceled", 14495300)
+        return
+    }
+
+    if (detectTranscendents && !detectLimbo && !nvidiaReplay) {
+        SetTimer, DoClip2, Off
+        ToolTip
+        if (clipWebhook)
+            try SendWebhook(":warning: Clipping Canceled", 14495300)
+        return
+    }
 return
+
+
+
 
 ;1080p
 DoMouseMove:
@@ -2788,7 +2830,6 @@ if (toggle) {
         sleep 3000
 
     if (autoCloseChat) {
-
         PixelGetColor, chatcolor, 138, 40, RGB
         if (chatcolor != 0x121215) {
             Send, {Esc}
@@ -2815,6 +2856,7 @@ if (toggle) {
             Sleep, 300
             MouseClick, Left
             Sleep, 300
+            ; ChatType := "Closed"
         } else if (chatcolor2 = 0x121215) {
             Sleep, 300
         }
@@ -3068,9 +3110,9 @@ if (toggle) {
             Sleep, 500
             MouseMove, 800, 670, 3
             Sleep, 300
-            Click, Left
+            ; Click, Left
             Sleep, 500
-            Click, Left
+            ; Click, Left
             Sleep, 500
 
             ; Hypervolt (1)
