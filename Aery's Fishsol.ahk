@@ -56,6 +56,7 @@ useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 steampunkAura := false
+autoClicker := false
 IfAdded := ""
 global ClipPending := false
 global ClipType := ""
@@ -223,6 +224,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempSteampunkAura, %iniFilePath%, Macro, steampunkAura
     if (tempSteampunkAura != "ERROR")
     steampunkAura := (tempSteampunkAura = "true" || tempSteampunkAura = "1")
+
+    IniRead, tempAutoClicker, %iniFilePath%, Macro, autoClicker
+    if (tempAutoClicker != "ERROR")
+    autoClicker := (tempAutoClicker = "true" || tempAutoClicker = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -452,15 +457,28 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y153 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y190 w270 h95 cWhite, Snowman Collect
-Gui, Add, Button, x320 y250 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Add, GroupBox, x307 y190 w270 h135 cWhite, Auto-Clicker
+Gui, Add, Button, x320 y285 w80 h25 gStartAutoClicker vAutoClickStart, Start
+Gui, Add, Button, x410 y285 w80 h25 gStopAutoClicker  vAutoClickStop Disabled, Stop
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y253 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
+Gui, Add, Text, x500 y289 w60 h25 vAutoClickerStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x320 y260 w90 h20 BackgroundTrans, Delay (sec):
+Gui, Font, s9 cBlack Bold
+Gui, Add, Edit, x405 y260 w60 h22 vAutoClickDelay, 60
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x307 y340 w270 h95 cWhite, Snowman Collect
+Gui, Add, Button, x320 y400 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x415 y403 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x317 y360 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's snowman to collect snowflakes before going to the fish sell shop.
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y296 w270 h150 cWhite, Biome/Strange Controller:
+Gui, Add, GroupBox, x22 y296 w270 h139 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y318 w255 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
 
@@ -960,6 +978,15 @@ if (steampunkAura) {
     GuiControl,, SteampunkAuraStatus, OFF
     GuiControl, +c0xFF4444, SteampunkAuraStatus
 }
+if (autoClicker) {
+    GuiControl, Disable, AutoClickStart
+    GuiControl, Enable, AutoClickStop
+    GuiControl, +c0x00DD00, AutoClickerStatus, ON
+} else {
+    GuiControl, Enable, AutoClickStart
+    GuiControl, Disable, AutoClickStop
+    GuiControl, +c0xFF4444, AutoClickerStatus, OFF
+}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1295,6 +1322,20 @@ ToggleSteampunkAura:
         GuiControl, +c0xFF4444, SteampunkAuraStatus
     }
     IniWrite, % (steampunkAura ? "true" : "false"), %iniFilePath%, Macro, steampunkAura
+return
+ToggleAutoClicker:
+    autoClicker := !autoClicker
+        if (autoClicker) {
+        GuiControl, Disable, AutoClickStart
+        GuiControl, Enable, AutoClickStop
+        GuiControl,, AutoClickerStatus, ON
+    } else {
+        GuiControl, Enable, AutoClickStart
+        GuiControl, Disable, AutoClickStop
+        GuiControl,, AutoClickerStatus, OFF
+    }
+
+    IniWrite, % (autoClicker ? "true" : "false"), %iniFilePath%, Macro, autoClicker
 return
 
 ToggleDetectLimbo:
@@ -1856,10 +1897,6 @@ ShowClipText() {
     ToolTip, Clipped with Aery's Fishsol, 890, 10
 }
 
-DoAutoClick:
-    Click
-return
-
 DoStrangeController:
     MouseMove, 45, 521, 3
     sleep 300
@@ -1914,6 +1951,8 @@ SelectItem:
 return
 
 CraftHeavenly:
+ToolTip
+if (IfAdded != "Heavenly") {
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1937,37 +1976,40 @@ CraftHeavenly:
     Sleep, 200
     Send, 250
     Sleep, 200
+}
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     if (useCelestial) {
         MouseMove, 800, 682, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     if (useExotic) {
         MouseMove, 800, 742, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     MouseMove, 585, 585, 3
-    Sleep, 200
-    Click, Left
     Sleep, 1000
+    Click, Left
+    Sleep, 2500
 return
 
 
 
 CraftBound:
+ToolTip
+if (IfAdded != "Bounded") {
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -1993,26 +2035,28 @@ CraftBound:
     Sleep, 200
     Send, 250
     Sleep, 200
+}
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     if (useBounded) {
         MouseMove, 800, 682, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     MouseMove, 585, 585, 3
-    Sleep, 200
-    Click, Left
     Sleep, 1000
+    Click, Left
+    Sleep, 2500
 return
 
 CraftZeus:
+ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2061,9 +2105,9 @@ CraftZeus:
 
     if (useZeus) {
         MouseMove, 800, 746, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     MouseMove, 585, 585, 3
@@ -2073,6 +2117,8 @@ CraftZeus:
 return
 
 CraftHades:
+if (IfAdded != "Hades") {
+    ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2098,26 +2144,29 @@ CraftHades:
     Sleep, 200
     Send, 50
     Sleep, 200
+}
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     if (useHades) {
         MouseMove, 800, 682, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     MouseMove, 585, 585, 3
-    Sleep, 200
-    Click, Left
     Sleep, 1000
+    Click, Left
+    Sleep, 2500
 return
 
 CraftPoseidon:
+if (IfAdded != "Poseidon") {
+    ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2143,26 +2192,29 @@ CraftPoseidon:
     Sleep, 200
     Send, 50
     Sleep, 200
+}
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     if (usePoseidon) {
         MouseMove, 800, 682, 3
-        Sleep, 200
+        Sleep, 500
         Click, Left
-        Sleep, 200
+        Sleep, 500
     }
 
     MouseMove, 585, 585, 3
-    Sleep, 200
-    Click, Left
     Sleep, 1000
+    Click, Left
+    Sleep, 2500
 return
 
 CraftJewerly:
+if (IfAdded != "Jewerly") {
+    ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2184,7 +2236,6 @@ CraftJewerly:
     Click, Left
     Sleep, 200
 
-    if (IfAdded != "Jewerly") {
         Send, ^a
         Sleep, 200
         Send, 20
@@ -2192,17 +2243,19 @@ CraftJewerly:
     }
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     MouseMove, 585, 585, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftZombie:
+if (IfAdded != "Zombie") {
+    ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2224,7 +2277,6 @@ CraftZombie:
     Click, Left
     Sleep, 200
 
-    if (IfAdded != "Zombie") {
         Send, ^a
         Sleep, 200
         Send, 10
@@ -2232,39 +2284,41 @@ CraftZombie:
     }
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     MouseMove, 585, 585, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftRage:
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Rage Potion
-    Sleep, 200
-
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-
-    Send, {WheelUp 6}
-    Sleep, 500
-
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
     if (IfAdded != "Rage") {
+        ToolTip
+        MouseMove, 910, 333, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, Rage Potion
+        Sleep, 200
+
+        MouseMove, 1150, 420, 3
+        Sleep, 200
+
+        Send, {WheelUp 6}
+        Sleep, 500
+
+        Click, Left
+        Sleep, 200
+
+
+        MouseMove, 740, 636, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+
         Send, ^a
         Sleep, 200
         Send, 10
@@ -2272,17 +2326,19 @@ CraftRage:
     }
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     MouseMove, 585, 585, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftDiver:
+if (IfAdded != "Diver") {
+    ToolTip
     MouseMove, 910, 333, 3
     Sleep, 200
     Click, Left
@@ -2304,7 +2360,6 @@ CraftDiver:
     Click, Left
     Sleep, 200
 
-    if (IfAdded != "Diver") {
         Send, ^a
         Sleep, 200
         Send, 20
@@ -2312,12 +2367,12 @@ CraftDiver:
     }
 
     MouseMove, 806, 636, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
-    Sleep, 200
+    Sleep, 1000
 
     MouseMove, 585, 585, 3
-    Sleep, 200
+    Sleep, 1000
     Click, Left
     Sleep, 1000
 return
@@ -2661,6 +2716,45 @@ CraftMatrixSteampunk:
     Sleep, 3500
 return
 
+StartAutoClicker:
+    Gui, Submit, NoHide
+
+    if (autoClicker)
+        return
+
+    autoClicker := true
+
+    GuiControl, Disable, AutoClickStart
+    GuiControl, Enable, AutoClickStop
+    GuiControl,, AutoClickerStatus, ON
+    GuiControl, +c0x00DD00, AutoClickerStatus
+
+    autoClickDelayMS := AutoClickDelay * 1000
+    SetTimer, AutoClickTick, %autoClickDelayMS%
+return
+
+StopAutoClicker:
+    autoClicker := false
+
+    SetTimer, AutoClickTick, Off
+
+    GuiControl, Enable, AutoClickStart
+    GuiControl, Disable, AutoClickStop
+    GuiControl,, AutoClickerStatus, OFF
+    GuiControl, +c0xFF4444, AutoClickerStatus
+return
+
+AutoClickTick:
+    if (!autoClicker)
+        return
+
+    Click
+return
+
+
+
+
+
 UpdateGUI:
 if (toggle) {
     GuiControl,, StatusText, Running
@@ -2777,8 +2871,8 @@ F4::
 
    if (onoffWebhook)
         try SendWebhook(":green_circle: Crafting Started", "7909721")
-
-    SetTimer, CraftSelected, 1000
+        ToolTip, Crafting has Started, 900, 10
+    SetTimer, CraftSelected, 5067
 return
 
 F5::
