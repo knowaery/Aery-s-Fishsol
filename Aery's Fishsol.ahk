@@ -56,6 +56,8 @@ useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 steampunkAura := false
+autoClicker := false
+IfAdded := ""
 global ClipPending := false
 global ClipType := ""
 
@@ -222,6 +224,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempSteampunkAura, %iniFilePath%, Macro, steampunkAura
     if (tempSteampunkAura != "ERROR")
     steampunkAura := (tempSteampunkAura = "true" || tempSteampunkAura = "1")
+
+    IniRead, tempAutoClicker, %iniFilePath%, Macro, autoClicker
+    if (tempAutoClicker != "ERROR")
+    autoClicker := (tempAutoClicker = "true" || tempAutoClicker = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -451,31 +457,43 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y153 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y190 w270 h95 cWhite, Snowman Collect
-Gui, Add, Button, x320 y250 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Add, GroupBox, x307 y190 w270 h135 cWhite, Auto-Clicker
+Gui, Add, Button, x320 y285 w80 h25 gToggleAutoClicker vAutoClickerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y253 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
+Gui, Add, Text, x415 y289 w60 h25  vAutoClickerStatus BackgroundTrans, OFF
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x317 y210 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's snowman to collect snowflakes before going to the fish sell shop.
+Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection (using the macro / autocraft also prevents disconnection)
+Gui, Font, s9 cWhite Bold
+Gui, Add, Text, x320 y260 w90 h20 BackgroundTrans, Delay (sec):
+Gui, Font, s9 cBlack Normal
+Gui, Add, Edit, x405 y260 w60 h22 vAutoClickDelay, 60
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x307 y340 w270 h95 cWhite, Snowman Collect
+Gui, Add, Button, x320 y400 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x415 y403 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x317 y360 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's snowman to collect snowflakes before going to the fish sell shop.
 
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y296 w300 h150 cWhite, Biome/Strange Controller:
+Gui, Add, GroupBox, x22 y296 w270 h150 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x42 y318 w280 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
+Gui, Add, Text, x37 y318 w255 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x42 y355 w120 h25 BackgroundTrans, Strange Controller:
-Gui, Add, Button, x177 y355 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
+Gui, Add, Text, x30 y355 w120 h25 BackgroundTrans, Strange Controller:
+Gui, Add, Button, x157 y355 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x277 y360 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y360 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x42 y395 w125 h25 BackgroundTrans, Biome Randomizer:
-Gui, Add, Button, x177 y395 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
+Gui, Add, Text, x30 y395 w125 h25 BackgroundTrans, Biome Randomizer:
+Gui, Add, Button, x157 y395 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x277 y398 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y398 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
 
 
@@ -591,7 +609,7 @@ Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
 Gui, Add, GroupBox, x30 y185 w210 h100 cWhite, Heavenly Potion
 Gui, Add, GroupBox, x247 y185 w130 h100 cWhite, Bound Potion 
 Gui, Add, GroupBox, x385 y185 w181 h100 cWhite, Godly Potions
-Gui, Add, Text, x60 y157 w220 h50 BackgroundTrans, F4 = Start | F3 = Stop (ts not a typo)
+Gui, Add, Text, x60 y157 w150 h50 BackgroundTrans, F4 = Start | F3 = Stop (ts not a typo)
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x118 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -961,6 +979,16 @@ if (steampunkAura) {
     GuiControl,, SteampunkAuraStatus, OFF
     GuiControl, +c0xFF4444, SteampunkAuraStatus
 }
+if (autoClicker) {
+    GuiControl,, AutoClickerStatus, ON
+    GuiControl, +c00FF00, AutoClickerStatus
+    delayMs := AutoClickDelay * 1000
+    SetTimer, DoAutoClick, %delayMs%
+} else {
+    GuiControl,, AutoClickerStatus, OFF
+    GuiControl, +cFF4444, AutoClickerStatus
+    SetTimer, DoAutoClick, Off
+}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1296,6 +1324,20 @@ ToggleSteampunkAura:
         GuiControl, +c0xFF4444, SteampunkAuraStatus
     }
     IniWrite, % (steampunkAura ? "true" : "false"), %iniFilePath%, Macro, steampunkAura
+return
+ToggleAutoClicker:
+    autoClicker := !autoClicker
+    if (autoClicker) {
+        GuiControl,, AutoClickerStatus, ON
+        GuiControl, +c00FF00, AutoClickerStatus
+        delayMs := AutoClickDelay * 1000
+        SetTimer, DoAutoClick, %delayMs%
+    } else {
+        GuiControl,, AutoClickerStatus, OFF
+        GuiControl, +cFF4444, AutoClickerStatus
+        SetTimer, DoAutoClick, Off
+    }
+    IniWrite, % (autoClicker ? "true" : "false"), %iniFilePath%, Macro, autoClicker
 return
 
 ToggleDetectLimbo:
@@ -1857,6 +1899,10 @@ ShowClipText() {
     ToolTip, Clipped with Aery's Fishsol, 890, 10
 }
 
+DoAutoClick:
+    Click
+return
+
 DoStrangeController:
     MouseMove, 45, 521, 3
     sleep 300
@@ -1920,10 +1966,8 @@ CraftHeavenly:
 
     MouseMove, 1150, 420, 3
     Sleep, 200
-
     Send, {WheelUp 6}
     Sleep, 500
-
     Click, Left
     Sleep, 200
 
@@ -1963,6 +2007,7 @@ CraftHeavenly:
     Click, Left
     Sleep, 1000
 return
+
 
 
 CraftBound:
@@ -2036,7 +2081,7 @@ CraftZeus:
     Sleep, 200
     Send, 25
     Sleep, 200
-
+    
     MouseMove, 806, 636, 3
     Sleep, 200
     Click, Left
@@ -2182,10 +2227,12 @@ CraftJewerly:
     Click, Left
     Sleep, 200
 
-    Send, ^a
-    Sleep, 200
-    Send, 20
-    Sleep, 200
+    if (IfAdded != "Jewerly") {
+        Send, ^a
+        Sleep, 200
+        Send, 20
+        Sleep, 200
+    }
 
     MouseMove, 806, 636, 3
     Sleep, 200
@@ -2220,10 +2267,12 @@ CraftZombie:
     Click, Left
     Sleep, 200
 
-    Send, ^a
-    Sleep, 200
-    Send, 10
-    Sleep, 200
+    if (IfAdded != "Zombie") {
+        Send, ^a
+        Sleep, 200
+        Send, 10
+        Sleep, 200
+    }
 
     MouseMove, 806, 636, 3
     Sleep, 200
@@ -2258,10 +2307,12 @@ CraftRage:
     Click, Left
     Sleep, 200
 
-    Send, ^a
-    Sleep, 200
-    Send, 10
-    Sleep, 200
+    if (IfAdded != "Rage") {
+        Send, ^a
+        Sleep, 200
+        Send, 10
+        Sleep, 200
+    }
 
     MouseMove, 806, 636, 3
     Sleep, 200
@@ -2296,10 +2347,12 @@ CraftDiver:
     Click, Left
     Sleep, 200
 
-    Send, ^a
-    Sleep, 200
-    Send, 20
-    Sleep, 200
+    if (IfAdded != "Diver") {
+        Send, ^a
+        Sleep, 200
+        Send, 20
+        Sleep, 200
+    }
 
     MouseMove, 806, 636, 3
     Sleep, 200
@@ -2316,24 +2369,51 @@ CraftSelected:
     if (!autocrafting)
         return
 
-    if (selectedItem = "Heavenly Potion")
+    if (selectedItem = "Heavenly Potion") {
         Gosub, CraftHeavenly
-    else if (selectedItem = "Bound Potion")
+        Sleep, 500
+        IfAdded := "Heavenly"
+
+    } else if (selectedItem = "Bound Potion") {
         Gosub, CraftBound
-    else if (selectedItem = "Zeus Potion")
+        Sleep, 500
+        IfAdded := "Bound"
+
+    } else if (selectedItem = "Zeus Potion") {
         Gosub, CraftZeus
-    else if (selectedItem = "Hades Potion")
+        Sleep, 500
+        IfAdded := "Zeus"
+
+    } else if (selectedItem = "Hades Potion") {
         Gosub, CraftHades
-    else if (selectedItem = "Poseidon Potion")
+        Sleep, 500
+        IfAdded := "Hades"
+
+    } else if (selectedItem = "Poseidon Potion") {
         Gosub, CraftPoseidon
-    else if (selectedItem = "Jewelry Potion")
+        Sleep, 500
+        IfAdded := "Poseidon"
+
+    } else if (selectedItem = "Jewelry Potion") {
         Gosub, CraftJewerly
-    else if (selectedItem = "Zombie Potion")
+        Sleep, 500
+        IfAdded := "Jewerly"
+
+    } else if (selectedItem = "Zombie Potion") {
         Gosub, CraftZombie
-    else if (selectedItem = "Rage Potion")
+        Sleep, 500
+        IfAdded := "Zombie"
+
+    } else if (selectedItem = "Rage Potion") {
         Gosub, CraftRage
-    else if (selectedItem = "Diver Potion")
+        Sleep, 500
+        IfAdded := "Rage"
+
+    } else if (selectedItem = "Diver Potion") {
         Gosub, CraftDiver
+        Sleep, 500
+        IfAdded := "Diver"
+    }
 return
 
 CollectSnowman:
@@ -2597,14 +2677,14 @@ CraftMatrixSteampunk:
     Sleep, 500
 
     ; Zeus (2)
-     Send, {WheelUp 1}
-    ; Sleep, 500
-    ; MouseMove, 800, 670, 3
-    ; Sleep, 300
-    ; Click, Left
-    ; Sleep, 500
-    ; Click, Left
-    ; Sleep, 500
+    Send, {WheelUp 1}
+    Sleep, 500
+    MouseMove, 800, 670, 3
+    Sleep, 300
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
 
     ; Hypervolt (1)
     MouseMove, 800, 725, 3
@@ -3110,9 +3190,9 @@ if (toggle) {
             Sleep, 500
             MouseMove, 800, 670, 3
             Sleep, 300
-            ; Click, Left
+            Click, Left
             Sleep, 500
-            ; Click, Left
+            Click, Left
             Sleep, 500
 
             ; Hypervolt (1)
