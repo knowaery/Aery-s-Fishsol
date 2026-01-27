@@ -56,7 +56,6 @@ useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 steampunkAura := false
-autoClicker := false
 IfAdded := ""
 global ClipPending := false
 global ClipType := ""
@@ -224,10 +223,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempSteampunkAura, %iniFilePath%, Macro, steampunkAura
     if (tempSteampunkAura != "ERROR")
     steampunkAura := (tempSteampunkAura = "true" || tempSteampunkAura = "1")
-
-    IniRead, tempAutoClicker, %iniFilePath%, Macro, autoClicker
-    if (tempAutoClicker != "ERROR")
-    autoClicker := (tempAutoClicker = "true" || tempAutoClicker = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -457,26 +452,12 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y153 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y190 w270 h135 cWhite, Auto-Clicker
-Gui, Add, Button, x320 y285 w80 h25 gToggleAutoClicker vAutoClickerBtn, Toggle
+Gui, Add, GroupBox, x307 y190 w270 h95 cWhite, Snowman Collect
+Gui, Add, Button, x320 y250 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y289 w60 h25  vAutoClickerStatus BackgroundTrans, OFF
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection (using the macro / autocraft also prevents disconnection)
-Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x320 y260 w90 h20 BackgroundTrans, Delay (sec):
-Gui, Font, s9 cBlack Normal
-Gui, Add, Edit, x405 y260 w60 h22 vAutoClickDelay, 60
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y340 w270 h95 cWhite, Snowman Collect
-Gui, Add, Button, x320 y400 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y403 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
+Gui, Add, Text, x415 y253 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x317 y360 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's snowman to collect snowflakes before going to the fish sell shop.
-
-
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y296 w270 h150 cWhite, Biome/Strange Controller:
@@ -979,16 +960,6 @@ if (steampunkAura) {
     GuiControl,, SteampunkAuraStatus, OFF
     GuiControl, +c0xFF4444, SteampunkAuraStatus
 }
-if (autoClicker) {
-    GuiControl,, AutoClickerStatus, ON
-    GuiControl, +c00FF00, AutoClickerStatus
-    delayMs := AutoClickDelay * 1000
-    SetTimer, DoAutoClick, %delayMs%
-} else {
-    GuiControl,, AutoClickerStatus, OFF
-    GuiControl, +cFF4444, AutoClickerStatus
-    SetTimer, DoAutoClick, Off
-}
 
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1324,20 +1295,6 @@ ToggleSteampunkAura:
         GuiControl, +c0xFF4444, SteampunkAuraStatus
     }
     IniWrite, % (steampunkAura ? "true" : "false"), %iniFilePath%, Macro, steampunkAura
-return
-ToggleAutoClicker:
-    autoClicker := !autoClicker
-    if (autoClicker) {
-        GuiControl,, AutoClickerStatus, ON
-        GuiControl, +c00FF00, AutoClickerStatus
-        delayMs := AutoClickDelay * 1000
-        SetTimer, DoAutoClick, %delayMs%
-    } else {
-        GuiControl,, AutoClickerStatus, OFF
-        GuiControl, +cFF4444, AutoClickerStatus
-        SetTimer, DoAutoClick, Off
-    }
-    IniWrite, % (autoClicker ? "true" : "false"), %iniFilePath%, Macro, autoClicker
 return
 
 ToggleDetectLimbo:
@@ -2936,7 +2893,6 @@ if (toggle) {
             Sleep, 300
             MouseClick, Left
             Sleep, 300
-            ; ChatType := "Closed"
         } else if (chatcolor2 = 0x121215) {
             Sleep, 300
         }
