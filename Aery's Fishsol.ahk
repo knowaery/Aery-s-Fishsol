@@ -57,6 +57,7 @@ advancedFishingThreshold := 25
 archDevice := false
 steampunkAura := false
 autoClicker := false
+addFlows := false
 IfAdded := ""
 global ClipPending := false
 global ClipType := ""
@@ -228,6 +229,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAutoClicker, %iniFilePath%, Macro, autoClicker
     if (tempAutoClicker != "ERROR")
     autoClicker := (tempAutoClicker = "true" || tempAutoClicker = "1")
+
+    IniRead, tempAddFlows, %iniFilePath%, Macro, addFlows
+    if (tempAddFlows != "ERROR")
+    addFlows := (tempAddFlows = "true" || tempAddFlows = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -659,22 +664,32 @@ Gui, Add, DropDownList, x245 y155 w120 vAutoCraft gSelectItem, Heavenly Potion|B
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x300 y300 w276 h95 cWhite, Craft Angel Device
+Gui, Add, GroupBox, x300 y300 w276 h95 cWhite, Craft Matrix: Steampunk
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x315 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x315 y360 w70 h25 gToggleArchDevice vArchDeviceBtn, Toggle
+Gui, Add, Button, x315 y360 w70 h25 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x403 y364 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
+Gui, Add, Text, x403 y364 w60 h25 vSteampunkAuraStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Matrix: Steampunk
+Gui, Add, GroupBox, x22 y400 w271 h95 cWhite, Add Flows to Runic Device
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x37 y320 w260 h60 BackgroundTrans, Automatically adds auras to Matrix: Steampunk before going to the fish sell shop.
+Gui, Add, Text, x37 y420 w260 h60 BackgroundTrans, Automatically adds Flows to the Runic Device before going to the fish sell shop.
+Gui, Add, Text, x37 y500 w310 h60 BackgroundTrans, (ill prob not add the other auras, i had said i wasnt gonna add ts already)
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x37 y360 w70 h25 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
+Gui, Add, Button, x37 y460 w70 h25 gToggleAddFlows vAddFlowsBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x120 y364 w60 h25 vSteampunkAuraStatus BackgroundTrans, OFF
+Gui, Add, Text, x120 y464 w60 h25 vAddFlowsStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Angel Device
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x37 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x37 y360 w70 h25 gToggleArchDevice vArchDeviceBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x120 y364 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
 
 
 Gui, Tab, Failsafes
@@ -988,6 +1003,13 @@ if (autoClicker) {
     GuiControl, Enable, AutoClickStart
     GuiControl, Disable, AutoClickStop
     GuiControl, +c0xFF4444, AutoClickerStatus, OFF
+}
+if (addFlows) {
+    GuiControl,, AddFlowsStatus, ON
+    GuiControl, +c0x00DD00, AddFlowsStatus
+} else {
+    GuiControl,, AddFlowsStatus, OFF
+    GuiControl, +c0xFF4444, AddFlowsStatus
 }
 
 if (detectTranscendents) {
@@ -1338,6 +1360,18 @@ ToggleAutoClicker:
     }
 
     IniWrite, % (autoClicker ? "true" : "false"), %iniFilePath%, Macro, autoClicker
+return
+
+ToggleAddFlows:
+    addFlows := !addFlows
+    if (addFlows) {
+        GuiControl,, AddFlowsStatus, ON
+        GuiControl, +c0x00DD00, AddFlowsStatus
+    } else {
+        GuiControl,, AddFlowsStatus, OFF
+        GuiControl, +c0xFF4444, AddFlowsStatus
+    }
+    IniWrite, % (addFlows ? "true" : "false"), %iniFilePath%, Macro, addFlows
 return
 
 ToggleDetectLimbo:
@@ -2738,6 +2772,115 @@ CraftMatrixSteampunk:
     Sleep, 3500
 return
 
+CraftRunicDevice:
+    Send, {a Down}
+    Sleep, 3000
+    Send, {a Up}
+    Sleep, 50
+    Send, {s Down}
+    Sleep, 5000
+    Send, {s Up}
+    Sleep, 50
+    Send, {a Down}
+    Sleep, 1100
+    Send, {a Up}
+    Sleep, 200
+    Send, {w Down}
+    Sleep, 100
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 2250
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {d Down}
+    Sleep, 1800
+    Send, {d Up}
+    Sleep, 250
+    Send, {Shift}
+    Sleep, 250
+
+    Send, e
+    Sleep, 600
+    MouseMove, 960, 800, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 600
+    MouseMove, 670, 949, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 800
+    MouseMove, 900, 365, 3
+    Sleep, 350
+    Click, Left
+    Sleep, 350
+    Send, Unfathomable Ruins
+    Sleep, 350
+    MouseMove, 1111, 444, 3
+    Sleep, 250
+    Send, {WheelUp 25}
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    MouseMove, 600, 700, 3
+    Sleep, 400
+    Send, {WheelUp 25}
+    Sleep, 800
+    Send, {WheelDown 25}
+    Sleep, 800
+
+    ; Flows (15)
+    MouseMove, 800, 770, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 500
+    Click, Left
+    Sleep, 250
+
+    Send, {Esc}
+    Sleep, 500
+    Send, r
+    Sleep, 500
+    Send, {Enter}
+    Sleep, 3500
+return
+
 StartAutoClicker:
     Gui, Submit, NoHide
 
@@ -3134,15 +3277,31 @@ if (toggle) {
             Gosub, CollectSnowman
         }
 
-        if (archDevice && !steampunkAura) {
+        if (archDevice && !steampunkAura && !addFlows) {
             Gosub, CraftArchDevice
         }
 
-        if !archDevice && steampunkAura {
+        if !archDevice && steampunkAura && !addFlows {
             Gosub, CraftMatrixSteampunk
         }
 
-        if archDevice && steampunkAura {
+        if !archDevice && !steampunkAura && addFlows {
+            Gosub, CraftRunicDevice
+        }
+
+        if archDevice && steampunkAura && !addFlows {
+            Gosub, CraftArchDevice
+            Sleep, 500
+            Gosub, CraftMatrixSteampunk
+        }
+
+        if !archDevice && steampunkAura && addFlows {
+            Gosub, CraftMatrixSteampunk
+            Sleep, 500
+            Gosub, CraftRunicDevice
+        }
+
+        if archDevice && !steampunkAura && addFlows {
             Send, {a Down}
             Sleep, 3000
             Send, {a Up}
@@ -3255,6 +3414,240 @@ if (toggle) {
             Click, Left
             Sleep, 1000
 
+            MouseMove, 900, 365, 3
+            Sleep, 350
+            Click, Left
+            Sleep, 350
+            Send, Unfathomable Ruins
+            Sleep, 350
+            MouseMove, 1111, 444, 3
+            Sleep, 250
+            Send, {WheelUp 25}
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            MouseMove, 600, 700, 3
+            Sleep, 400
+            Send, {WheelUp 25}
+            Sleep, 800
+            Send, {WheelDown 25}
+            Sleep, 800
+
+            ; Flows (15)
+            MouseMove, 800, 770, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 750
+
+            MouseMove, 1400, 300, 3
+            Sleep, 300
+            Click, Left
+            Sleep, 300
+
+            Send, {Esc}
+            Sleep, 500
+            Send, r
+            Sleep, 500
+            Send, {Enter}
+            Sleep, 3500
+        }
+
+        if archDevice && steampunkAura && addFlows {
+            Send, {a Down}
+            Sleep, 3000
+            Send, {a Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 5000
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {a Down}
+            Sleep, 1100
+            Send, {a Up}
+            Sleep, 200
+
+            Send, {w Down}
+            Sleep, 100
+            Send, {w Up}
+            Sleep, 50
+
+            Send, {Space Down}
+            Sleep, 50
+            Send, {Space Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 2250
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {Shift}
+            Sleep, 250
+
+            Send, {d Down}
+            Sleep, 1800
+            Send, {d Up}
+            Sleep, 250
+
+            Send, {Shift}
+            Sleep, 250
+
+            Send, e
+            Sleep, 600
+            MouseMove, 960, 800, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 600
+            MouseMove, 670, 949, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 800
+
+            MouseMove, 900, 340
+            Sleep, 350
+            Click, Left
+            MouseMove, 900, 365, 3
+            Sleep, 350
+            Click, Left
+            Sleep, 350
+            Send, Angel Device
+            Sleep, 350
+            MouseMove, 1111, 444, 3
+            Sleep, 250
+            Send, {WheelUp 25}
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            MouseMove, 600, 700, 3
+            Sleep, 400
+            Send, {WheelUp 25}
+            Sleep, 800
+            Send, {WheelDown 25}
+            Sleep, 800
+
+            ; Divnus Angel (7)
+            MouseMove, 800, 770, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 250
+
+            ; Hope (5)
+            MouseMove, 800, 720, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 250
+
+            ; Faith (1)
+            MouseMove, 800, 665, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 1000
+
+
+
+            MouseMove, 900, 365, 3
+            Sleep, 350
+            Click, Left
+            Sleep, 350
+            Send, Unfathomable Ruins
+            Sleep, 350
+            MouseMove, 1111, 444, 3
+            Sleep, 250
+            Send, {WheelUp 25}
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            MouseMove, 600, 700, 3
+            Sleep, 400
+            Send, {WheelUp 25}
+            Sleep, 800
+            Send, {WheelDown 25}
+            Sleep, 800
+
+            ; Flows (15)
+            MouseMove, 800, 770, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+            Click, Left
+            Sleep, 750
+
             ; Steampunk
             MouseMove, 1150, 340,3
             Sleep, 250
@@ -3317,6 +3710,7 @@ if (toggle) {
             MouseMove, 1400, 300, 3
             Sleep, 300
             Click, Left
+            Sleep, 300
 
             Send, {Esc}
             Sleep, 500
