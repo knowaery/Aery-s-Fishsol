@@ -1472,14 +1472,11 @@ ShowAllGlobalOutlines() {
     ShowGlobalOutline(1, 1111, 80)
 
     ShowGlobalOutline(2, 600, 80)
-
-    ShowGlobalOutline(3, 400, 80)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
     HideGlobalOutline(2)
-    HideGlobalOutline(3)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1572,9 +1569,8 @@ CheckPixel:
 
     PixelGetColor, pos1, 1111, 80, RGB
     PixelGetColor, pos2, 600, 80, RGB
-    PixelGetColor, pos3, 600, 80, RGB
 
-    if (pos1 && pos2 && pos3 = 0xFFFFFF && !ClipPending) {
+    if (pos1 && pos2 = 0xFFFFFF && !ClipPending) {
         ClipPending := true
         ClipType := "global"
         ShowClipText()
@@ -2840,7 +2836,7 @@ CraftRunicDevice:
     Sleep, 800
 
     ; Flows (15)
-    MouseMove, 800, 770, 3
+    MouseMove, 800, 720, 3
     Sleep, 250
     Click, Left
     Sleep, 500
