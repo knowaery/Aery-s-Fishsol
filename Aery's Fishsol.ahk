@@ -554,17 +554,17 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x33 y520 w534 h75 cWhite, Highlight Detection Area
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
-Gui, Add, Text, x173 y566 w520 h145 BackgroundTrans, (Globals)
+Gui, Add, Text, x173 y566 w520 h145 BackgroundTrans, (Globals | Spamming = Lag)
 Gui, Add, Text, x470 y566 w520 h145 BackgroundTrans, (Transcendents)
-Gui, Font, s9 cWhite Bold
+Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x45 y561 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
 Gui, Add, Button, x345 y561 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
-Gui, Font, s9 c0xCCCCCC Bold
+Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x143 y566 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
 Gui, Add, Text, x440 y566 w60 h25 vTransAreaStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x30 y618 w520 h145 BackgroundTrans, F5 to Cancel Clipping
+Gui, Add, Text, x30 y618 w520 h145 BackgroundTrans, F6 to Cancel Clipping
 
 Gui, Tab, Webhook
 
@@ -608,7 +608,7 @@ Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
 Gui, Add, GroupBox, x30 y185 w210 h100 cWhite, Heavenly Potion
 Gui, Add, GroupBox, x247 y185 w130 h100 cWhite, Bound Potion 
 Gui, Add, GroupBox, x385 y185 w181 h100 cWhite, Godly Potions
-Gui, Add, Text, x60 y157 w150 h50 BackgroundTrans, F4 = Start | F3 = Stop (ts not a typo)
+Gui, Add, Text, x60 y157 w150 h50 BackgroundTrans, F4 = Start | F5 = Stop
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x118 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -662,18 +662,18 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x300 y300 w276 h95 cWhite, Craft Angel Device
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x315 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
-Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x315 y360 w70 h20 gToggleArchDevice vArchDeviceBtn, Toggle
-Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x315 y360 w70 h25 gToggleArchDevice vArchDeviceBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x403 y364 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Matrix: Steampunk
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y320 w260 h60 BackgroundTrans, Automatically adds auras to Matrix: Steampunk before going to the fish sell shop.
-Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x37 y360 w70 h20 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
-Gui, Font, s9 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Button, x37 y360 w70 h25 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x120 y364 w60 h25 vSteampunkAuraStatus BackgroundTrans, OFF
 
 
@@ -895,18 +895,20 @@ if (onoffWebhook) {
 if (globalArea) {
     GuiControl,, GlobalAreaStatus, ON
     GuiControl, +c0x00DD00, GlobalAreaStatus
-    ShowGlobalOutline()
+    ShowAllGlobalOutlines()
 } else {
     GuiControl,, GlobalAreaStatus, OFF
     GuiControl, +c0xFF4444, GlobalAreaStatus
-    HideGlobalOutline()
+    HideAllGlobalOutlines()
 }
 if (transArea) {
     GuiControl,, TransAreaStatus, ON
     GuiControl, +c0x00DD00, TransAreaStatus
+    ShowTranscendentOutline()
 } else {
     GuiControl,, TransAreaStatus, OFF
     GuiControl, +c0xFF4444, TransAreaStatus
+    HideTranscendentOutline()
 }
 if (doPing) {
     GuiControl,, DoPingStatus, ON
@@ -1011,7 +1013,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 10
+    SetTimer, CheckPixel, 25
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1202,17 +1204,15 @@ return
 
 ToggleGlobalArea:
     globalArea := !globalArea
-
     if (globalArea) {
         GuiControl,, GlobalAreaStatus, ON
         GuiControl, +c0x00DD00, GlobalAreaStatus
-        ShowGlobalOutline()
+        ShowAllGlobalOutlines()
     } else {
         GuiControl,, GlobalAreaStatus, OFF
         GuiControl, +c0xFF4444, GlobalAreaStatus
-        HideGlobalOutline()
+        HideAllGlobalOutlines()
     }
-
     IniWrite, % (globalArea ? "true" : "false"), %iniFilePath%, Macro, globalArea
 return
 
@@ -1221,9 +1221,11 @@ ToggleTransArea:
     if (transArea) {
         GuiControl,, TransAreaStatus, ON
         GuiControl, +c0x00DD00, TransAreaStatus
+        ShowTranscendentOutline()
     } else {
         GuiControl,, TransAreaStatus, OFF
         GuiControl, +c0xFF4444, TransAreaStatus
+        HideTranscendentOutline()
     }
     IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
 return
@@ -1383,7 +1385,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel, 25
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1432,42 +1434,56 @@ UpdateAdvancedThreshold:
     }
 return
 
-ShowGlobalOutline() {
+ShowAllGlobalOutlines() {
+    ShowGlobalOutline(1, 1111, 80)
+
+    ShowGlobalOutline(2, 600, 80)
+
+    ShowGlobalOutline(3, 400, 80)
+}
+
+HideAllGlobalOutlines() {
+    HideGlobalOutline(1)
+    HideGlobalOutline(2)
+    HideGlobalOutline(3)
+}
+
+ShowGlobalOutline(id, centerX, centerY) {
     size := 40
     thickness := 2
 
-    x := 1111 - size//2
-    y := 80 - size//2
+    x := centerX - size//2
+    y := centerY - size//2
 
     yBottom := y + size - thickness
     xRight  := x + size - thickness
 
-    Gui, GBoxTop:Destroy
-    Gui, GBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxTop:Color, 00FF00
-    Gui, GBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
+    Gui, GBoxTop%id%:Destroy
+    Gui, GBoxTop%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxTop%id%:Color, 00FF00
+    Gui, GBoxTop%id%:Show, x%x% y%y% w%size% h%thickness% NA
 
-    Gui, GBoxBottom:Destroy
-    Gui, GBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxBottom:Color, 00FF00
-    Gui, GBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
+    Gui, GBoxBottom%id%:Destroy
+    Gui, GBoxBottom%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxBottom%id%:Color, 00FF00
+    Gui, GBoxBottom%id%:Show, x%x% y%yBottom% w%size% h%thickness% NA
 
-    Gui, GBoxLeft:Destroy
-    Gui, GBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxLeft:Color, 00FF00
-    Gui, GBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
+    Gui, GBoxLeft%id%:Destroy
+    Gui, GBoxLeft%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxLeft%id%:Color, 00FF00
+    Gui, GBoxLeft%id%:Show, x%x% y%y% w%thickness% h%size% NA
 
-    Gui, GBoxRight:Destroy
-    Gui, GBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxRight:Color, 00FF00
-    Gui, GBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
+    Gui, GBoxRight%id%:Destroy
+    Gui, GBoxRight%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, GBoxRight%id%:Color, 00FF00
+    Gui, GBoxRight%id%:Show, x%xRight% y%y% w%thickness% h%size% NA
 }
 
-HideGlobalOutline() {
-    Gui, GBoxTop:Destroy
-    Gui, GBoxBottom:Destroy
-    Gui, GBoxLeft:Destroy
-    Gui, GBoxRight:Destroy
+HideGlobalOutline(id) {
+    Gui, GBoxTop%id%:Destroy
+    Gui, GBoxBottom%id%:Destroy
+    Gui, GBoxLeft%id%:Destroy
+    Gui, GBoxRight%id%:Destroy
 }
 
 ShowTranscendentOutline() {
@@ -1483,21 +1499,25 @@ ShowTranscendentOutline() {
     color := "66CCFF"
 
     Gui, TBoxTop:Destroy
+    Gui, TBoxTop:New
     Gui, TBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxTop:Color, %color%
     Gui, TBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
 
     Gui, TBoxBottom:Destroy
+    Gui, TBoxBottom:New
     Gui, TBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxBottom:Color, %color%
     Gui, TBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
 
     Gui, TBoxLeft:Destroy
+    Gui, TBoxLeft:New
     Gui, TBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxLeft:Color, %color%
     Gui, TBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
 
     Gui, TBoxRight:Destroy
+    Gui, TBoxRight:New
     Gui, TBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxRight:Color, %color%
     Gui, TBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
@@ -1511,14 +1531,16 @@ HideTranscendentOutline() {
 }
 
 CheckPixel:
-    global nvidiaReplay, clipWebhook, triggerDelay, ClipPending, ClipType
+    global nvidiaReplay, triggerDelay, ClipPending, ClipType
 
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, color, 1111, 80, RGB
+    PixelGetColor, pos1, 1111, 80, RGB
+    PixelGetColor, pos2, 600, 80, RGB
+    PixelGetColor, pos3, 600, 80, RGB
 
-    if (color = 0xFFFFFF && !ClipPending) {
+    if (pos1 && pos2 && pos3 = 0xFFFFFF && !ClipPending) {
         ClipPending := true
         ClipType := "global"
         ShowClipText()
@@ -2850,9 +2872,6 @@ F2::
 Return
 
 F3::
-autocrafting := false
-    SetTimer, CraftSelected, Off
-
     if (onoffWebhook) {
             try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
@@ -2862,20 +2881,64 @@ return
 
 F4::
     Gui, Submit, NoHide
-    if (autocrafting)
+
+    if (autocrafting || toggle)
         return
-     if (toggle)
+
+    if (selectedItem = "") {
+        ToolTip, Please Select Item To Craft!, 900, 10
+        Sleep, 2500
+        ToolTip
         return
+    }
 
     autocrafting := true
 
-   if (onoffWebhook)
-        try SendWebhook(":green_circle: Crafting Started", "7909721")
-        ToolTip, Crafting has Started, 900, 10
-    SetTimer, CraftSelected, 5067
+    if (onoffWebhook) {
+        try SendWebhook("Crafting Started", 7909721)
+    }
+
+    ToolTip, Crafting will start in 5 seconds..., 900, 10
+    Sleep, 1000
+    ToolTip, Crafting will start in 4 seconds..., 900, 10
+    Sleep, 1000
+    ToolTip, Crafting will start in 3 seconds..., 900, 10
+    Sleep, 1000
+    ToolTip, Crafting will start in 2 seconds..., 900, 10
+    Sleep, 1000
+    ToolTip, Crafting will start in 1 second..., 900, 10
+    Sleep, 1000
+    ToolTip
+
+    SetTimer, CraftSelected, 1000
 return
 
-F5::
+
+F5:: 
+if (!autocrafting)
+   return
+
+   if (onoffWebhook) {
+        try SendWebhook("Crafting Stopped", "14495300")
+   }
+
+    autocrafting := false
+    SetTimer, CraftSelected, Off
+
+    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (5), 800, 10
+    sleep 1000
+    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (4), 800, 10
+    sleep 1000
+    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (3), 800, 10
+    Sleep 1000
+    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (2), 800, 10
+    Sleep 1000
+    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (1), 800, 10
+    Sleep 1000
+    ToolTip
+return
+
+F6::
     if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
         return
 
