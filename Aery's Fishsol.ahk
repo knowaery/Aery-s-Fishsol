@@ -3116,70 +3116,39 @@ F6::
             try SendWebhook(":warning: Clipping Canceled", 14495300)
         }
         if (nvidiaReplay && detectTranscendents) {
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (20), 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (19), 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (18), 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (17), 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (16), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (15), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (14), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (13), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (12), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (11), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (10), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (9), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (8), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (7), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (6), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (5), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (4), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (3), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (2), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals and Transcendents (1), 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
             sleep, 1000
             ToolTip
+            SetTimer, CheckPixel, 10
+            SetTimer, CheckPixel2, 10
+            if (clipWebhook) {
+            try SendWebhook(":warning: Clipping Re-Enabled", 0)
+        }
         }
         if (nvidiaReplay && !detectTranscendents) {
-            ToolTip, Please Re-enable Clipping Globals (10), 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (9), 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (8), 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (7), 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (6), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (5), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (4), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (3), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globalst (2), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Globals (1), 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
             sleep, 1000
             ToolTip
+            SetTimer, CheckPixel, 10
+            if (clipWebhook) {
+            try SendWebhook(":warning: Clipping Re-Enabled", 0)
+        }
         }
     }
     if (detectTranscendents && !detectLimbo && !nvidiaReplay) {
@@ -3189,29 +3158,23 @@ F6::
             try SendWebhook(":warning: Clipping Canceled", 14495300)
         }
         if (detectTranscendents) {
-            ToolTip, Please Re-enable Clipping Transcendents (10), 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (9), 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (8), 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (7), 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
             sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (6), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (5), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (4), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (3), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (2), 850, 25
-            sleep, 1000
-            ToolTip, Please Re-enable Clipping Transcendents (1), 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
             sleep, 1000
             ToolTip
+            SetTimer, CheckPixel2, 10
+            if (clipWebhook) {
+            try SendWebhook(":warning: Clipping Re-Enabled", 0)
         }
     }
+}
 return
 
 
