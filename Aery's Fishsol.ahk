@@ -1024,7 +1024,7 @@ if (detectTranscendents) {
     for index, _ in transcendentPixels
         transcendentCounters[index] := 0
 
-    SetTimer, CheckPixel2, 25
+    SetTimer, CheckPixel2, 10
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
     GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -1034,7 +1034,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 25
+    SetTimer, CheckPixel, 10
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1471,11 +1471,13 @@ ShowAllGlobalOutlines() {
     ShowGlobalOutline(1, 1111, 80)
 
     ShowGlobalOutline(2, 600, 80)
+    ShowGlobalOutline(3, 400, 80)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
     HideGlobalOutline(2)
+    HideGlobalOutline(3)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1529,25 +1531,21 @@ ShowTranscendentOutline() {
     color := "66CCFF"
 
     Gui, TBoxTop:Destroy
-    Gui, TBoxTop:New
     Gui, TBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxTop:Color, %color%
     Gui, TBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
 
     Gui, TBoxBottom:Destroy
-    Gui, TBoxBottom:New
     Gui, TBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxBottom:Color, %color%
     Gui, TBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
 
     Gui, TBoxLeft:Destroy
-    Gui, TBoxLeft:New
     Gui, TBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxLeft:Color, %color%
     Gui, TBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
 
     Gui, TBoxRight:Destroy
-    Gui, TBoxRight:New
     Gui, TBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
     Gui, TBoxRight:Color, %color%
     Gui, TBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
@@ -3068,6 +3066,152 @@ if (!autocrafting)
     ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (1), 800, 10
     Sleep 1000
     ToolTip
+return
+
+
+F6::
+    if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
+        return
+
+    if (detectLimbo && !nvidiaReplay && detectTranscendents) {
+        SetTimer, DoContract, Off
+        if (clipWebhook) {
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        }
+        if (detectLimbo) {
+            ToolTip, Detecting will start in 5 Seconds, 800, 10
+            sleep, 5000
+            SetTimer, CheckPixel3, 50
+            ToolTip
+        }
+    } else if (detectLimbo && nvidiaReplay && !detectTranscendents) {
+        SetTimer, DoContract, Off
+        if (clipWebhook) {
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        }
+        if (detectLimbo) {
+            ToolTip, Detecting will start in 5 Seconds, 800, 10
+            sleep, 5000
+            SetTimer, CheckPixel3, 50
+            ToolTip
+        }
+    } else if (detectLimbo && !nvidiaReplay && !detectTranscendents) {
+        SetTimer, DoContract, Off
+        if (clipWebhook) {
+            try SendWebhook(":warning: Contracting Canceled", 14495300)
+        }
+        if (detectLimbo) {
+            ToolTip, Detecting will start in 5 Seconds, 800, 10
+            sleep, 5000
+            SetTimer, CheckPixel3, 50
+            ToolTip
+        }
+    }
+    if (nvidiaReplay && !detectLimbo) {
+        SetTimer, DoClip, Off
+        if (detectTranscendents) {
+            SetTimer, DoClip2, Off
+        }
+        if (clipWebhook) {
+            try SendWebhook(":warning: Clipping Canceled", 14495300)
+        }
+        if (nvidiaReplay && detectTranscendents) {
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (20), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (19), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (18), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (17), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (16), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (15), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (14), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (13), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (12), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (11), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (10), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (9), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (8), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (7), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (6), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (5), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (4), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (3), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (2), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals and Transcendents (1), 850, 25
+            sleep, 1000
+            ToolTip
+        }
+        if (nvidiaReplay && !detectTranscendents) {
+            ToolTip, Please Re-enable Clipping Globals (10), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (9), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (8), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (7), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (6), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (5), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (4), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (3), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globalst (2), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Globals (1), 850, 25
+            sleep, 1000
+            ToolTip
+        }
+    }
+    if (detectTranscendents && !detectLimbo && !nvidiaReplay) {
+        SetTimer, DoClip2, Off
+        ToolTip
+        if (clipWebhook) {
+            try SendWebhook(":warning: Clipping Canceled", 14495300)
+        }
+        if (detectTranscendents) {
+            ToolTip, Please Re-enable Clipping Transcendents (10), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (9), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (8), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (7), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (6), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (5), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (4), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (3), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (2), 850, 25
+            sleep, 1000
+            ToolTip, Please Re-enable Clipping Transcendents (1), 850, 25
+            sleep, 1000
+            ToolTip
+        }
+    }
 return
 
 
