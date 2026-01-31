@@ -30,7 +30,6 @@ transcendentColorNames[0xFEFEFE] := "Equinox3"
 transcendentColorNames[0x566980] := "Luminosity1"
 lastTranscendentColor := ""
 lastTranscendentColor2 := ""
-snowmanCollect := false
 strangeController := false
 biomeRandomizer := false
 autoCloseChat := false
@@ -51,9 +50,6 @@ autocrafting := false
 useCelestial := false
 useExotic := false
 useBounded := false
-useZeus := false
-usePoseidon := false
-useHades := false
 advancedFishingThreshold := 25
 archDevice := false
 steampunkAura := false
@@ -157,10 +153,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, false
     autoCloseChat := (tempAutoCloseChat = "true" || tempAutoCloseChat = "1")
 
-    IniRead, tempSnowmanCollect, %iniFilePath%, Macro, snowmanCollect
-    if (tempSnowmanCollect != "ERROR")
-    snowmanCollect := (tempSnowmanCollect = "true" || tempSnowmanCollect = "1")
-
     IniRead, tempBiomeRandomizer, %iniFilePath%, Macro, biomeRandomizer
     if (tempBiomeRandomizer != "ERROR")
     biomeRandomizer := (tempBiomeRandomizer = "true" || tempBiomeRandomizer = "1")
@@ -205,18 +197,6 @@ if (FileExist(iniFilePath)) {
     if (tempBounded != "ERROR")
     useBounded := (tempBounded = "true" || tempBounded = "1")
 
-    IniRead, tempZeus, %iniFilePath%, Macro, useZeus
-    if (tempZeus != "ERROR")
-    useZeus := (tempZeus = "true" || tempZeus = "1")
-
-    IniRead, tempPoseidon, %iniFilePath%, Macro, usePoseidon
-    if (tempPoseidon != "ERROR")
-    usePoseidon := (tempPoseidon = "true" || tempPoseidon = "1")
-
-    IniRead, tempHades, %iniFilePath%, Macro, useHades
-    if (tempHades != "ERROR")
-    useHades := (tempHades = "true" || tempHades = "1")
-
     IniRead, tempArchDevice, %iniFilePath%, Macro, archDevice
     if (tempArchDevice != "ERROR")
     archDevice := (tempArchDevice = "true" || tempArchDevice = "1")
@@ -242,7 +222,7 @@ if (FileExist(iniFilePath)) {
 }
 
 
-version := "Aery's v1.2"
+version := "Aery's v1.3"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -474,14 +454,6 @@ Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y340 w270 h95 cWhite, Snowman Collect
-Gui, Add, Button, x320 y400 w80 h25 gToggleSnowmanCollect vSnowmanCollectBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y403 w60 h25  vSnowmanCollectStatus BackgroundTrans, OFF
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x317 y360 w280 h135 BackgroundTrans c0xCCCCCC, Goes to Lime's snowman to collect snowflakes before going to the fish sell shop.
-
-Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y296 w270 h139 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y318 w255 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
@@ -610,55 +582,37 @@ Gui, Tab, Crafting
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
 ; Gui, Add, GroupBox, x45 y385 w200 h100 cWhite, Watch AD
-Gui, Add, GroupBox, x30 y185 w210 h100 cWhite, Heavenly Potion
-Gui, Add, GroupBox, x247 y185 w130 h100 cWhite, Bound Potion 
-Gui, Add, GroupBox, x385 y185 w181 h100 cWhite, Godly Potions
+Gui, Add, GroupBox, x130 y185 w210 h100 cWhite, Heavenly Potion
+Gui, Add, GroupBox, x347 y185 w130 h100 cWhite, Bound Potion 
 Gui, Add, Text, x60 y157 w150 h50 BackgroundTrans, F4 = Start | F5 = Stop
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x118 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
-Gui, Add, Button, x118 y245 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
-Gui, Add, Text, x208 y209 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
-Gui, Add, Text, x208 y249 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Add, Button, x218 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
+Gui, Add, Button, x218 y245 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
+Gui, Add, Text, x308 y209 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x308 y249 w60 h25 vUseExoticStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x38 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add 
-Gui, Add, Text, x38 y249 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x138 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add 
+Gui, Add, Text, x138 y249 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c9B8CFF Bold, Trajan Pro
-Gui, Add, Text, x64 y209 w600 h100 BackgroundTrans, Celestial:
+Gui, Add, Text, x164 y209 w600 h100 BackgroundTrans, Celestial:
 Gui, Font, s9 cFF0000 Bold, Trajan Pro
-Gui, Add, Text, x64 y249 w600 h100 BackgroundTrans, Exotic:
+Gui, Add, Text, x164 y249 w600 h100 BackgroundTrans, Exotic:
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x258 y245 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
-Gui, Add, Text, x346 y249 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Add, Button, x358 y245 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
+Gui, Add, Text, x446 y249 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x258 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x358 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c1559C9 Bold, Trajan Pro
-Gui, Add, Text, x285 y209 w600 h100 BackgroundTrans, Bounded:
+Gui, Add, Text, x385 y209 w600 h100 BackgroundTrans, Bounded:
 
-Gui, Font, s9 cWhite Bold, Segoe UI
-Gui, Add, Button, x480 y205 w50 h15 gToggleUseZeus vUseZeusBtn, Toggle
-Gui, Add, Button, x480 y234 w50 h15 gToggleUseHades vUseHadesBtn, Toggle
-Gui, Add, Button, x480 y260 w50 h15 gToggleUsePoseidon vUsePoseidonBtn, Toggle
-Gui, Add, Text, x535 y207 w60 h25 vUseZeusStatus BackgroundTrans, OFF
-Gui, Add, Text, x535 y236 w60 h25 vUseHadesStatus BackgroundTrans, OFF
-Gui, Add, Text, x535 y262 w60 h25 vUsePoseidonStatus BackgroundTrans, OFF
-Gui, Font, s9 cWhite Normal, Trajan Pro
-Gui, Add, Text, x395 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Add, Text, x395 y234 w600 h100 BackgroundTrans c0xCCCCCC, Add
-Gui, Add, Text, x395 y260 w600 h100 BackgroundTrans c0xCCCCCC, Add  
-Gui, Font, s9 cFFD700 Bold, Trajan Pro
-Gui, Add, Text, x422 y209 w600 h100 BackgroundTrans, Zeus:
-Gui, Font, s9 cCC5500 Bold, Trajan Pro
-Gui, Add, Text, x422 y234 w600 h100 BackgroundTrans, Hades:
-Gui, Font, s9 c085A8C Bold, Trajan Pro
-Gui, Add, Text, x422 y260 w600 h100 BackgroundTrans, Poseidon:
 
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Adding the auras listed below means adding them to the desired potion from your inventory.
 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, DropDownList, x245 y155 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Zeus Potion|Hades Potion|Poseidon Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+Gui, Add, DropDownList, x245 y155 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
 
 
@@ -681,6 +635,9 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Button, x37 y460 w70 h25 gToggleAddFlows vAddFlowsBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x120 y464 w60 h25 vAddFlowsStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x37 y550 w550 h60 BackgroundTrans, (I DO NOT RECOMMEND PUT THESE ON RN, SOMETIMES WHEN YOU OPEN CRAFT MENU YOUR SCREEN STAYS BLACK)
+Gui, Add, Text, x37 y600 w550 h60 BackgroundTrans, (AutoCraft Works)
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Angel Device
@@ -791,10 +748,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.2
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.3
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishSol v1.2
+Gui, Show, w600 h670,  Aery's fishSol v1.3
 
 if (res = "1080p") {
     GuiControl, Choose, Resolution, 1
@@ -861,13 +818,6 @@ if (autoCloseChat) {
 } else {
     GuiControl,, AutoCloseChatStatus, OFF
     GuiControl, +c0xFF4444, AutoCloseChatStatus
-}
-if (snowmanCollect) {
-    GuiControl,, SnowmanCollectStatus, ON
-    GuiControl, +c0x00DD00, SnowmanCollectStatus
-} else {
-    GuiControl,, SnowmanCollectStatus, OFF
-    GuiControl, +c0xFF4444, SnowmanCollectStatus
 }
 if (detectLimbo) {
     GuiControl,, DetectLimboStatus, ON
@@ -959,27 +909,6 @@ if (useBounded) {
 } else {
     GuiControl,, UseBoundedStatus, OFF
     GuiControl, +c0xFF4444, UseBoundedStatus
-}
-if (useZeus) {
-    GuiControl,, UseZeusStatus, ON
-    GuiControl, +c0x00DD00, UseZeusStatus
-} else {
-    GuiControl,, UseZeusStatus, OFF
-    GuiControl, +c0xFF4444, UseZeusStatus
-}
-if (usePoseidon) {
-    GuiControl,, UsePoseidonStatus, ON
-    GuiControl, +c0x00DD00, UsePoseidonStatus
-} else {
-    GuiControl,, UsePoseidonStatus, OFF
-    GuiControl, +c0xFF4444, UsePoseidonStatus
-}
-if (useHades) {
-    GuiControl,, UseHadesStatus, ON
-    GuiControl, +c0x00DD00, UseHadesStatus
-} else {
-    GuiControl,, UseHadesStatus, OFF
-    GuiControl, +c0xFF4444, UseHadesStatus
 }
 if (archDevice) {
     GuiControl,, ArchDeviceStatus, ON
@@ -1187,18 +1116,6 @@ ToggleOnoffWebhook:
     IniWrite, % (onoffWebhook ? "true" : "false"), %iniFilePath%, Macro, onoffWebhook
 return
 
-ToggleSnowmanCollect:
-    snowmanCollect := !snowmanCollect
-    if (snowmanCollect) {
-        GuiControl,, SnowmanCollectStatus, ON
-        GuiControl, +c0x00DD00, SnowmanCollectStatus
-    } else {
-        GuiControl,, SnowmanCollectStatus, OFF
-        GuiControl, +c0xFF4444, SnowmanCollectStatus
-    }
-    IniWrite, % (snowmanCollect ? "true" : "false"), %iniFilePath%, Macro, snowmanCollect
-return
-
 ToggleStrangeController:
     strangeController := !strangeController
     if (strangeController) {
@@ -1285,42 +1202,6 @@ ToggleUseBounded:
         GuiControl, +c0xFF4444, UseBoundedStatus
     }
     IniWrite, % (useBounded ? "true" : "false"), %iniFilePath%, Macro, useBounded
-return
-
-ToggleUseZeus:
-    useZeus := !useZeus
-    if (useZeus) {
-        GuiControl,, UseZeusStatus, ON
-        GuiControl, +c0x00DD00, UseZeusStatus
-    } else {
-        GuiControl,, UseZeusStatus, OFF
-        GuiControl, +c0xFF4444, UseZeusStatus
-    }
-    IniWrite, % (useZeus ? "true" : "false"), %iniFilePath%, Macro, useZeus
-return
-
-ToggleUsePoseidon:
-    usePoseidon := !usePoseidon
-    if (usePoseidon) {
-        GuiControl,, UsePoseidonStatus, ON
-        GuiControl, +c0x00DD00, UsePoseidonStatus
-    } else {
-        GuiControl,, UsePoseidonStatus, OFF
-        GuiControl, +c0xFF4444, UsePoseidonStatus
-    }
-    IniWrite, % (usePoseidon ? "true" : "false"), %iniFilePath%, Macro, usePoseidon
-return
-
-ToggleUseHades:
-    useHades := !useHades
-    if (useHades) {
-        GuiControl,, UseHadesStatus, ON
-        GuiControl, +c0x00DD00, UseHadesStatus
-    } else {
-        GuiControl,, UseHadesStatus, OFF
-        GuiControl, +c0xFF4444, UseHadesStatus
-    }
-    IniWrite, % (useHades ? "true" : "false"), %iniFilePath%, Macro, useHades
 return
 
 ToggleArchDevice:
@@ -1596,12 +1477,12 @@ CheckPixel2:
     }
     }
 
+    PixelGetColor, levicolor, 950, 240, RGB
     if (levicolor = 0x000201) {
         ShowClipText()
         lastTranscendentColor2 := "Leviathan"
         SetTimer, DoClip2, -%triggerDelay2%
     }
-
 
     PixelGetColor, colorbt, 950, 180, RGB
     PixelGetColor, colorbt2, 1200, 500, RGB
@@ -1780,7 +1661,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.2"","
+    . """text"": ""Aery's fishSol V1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1824,7 +1705,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.2"","
+    . """text"": ""Aery's fishSol v1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1859,7 +1740,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.2"","
+    . """text"": ""Aery's fishSol V1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1902,15 +1783,17 @@ Global Replay will NOT detect any global rolled under 99m.
 but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
-All Globals: +
 Limbo Globals: -
 Nyctophobia: -
+Eden: (Unsure)
+All Globals: +
 Pixelation: +
 Luminosity: +
 Leviathan (Unsure)
 Breakthrough: + 
 Equinox: +
-Eden: (Unsure)
+Monarch: idk
+
 
 
 This Replay System can be used even if you're not using the macro
@@ -1983,39 +1866,46 @@ return
 
 CraftHeavenly:
 ToolTip
-if (IfAdded != "Heavenly") {
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Heavenly Potion
-    Sleep, 200
+    if (IfAdded != "Heavenly") {
+        MouseMove, 1500, 275, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 100
+        Send, Heavenly Potion
+        Sleep, 200
+        Send {Enter}
+        Sleep, 200
 
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-    Send, {WheelUp 6}
-    Sleep, 500
-    Click, Left
-    Sleep, 200
+        MouseMove, 1500, 367, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 200
 
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
+        MouseMove, 200, 830, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    Send, ^a
-    Sleep, 200
-    Send, 250
-    Sleep, 200
-}
+        MouseMove, 1023, 437, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    MouseMove, 806, 636, 3
+        Send, ^a
+        Sleep, 200
+        Send, 250
+        Sleep, 200
+    }
+
+    MouseMove, 1130, 437, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 
     if (useCelestial) {
-        MouseMove, 800, 682, 3
+        MouseMove, 1130, 492, 3
         Sleep, 500
         Click, Left
         Sleep, 500
@@ -2024,385 +1914,244 @@ if (IfAdded != "Heavenly") {
     }
 
     if (useExotic) {
-        MouseMove, 800, 742, 3
+        MouseMove, 1130, 542, 3
         Sleep, 500
         Click, Left
         Sleep, 500
     }
 
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 2500
 return
-
-
-
 CraftBound:
 ToolTip
-if (IfAdded != "Bounded") {
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Bound Potion
-    Sleep, 200
+    if (IfAdded != "Bounded") {
+        MouseMove, 1500, 275, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 100
+        Send, Potion of Bound
+        Sleep, 200
+        Send {Enter}
+        Sleep, 200
 
-    MouseMove, 1150, 420, 3
-    Sleep, 200
+        MouseMove, 1500, 367, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 200
 
-    Send, {WheelUp 6}
-    Sleep, 500
+        MouseMove, 200, 832, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    Click, Left
-    Sleep, 200
+        MouseMove, 1023, 597, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 200
+        Send, 100
+        Sleep, 200
 
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    Send, ^a
-    Sleep, 200
-    Send, 250
-    Sleep, 200
-}
-
-    MouseMove, 806, 636, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 1000
+        MouseMove, 1130, 597, 3
+        Sleep, 200
+        Click, Left
+        sleep, 200
+    }
 
     if (useBounded) {
-        MouseMove, 800, 682, 3
+        MouseMove, 1130, 438, 3
         Sleep, 500
         Click, Left
         Sleep, 500
     }
 
-    MouseMove, 585, 585, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 2500
-return
-
-CraftZeus:
-ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Godly Zeus
-    Sleep, 200
-
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-
-    Send, {WheelUp 6}
-    Sleep, 500
-
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    Send, ^a
-    Sleep, 200
-    Send, 25
-    Sleep, 200
-    
-    MouseMove, 806, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 690, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    Send, ^a
-    Sleep, 200
-    Send, 25
-    Sleep, 200
-
-    MouseMove, 806, 690, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    if (useZeus) {
-        MouseMove, 800, 746, 3
-        Sleep, 500
-        Click, Left
-        Sleep, 500
-    }
-
-    MouseMove, 585, 585, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 1000
-return
-
-CraftHades:
-if (IfAdded != "Hades") {
-    ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Godly Hades
-    Sleep, 200
-
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-
-    Send, {WheelUp 6}
-    Sleep, 500
-
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    Send, ^a
-    Sleep, 200
-    Send, 50
-    Sleep, 200
-}
-
-    MouseMove, 806, 636, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 1000
-
-    if (useHades) {
-        MouseMove, 800, 682, 3
-        Sleep, 500
-        Click, Left
-        Sleep, 500
-    }
-
-    MouseMove, 585, 585, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 2500
-return
-
-CraftPoseidon:
-if (IfAdded != "Poseidon") {
-    ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Godly Poseidon
-    Sleep, 200
-
-    MouseMove, 1150, 420, 3
-    Sleep, 200
-
-    Send, {WheelUp 6}
-    Sleep, 500
-
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
-    Send, ^a
-    Sleep, 200
-    Send, 50
-    Sleep, 200
-}
-
-    MouseMove, 806, 636, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 1000
-
-    if (usePoseidon) {
-        MouseMove, 800, 682, 3
-        Sleep, 500
-        Click, Left
-        Sleep, 500
-    }
-
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 2500
 return
 
 CraftJewerly:
-if (IfAdded != "Jewerly") {
-    ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Jewerly Potion
-    Sleep, 200
+ToolTip
+    if (IfAdded != "Jewerly") {
+        MouseMove, 1500, 275, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 100
+        Send, Jewelry Potion
+        Sleep, 200
+        Send {Enter}
+        Sleep, 200
 
-    MouseMove, 1150, 420, 3
-    Sleep, 200
+        MouseMove, 1500, 367, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 200
 
-    Send, {WheelUp 6}
-    Sleep, 500
+        MouseMove, 200, 832, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
+        MouseMove, 1023, 432, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
         Send, ^a
         Sleep, 200
         Send, 20
         Sleep, 200
     }
 
-    MouseMove, 806, 636, 3
+    MouseMove, 1130, 432, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftZombie:
-if (IfAdded != "Zombie") {
-    ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Zombie Potion
-    Sleep, 200
+ToolTip
+    if (IfAdded != "Zombie") {
+        MouseMove, 1500, 275, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 100
+        Send, Zombie Potion
+        Sleep, 200
+        Send {Enter}
+        Sleep, 200
 
-    MouseMove, 1150, 420, 3
-    Sleep, 200
+        MouseMove, 1500, 367, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 200
 
-    Send, {WheelUp 6}
-    Sleep, 500
+        MouseMove, 200, 832, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
+        MouseMove, 1023, 432, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
         Send, ^a
         Sleep, 200
         Send, 10
         Sleep, 200
     }
 
-    MouseMove, 806, 636, 3
+    MouseMove, 1130, 432, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftRage:
+ToolTip
     if (IfAdded != "Rage") {
-        ToolTip
-        MouseMove, 910, 333, 3
+        MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
         Sleep, 200
+        Send, ^a
+        Sleep, 100
         Send, Rage Potion
         Sleep, 200
-
-        MouseMove, 1150, 420, 3
+        Send {Enter}
         Sleep, 200
 
-        Send, {WheelUp 6}
+        MouseMove, 1500, 367, 3
         Sleep, 500
-
         Click, Left
         Sleep, 200
 
-
-        MouseMove, 740, 636, 3
+        MouseMove, 200, 832, 3
         Sleep, 200
         Click, Left
         Sleep, 200
 
+        MouseMove, 1023, 432, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
         Send, ^a
         Sleep, 200
         Send, 10
         Sleep, 200
     }
 
-    MouseMove, 806, 636, 3
+    MouseMove, 1130, 432, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 return
 
 CraftDiver:
-if (IfAdded != "Diver") {
-    ToolTip
-    MouseMove, 910, 333, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-    Send, Diver Potion
-    Sleep, 200
+ToolTip
+    if (IfAdded != "Diver") {
+        MouseMove, 1500, 275, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
+        Send, ^a
+        Sleep, 100
+        Send, Diver Potion
+        Sleep, 200
+        Send {Enter}
+        Sleep, 200
 
-    MouseMove, 1150, 420, 3
-    Sleep, 200
+        MouseMove, 1500, 367, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 200
 
-    Send, {WheelUp 6}
-    Sleep, 500
+        MouseMove, 200, 832, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
 
-    Click, Left
-    Sleep, 200
-
-    MouseMove, 740, 636, 3
-    Sleep, 200
-    Click, Left
-    Sleep, 200
-
+        MouseMove, 1023, 432, 3
+        Sleep, 200
+        Click, Left
+        Sleep, 200
         Send, ^a
         Sleep, 200
         Send, 20
         Sleep, 200
     }
 
-    MouseMove, 806, 636, 3
+    MouseMove, 1130, 432, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
 
-    MouseMove, 585, 585, 3
+    MouseMove, 1130, 693, 3
     Sleep, 1000
     Click, Left
     Sleep, 1000
@@ -2420,22 +2169,7 @@ CraftSelected:
     } else if (selectedItem = "Bound Potion") {
         Gosub, CraftBound
         Sleep, 500
-        IfAdded := "Bound"
-
-    } else if (selectedItem = "Zeus Potion") {
-        Gosub, CraftZeus
-        Sleep, 500
-        IfAdded := "Zeus"
-
-    } else if (selectedItem = "Hades Potion") {
-        Gosub, CraftHades
-        Sleep, 500
-        IfAdded := "Hades"
-
-    } else if (selectedItem = "Poseidon Potion") {
-        Gosub, CraftPoseidon
-        Sleep, 500
-        IfAdded := "Poseidon"
+        IfAdded := "Bounded"
 
     } else if (selectedItem = "Jewelry Potion") {
         Gosub, CraftJewerly
@@ -2457,57 +2191,6 @@ CraftSelected:
         Sleep, 500
         IfAdded := "Diver"
     }
-return
-
-CollectSnowman:
-    Send, {a Down}
-    Sleep, 3000
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 500
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {a Down}
-    Sleep, 2350
-    Send, {a Up}
-    Sleep, 50
-
-    Send, {w Down}
-    Sleep, 200
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {e Down}
-    Sleep, 150
-    Send, {e Up}
-    Sleep, 50
-
-    Send, {Esc}
-    Sleep, 500
-
-     Send, r
-     Sleep, 500
-
-    Send, {Enter}
-     Sleep, 3000
 return
 
 CraftArchDevice:
@@ -2555,30 +2238,35 @@ CraftArchDevice:
     Click, Left
     Sleep, 600
     MouseMove, 670, 949, 3
-    Sleep, 250
-    Click, Left
     Sleep, 800
-    MouseMove, 900, 365, 3
+    Click, Left
+    Sleep, 1500
+    MouseMove, 1500, 267, 3
     Sleep, 350
     Click, Left
     Sleep, 350
-    Send, Angel Device
+    Send, ^a
+    Sleep, 100
+    Send, Heavenly Device
     Sleep, 350
-    MouseMove, 1111, 444, 3
+    Send, {Enter} 
+    Sleep, 350
+    MouseMove, 1500, 367, 3
     Sleep, 250
-    Send, {WheelUp 25}
-    Sleep, 500
     Click, Left
     Sleep, 500
-    MouseMove, 600, 700, 3
+    MouseMove, 220, 830, 3
+    Sleep, 350
+    Click, Left
     Sleep, 400
+    MouseMove, 967, 500, 3
     Send, {WheelUp 25}
     Sleep, 800
     Send, {WheelDown 25}
     Sleep, 800
 
     ; Divnus Angel (7)
-    MouseMove, 800, 770, 3
+    MouseMove, 1140, 630, 3
     Sleep, 250
     Click, Left
     Sleep, 500
@@ -2596,7 +2284,7 @@ CraftArchDevice:
     Sleep, 250
 
     ; Hope (5)
-    MouseMove, 800, 720, 3
+    MouseMove, 1140, 575, 3
     Sleep, 250
     Click, Left
     Sleep, 500
@@ -2610,11 +2298,11 @@ CraftArchDevice:
     Sleep, 250
 
     ; Faith (1)
-    MouseMove, 800, 665, 3
+    MouseMove, 1140, 525, 3
     Sleep, 250
     Click, Left
     Sleep, 1000
-    MouseMove, 1420, 302, 3
+    MouseMove, 1858, 186, 3
     Sleep, 250
     Click, Left
     Sleep, 500
@@ -2674,31 +2362,35 @@ CraftMatrixSteampunk:
     MouseMove, 670, 949, 3
     Sleep, 250
     Click, Left
-    Sleep, 800
+    Sleep, 1500
 
 
-    MouseMove, 1150, 340,3
+    MouseMove, 1640, 230,3
     Sleep, 250
     Click, Left
-    MouseMove, 900, 365, 3
+    MouseMove, 1500, 267, 3
     Sleep, 350
     Click, Left
     Sleep, 350
+    Send, ^a
+    sleep, 100
     Send, Steampunk
-    Sleep, 350
-    MouseMove, 1111, 444, 3
+    Sleep, 100
+    Send, {Enter}
+    MouseMove, 1500, 367, 3
     Sleep, 250
-    Send, {WheelUp 25}
-    Sleep, 500
     Click, Left
     Sleep, 500
-    MouseMove, 600, 700, 3
+    MouseMove, 220, 830, 3
+    Sleep, 350
+    Click, Left
     Sleep, 400
+    MouseMove, 967, 500, 3
     Send, {WheelUp 25}
     Sleep, 800
 
     ; Magnetic Polarity (5)
-    MouseMove, 800, 690, 3
+    MouseMove, 1140, 490, 3
     Click, Left
     Sleep, 500
     Click, Left
@@ -2711,7 +2403,7 @@ CraftMatrixSteampunk:
     Sleep, 500
 
     ; Virtual (3)
-    MouseMove, 800, 740, 3
+    MouseMove, 1140, 540, 3
     Click, Left
     Sleep, 500
     Click, Left
@@ -2720,9 +2412,7 @@ CraftMatrixSteampunk:
     Sleep, 500
 
     ; Zeus (2)
-    Send, {WheelUp 1}
-    Sleep, 500
-    MouseMove, 800, 670, 3
+    MouseMove, 1140, 595, 3
     Sleep, 300
     Click, Left
     Sleep, 500
@@ -2730,12 +2420,12 @@ CraftMatrixSteampunk:
     Sleep, 500
 
     ; Hypervolt (1)
-    MouseMove, 800, 725, 3
+    MouseMove, 540, 650, 3
     Sleep, 300
     Click, Left
-    Sleep, 500
+    Sleep, 1000
 
-    MouseMove, 1400, 300, 3
+    MouseMove, 1858, 186, 3
     Sleep, 300
     Click, Left
 
@@ -2792,30 +2482,35 @@ CraftRunicDevice:
     Click, Left
     Sleep, 600
     MouseMove, 670, 949, 3
-    Sleep, 250
-    Click, Left
     Sleep, 800
-    MouseMove, 900, 365, 3
+    Click, Left
+    Sleep, 1500
+    MouseMove, 1500, 267, 3
     Sleep, 350
     Click, Left
     Sleep, 350
+    Send, ^a
+    Sleep, 100
     Send, Unfathomable Ruins
     Sleep, 350
-    MouseMove, 1111, 444, 3
+    Send, {Enter} 
+    Sleep, 350
+    MouseMove, 1500, 367, 3
     Sleep, 250
-    Send, {WheelUp 25}
-    Sleep, 500
     Click, Left
     Sleep, 500
-    MouseMove, 600, 700, 3
+    MouseMove, 220, 830, 3
+    Sleep, 350
+    Click, Left
     Sleep, 400
+    MouseMove, 967, 500, 3
     Send, {WheelUp 25}
     Sleep, 800
     Send, {WheelDown 25}
     Sleep, 800
 
     ; Flows (15)
-    MouseMove, 800, 720, 3
+    MouseMove, 1140, 580, 3
     Sleep, 250
     Click, Left
     Sleep, 500
@@ -2846,7 +2541,13 @@ CraftRunicDevice:
     Click, Left
     Sleep, 500
     Click, Left
+    Sleep, 1000
+
+    MouseMove, 1858, 186, 3
     Sleep, 250
+    Click, Left
+    Sleep, 500
+
 
     Send, {Esc}
     Sleep, 500
@@ -3061,76 +2762,106 @@ F6::
     if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
         return
 
+    if (nvidiaReplay && detectTranscendents && detectLimbo) {
+        SetTimer, DoContract, Off
+        SetTimer, DoClip, Off
+        SetTimer, DoClip2, Off
+        if (clipWebhook) {
+            try SendWebhook(":x: Clipping and Contracting Canceled", 0)
+        }
+        ToolTip, Clipping and Eden Detection Restarting in 5 Seconds..., 820, 25
+        sleep, 1000
+        ToolTip,  Clipping and Eden Detection Restarting in 4 Seconds..., 820, 25
+        sleep, 1000
+        ToolTip,  Clipping and Eden Detection Restarting in 3 Seconds..., 820, 25
+        sleep, 1000
+        ToolTip,  Clipping and Eden Detection Restarting in 2 Seconds..., 820, 25
+        sleep, 1000
+        ToolTip,  Clipping and Eden Detection Restarting in 1 Seconds..., 820, 25
+        sleep, 1000
+        ToolTip
+        SetTimer, DoContract, 50
+        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel2, 10
+        if (clipWebhook) {
+        try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
+        }
+    }
+
     if (detectLimbo && !nvidiaReplay && detectTranscendents) {
         SetTimer, DoContract, Off
         if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
+            try SendWebhook(":warning: Contracting Canceled", 0)
         }
-        if (detectLimbo) {
-            ToolTip, Detecting will start in 5 Seconds, 800, 10
-            sleep, 5000
-            SetTimer, CheckPixel3, 50
-            ToolTip
+        ToolTip, Detecting will start in 5 Seconds, 888, 10
+        sleep, 5000
+        SetTimer, CheckPixel3, 50
+        ToolTip
+        if (clipWebhook) {
+        try SendWebhook(":warning: Eden Detection Started", 0)
         }
     } else if (detectLimbo && nvidiaReplay && !detectTranscendents) {
         SetTimer, DoContract, Off
         if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
+            try SendWebhook(":warning: Contracting Canceled", 0)
         }
-        if (detectLimbo) {
-            ToolTip, Detecting will start in 5 Seconds, 800, 10
-            sleep, 5000
-            SetTimer, CheckPixel3, 50
-            ToolTip
+        ToolTip, Detecting will start in 5 Seconds, 888, 10
+        sleep, 5000
+        SetTimer, CheckPixel3, 50
+        ToolTip
+        if (clipWebhook) {
+        try SendWebhook(":warning: Eden Detection Started", 0)
         }
     } else if (detectLimbo && !nvidiaReplay && !detectTranscendents) {
         SetTimer, DoContract, Off
         if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
+            try SendWebhook(":warning: Contracting Canceled", 0)
         }
-        if (detectLimbo) {
-            ToolTip, Detecting will start in 5 Seconds, 800, 10
-            sleep, 5000
-            SetTimer, CheckPixel3, 50
-            ToolTip
+        ToolTip, Detecting will start in 5 Seconds, 888, 10
+        sleep, 5000
+        SetTimer, CheckPixel3, 50
+        ToolTip
+        if (clipWebhook) {
+        try SendWebhook(":warning: Eden Detection Started", 0)
         }
-    }
+        }
+
     if (nvidiaReplay && !detectLimbo) {
         SetTimer, DoClip, Off
         if (detectTranscendents) {
             SetTimer, DoClip2, Off
         }
         if (clipWebhook) {
-            try SendWebhook(":warning: Clipping Canceled", 14495300)
+            try SendWebhook(":x: Clipping Canceled", 0)
         }
         if (nvidiaReplay && detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
             sleep, 1000
             ToolTip
             SetTimer, CheckPixel, 10
             SetTimer, CheckPixel2, 10
             if (clipWebhook) {
-            try SendWebhook(":warning: Clipping Re-Enabled", 0)
+            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
         }
         if (nvidiaReplay && !detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
             sleep, 1000
             ToolTip
             SetTimer, CheckPixel, 10
@@ -3143,23 +2874,23 @@ F6::
         SetTimer, DoClip2, Off
         ToolTip
         if (clipWebhook) {
-            try SendWebhook(":warning: Clipping Canceled", 14495300)
+            try SendWebhook(":x: Clipping Canceled", 0)
         }
         if (detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
             sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 850, 25
+            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
             sleep, 1000
             ToolTip
             SetTimer, CheckPixel2, 10
             if (clipWebhook) {
-            try SendWebhook(":warning: Clipping Re-Enabled", 0)
+            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
     }
 }
@@ -3176,12 +2907,10 @@ if (toggle) {
     global autoUnequip
     global useNothing
     global autoCloseChat
-    global snowmanCollect
     global strangeController
     global biomeRandomizer
     global DoBiomeRandomizer
     global DoStrangeController
-    global CollectSnowman
     global CraftArchDevice
     global CraftMatrixSteampunk
     global code
@@ -3294,8 +3023,6 @@ if (toggle) {
         Gosub, DoBiomeRandomizer
     }
 
-
-
         MouseMove, 47, 467, 3
         sleep 220
         Click, Left
@@ -3309,33 +3036,114 @@ if (toggle) {
 		Click, WheelDown 45
 		sleep 300
 
- 
-        if (snowmanCollect) {
-            Gosub, CollectSnowman
-        }
-
         if (archDevice && !steampunkAura && !addFlows) {
             Gosub, CraftArchDevice
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
         }
 
         if !archDevice && steampunkAura && !addFlows {
             Gosub, CraftMatrixSteampunk
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
         }
 
         if !archDevice && !steampunkAura && addFlows {
             Gosub, CraftRunicDevice
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
         }
 
         if archDevice && steampunkAura && !addFlows {
             Gosub, CraftArchDevice
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
             Sleep, 500
             Gosub, CraftMatrixSteampunk
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
         }
 
         if !archDevice && steampunkAura && addFlows {
             Gosub, CraftMatrixSteampunk
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
             Sleep, 500
             Gosub, CraftRunicDevice
+            sleep, 500
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
         }
 
         if archDevice && !steampunkAura && addFlows {
@@ -3389,32 +3197,38 @@ if (toggle) {
             MouseMove, 670, 949, 3
             Sleep, 250
             Click, Left
-            Sleep, 800
+            Sleep, 1500
 
-            MouseMove, 900, 340
+            MouseMove, 670, 949, 3
+            Sleep, 800
+            Click, Left
+            Sleep, 800
+            MouseMove, 1500, 267, 3
             Sleep, 350
             Click, Left
-            MouseMove, 900, 365, 3
             Sleep, 350
-            Click, Left
+            Send, ^a
+            Sleep, 100
+            Send, Heavenly Device
             Sleep, 350
-            Send, Angel Device
+            Send, {Enter} 
             Sleep, 350
-            MouseMove, 1111, 444, 3
+            MouseMove, 1500, 367, 3
             Sleep, 250
-            Send, {WheelUp 25}
-            Sleep, 500
             Click, Left
             Sleep, 500
-            MouseMove, 600, 700, 3
+            MouseMove, 220, 830, 3
+            Sleep, 350
+            Click, Left
             Sleep, 400
+            MouseMove, 967, 500, 3
             Send, {WheelUp 25}
             Sleep, 800
             Send, {WheelDown 25}
             Sleep, 800
 
             ; Divnus Angel (7)
-            MouseMove, 800, 770, 3
+            MouseMove, 1140, 630, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3432,7 +3246,7 @@ if (toggle) {
             Sleep, 250
 
             ; Hope (5)
-            MouseMove, 800, 720, 3
+            MouseMove, 1140, 575, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3446,32 +3260,37 @@ if (toggle) {
             Sleep, 250
 
             ; Faith (1)
-            MouseMove, 800, 665, 3
+            MouseMove, 1140, 525, 3
             Sleep, 250
             Click, Left
             Sleep, 1000
 
-            MouseMove, 900, 365, 3
+            MouseMove, 1500, 267, 3
             Sleep, 350
             Click, Left
             Sleep, 350
+            Send, ^a
+            Sleep, 100
             Send, Unfathomable Ruins
             Sleep, 350
-            MouseMove, 1111, 444, 3
+            Send, {Enter} 
+            Sleep, 350
+            MouseMove, 1500, 367, 3
             Sleep, 250
-            Send, {WheelUp 25}
-            Sleep, 500
             Click, Left
             Sleep, 500
-            MouseMove, 600, 700, 3
+            MouseMove, 220, 830, 3
+            Sleep, 350
+            Click, Left
             Sleep, 400
+            MouseMove, 967, 500, 3
             Send, {WheelUp 25}
             Sleep, 800
             Send, {WheelDown 25}
             Sleep, 800
 
             ; Flows (15)
-            MouseMove, 800, 770, 3
+            MouseMove, 1140, 580, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3502,19 +3321,31 @@ if (toggle) {
             Click, Left
             Sleep, 500
             Click, Left
-            Sleep, 750
+            Sleep, 1000
 
-            MouseMove, 1400, 300, 3
-            Sleep, 300
+            MouseMove, 1858, 186, 3
+            Sleep, 250
             Click, Left
-            Sleep, 300
+            Sleep, 500
 
             Send, {Esc}
             Sleep, 500
             Send, r
             Sleep, 500
             Send, {Enter}
-            Sleep, 3500
+            Sleep, 4000
+
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
         }
 
         if archDevice && steampunkAura && addFlows {
@@ -3568,32 +3399,38 @@ if (toggle) {
             MouseMove, 670, 949, 3
             Sleep, 250
             Click, Left
-            Sleep, 800
+            Sleep, 1500
 
-            MouseMove, 900, 340
+            MouseMove, 670, 949, 3
+            Sleep, 800
+            Click, Left
+            Sleep, 800
+            MouseMove, 1500, 267, 3
             Sleep, 350
             Click, Left
-            MouseMove, 900, 365, 3
             Sleep, 350
-            Click, Left
+            Send, ^a
+            Sleep, 100
+            Send, Heavenly Device
             Sleep, 350
-            Send, Angel Device
+            Send, {Enter} 
             Sleep, 350
-            MouseMove, 1111, 444, 3
+            MouseMove, 1500, 367, 3
             Sleep, 250
-            Send, {WheelUp 25}
-            Sleep, 500
             Click, Left
             Sleep, 500
-            MouseMove, 600, 700, 3
+            MouseMove, 220, 830, 3
+            Sleep, 350
+            Click, Left
             Sleep, 400
+            MouseMove, 967, 500, 3
             Send, {WheelUp 25}
             Sleep, 800
             Send, {WheelDown 25}
             Sleep, 800
 
             ; Divnus Angel (7)
-            MouseMove, 800, 770, 3
+            MouseMove, 1140, 630, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3611,7 +3448,7 @@ if (toggle) {
             Sleep, 250
 
             ; Hope (5)
-            MouseMove, 800, 720, 3
+            MouseMove, 1140, 575, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3625,34 +3462,37 @@ if (toggle) {
             Sleep, 250
 
             ; Faith (1)
-            MouseMove, 800, 665, 3
+            MouseMove, 1140, 525, 3
             Sleep, 250
             Click, Left
             Sleep, 1000
 
-
-
-            MouseMove, 900, 365, 3
+            MouseMove, 1500, 267, 3
             Sleep, 350
             Click, Left
             Sleep, 350
+            Send, ^a
+            Sleep, 100
             Send, Unfathomable Ruins
             Sleep, 350
-            MouseMove, 1111, 444, 3
+            Send, {Enter} 
+            Sleep, 350
+            MouseMove, 1500, 367, 3
             Sleep, 250
-            Send, {WheelUp 25}
-            Sleep, 500
             Click, Left
             Sleep, 500
-            MouseMove, 600, 700, 3
+            MouseMove, 220, 830, 3
+            Sleep, 350
+            Click, Left
             Sleep, 400
+            MouseMove, 967, 500, 3
             Send, {WheelUp 25}
             Sleep, 800
             Send, {WheelDown 25}
             Sleep, 800
 
             ; Flows (15)
-            MouseMove, 800, 770, 3
+            MouseMove, 1140, 580, 3
             Sleep, 250
             Click, Left
             Sleep, 500
@@ -3683,31 +3523,34 @@ if (toggle) {
             Click, Left
             Sleep, 500
             Click, Left
-            Sleep, 750
+            Sleep, 250
 
-            ; Steampunk
-            MouseMove, 1150, 340,3
+            MouseMove, 1640, 230,3
             Sleep, 250
             Click, Left
-            MouseMove, 900, 365, 3
+            MouseMove, 1500, 267, 3
             Sleep, 350
             Click, Left
             Sleep, 350
+            Send, ^a
+            sleep, 100
             Send, Steampunk
-            Sleep, 350
-            MouseMove, 1111, 444, 3
+            Sleep, 100
+            Send, {Enter}
+            MouseMove, 1500, 367, 3
             Sleep, 250
-            Send, {WheelUp 25}
-            Sleep, 500
             Click, Left
             Sleep, 500
-            MouseMove, 600, 700, 3
+            MouseMove, 220, 830, 3
+            Sleep, 350
+            Click, Left
             Sleep, 400
+            MouseMove, 967, 500, 3
             Send, {WheelUp 25}
             Sleep, 800
 
             ; Magnetic Polarity (5)
-            MouseMove, 800, 690, 3
+            MouseMove, 1140, 490, 3
             Click, Left
             Sleep, 500
             Click, Left
@@ -3720,7 +3563,7 @@ if (toggle) {
             Sleep, 500
 
             ; Virtual (3)
-            MouseMove, 800, 740, 3
+            MouseMove, 1140, 540, 3
             Click, Left
             Sleep, 500
             Click, Left
@@ -3729,9 +3572,7 @@ if (toggle) {
             Sleep, 500
 
             ; Zeus (2)
-            Send, {WheelDown 1}
-            Sleep, 500
-            MouseMove, 800, 670, 3
+            MouseMove, 1140, 595, 3
             Sleep, 300
             Click, Left
             Sleep, 500
@@ -3739,23 +3580,35 @@ if (toggle) {
             Sleep, 500
 
             ; Hypervolt (1)
-            MouseMove, 800, 725, 3
+            MouseMove, 540, 650, 3
             Sleep, 300
             Click, Left
-            Sleep, 500
+            Sleep, 1000
 
-            MouseMove, 1400, 300, 3
+            MouseMove, 1858, 186, 3
             Sleep, 300
             Click, Left
-            Sleep, 300
 
             Send, {Esc}
             Sleep, 500
             Send, r
             Sleep, 500
             Send, {Enter}
-            Sleep, 3500
-        }
+            Sleep, 4000
+
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            
+    } 
 
 
 
