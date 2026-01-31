@@ -22,10 +22,11 @@ nvidiaReplay := false
 detectLimbo := false
 detectTranscendents :=false
 transcendentCounters := {}
-transcendentColors := [0x060908, 0xC2C2C2, 0x566980]
+transcendentColors := [0x060908, 0xC2C2C2, 0xFEFEFE, 0x566980]
 transcendentColorNames := {}
 transcendentColorNames[0x060908] := "Equinox1"
 transcendentColorNames[0xC2C2C2] := "Equinox2"
+transcendentColorNames[0xFEFEFE] := "Equinox3"
 transcendentColorNames[0x566980] := "Luminosity1"
 lastTranscendentColor := ""
 lastTranscendentColor2 := ""
@@ -59,8 +60,6 @@ steampunkAura := false
 autoClicker := false
 addFlows := false
 IfAdded := ""
-global ClipPending := false
-global ClipType := ""
 
 
 if (FileExist(iniFilePath)) {
@@ -597,13 +596,14 @@ Gui, Add, Text, x250 y324 w100 h25 BackgroundTrans c0xCCCCCC, Ping User:
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Clip Message
 Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
-Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 Gui, Add, Button, x320 y390 w80 h25 gToggleDoPing2 vDoPing2Btn, Toggle
-Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 Gui, Font, s7 cWhite Normal
 Gui, Add, Text, x465 y376 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
+Gui, Font, s10 c0xCCCCCC Bold
+Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
+Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 
 Gui, Tab, Crafting
 
@@ -1011,7 +1011,6 @@ if (addFlows) {
     GuiControl,, AddFlowsStatus, OFF
     GuiControl, +c0xFF4444, AddFlowsStatus
 }
-
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -1403,7 +1402,7 @@ ToggleDetectTranscendents:
         for index, _ in transcendentPixels
             transcendentCounters[index] := 0
 
-        SetTimer, CheckPixel2, 25
+        SetTimer, CheckPixel2, 10
     } else {
         GuiControl,, DetectTranscendentsStatus, OFF
         GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -1419,7 +1418,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 25
+        SetTimer, CheckPixel, 10
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1569,8 +1568,9 @@ CheckPixel:
 
     PixelGetColor, pos1, 1111, 80, RGB
     PixelGetColor, pos2, 600, 80, RGB
+    PixelGetColor, pos3, 400, 80, RGB
 
-    if (pos1 && pos2 = 0xFFFFFF && !ClipPending) {
+    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF && pos3 = 0xFFFFFF && !ClipPending) {
         ClipPending := true
         ClipType := "global"
         ShowClipText()
@@ -1595,10 +1595,6 @@ CheckPixel2:
             transcendentCounters[index]++
             lastTranscendentColor := colort
             ShowClipText()
-
-            SetTimer, DoClip, Off
-            ClipPending := true
-            ClipType := "transcendent"
             SetTimer, DoClip2, -%triggerDelay2%
         }
     }
@@ -1650,9 +1646,8 @@ CheckPixel3:
 return
 
 DoClip2:
+global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
 if (clipWebhook) {
-    global lastTranscendentColor, transcendentColorNames
-    global lastTranscendentColor2
     Send, !{F10}
 
     sleep, 1500
@@ -1664,7 +1659,7 @@ if (clipWebhook) {
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2") {
+    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3" ) {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
     } else if (colorName = "Luminosity1") {
@@ -1698,11 +1693,9 @@ if (clipWebhook) {
     ToolTip
 }
 } else if (!clipWebhook) {
-    ToolTip
     Send, !{F10}
+    ToolTip
 }
-ClipPending := false
-ClipType := ""
 return
 
 DoClip:
@@ -3034,7 +3027,7 @@ F4::
     autocrafting := true
 
     if (onoffWebhook) {
-        try SendWebhook("Crafting Started", 7909721)
+        try SendWebhook(":tools: Crafting Started", 7909721)
     }
 
     ToolTip, Crafting will start in 5 seconds..., 900, 10
@@ -3058,7 +3051,7 @@ if (!autocrafting)
    return
 
    if (onoffWebhook) {
-        try SendWebhook("Crafting Stopped", "14495300")
+        try SendWebhook(":tools: Crafting Stopped", "14495300")
    }
 
     autocrafting := false
@@ -3076,53 +3069,6 @@ if (!autocrafting)
     Sleep 1000
     ToolTip
 return
-
-F6::
-    if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
-        return
-
-    if (detectLimbo && !nvidiaReplay && detectTranscendents) {
-        SetTimer, DoContract, Off
-        ToolTip
-        if (clipWebhook)
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
-        return
-    } else if (detectLimbo && nvidiaReplay && !detectTranscendents) {
-        SetTimer, DoContract, Off
-        ToolTip
-        if (clipWebhook)
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
-        return
-    } else if (detectLimbo && !nvidiaReplay && !detectTranscendents) {
-        SetTimer, DoContract, Off
-        ToolTip
-        if (clipWebhook)
-            try SendWebhook(":warning: Contracting Canceled", 14495300)
-        return
-    }
-
-    if (nvidiaReplay && !detectLimbo) {
-        SetTimer, DoClip, Off
-
-        if (detectTranscendents)
-            SetTimer, DoClip2, Off
-
-        ToolTip
-        if (clipWebhook)
-            try SendWebhook(":warning: Clipping Canceled", 14495300)
-        return
-    }
-
-    if (detectTranscendents && !detectLimbo && !nvidiaReplay) {
-        SetTimer, DoClip2, Off
-        ToolTip
-        if (clipWebhook)
-            try SendWebhook(":warning: Clipping Canceled", 14495300)
-        return
-    }
-return
-
-
 
 
 ;1080p
