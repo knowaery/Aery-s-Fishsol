@@ -1559,7 +1559,7 @@ HideTranscendentOutline() {
 }
 
 CheckPixel:
-    global nvidiaReplay, triggerDelay, ClipPending, ClipType
+    global nvidiaReplay, triggerDelay
 
     if (!nvidiaReplay)
         return
@@ -1568,9 +1568,7 @@ CheckPixel:
     PixelGetColor, pos2, 600, 80, RGB
     PixelGetColor, pos3, 400, 80, RGB
 
-    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF && pos3 = 0xFFFFFF && !ClipPending) {
-        ClipPending := true
-        ClipType := "global"
+    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF && pos3 = 0xFFFFFF) {
         ShowClipText()
         SetTimer, DoClip, -%triggerDelay%
     }
@@ -1601,10 +1599,6 @@ CheckPixel2:
     if (levicolor = 0x000201) {
         ShowClipText()
         lastTranscendentColor2 := "Leviathan"
-
-        SetTimer, DoClip, Off
-        ClipPending := true
-        ClipType := "transcendent"
         SetTimer, DoClip2, -%triggerDelay2%
     }
 
@@ -1616,10 +1610,6 @@ CheckPixel2:
     if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
         ShowClipText()
         lastTranscendentColor2 := "Breakthrough"
-
-        SetTimer, DoClip, Off
-        ClipPending := true
-        ClipType := "transcendent"
         SetTimer, DoClip2, -%triggerDelay2%
     }
 return
@@ -1715,8 +1705,6 @@ if (clipWebhook) {
     Send, !{F10}
     ToolTip
 }
-ClipPending := false
-ClipType := ""
 return
 
 
