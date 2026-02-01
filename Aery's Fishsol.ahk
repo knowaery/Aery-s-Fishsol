@@ -19,7 +19,6 @@ azertyPathing := false
 autoUnequip := false
 useNothing := false
 nvidiaReplay := false
-detectLimbo := false
 detectTranscendents :=false
 transcendentCounters := {}
 transcendentColors := [0x060908, 0xC2C2C2, 0xFEFEFE, 0x566980]
@@ -164,10 +163,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAzerty, %iniFilePath%, Macro, azertyPathing
     if (tempAzerty != "ERROR")
     azertyPathing := (tempAzerty = "true" || tempAzerty = "1")
-
-    IniRead, tempDetectLimbo, %iniFilePath%, Macro, detectLimbo
-    if (tempDetectLimbo != "ERROR")
-    detectLimbo := (tempDetectLimbo = "true" || tempDetectLimbo = "1")
 
     IniRead, tempGlobalArea, %iniFilePath%, Macro, globalArea
     if (tempGlobalArea != "ERROR")
@@ -323,7 +318,7 @@ if (dev3_name = "ivelchampion249") {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.2
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.3
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -506,41 +501,25 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y348 w70 h25 vDetectTranscendentsStatus BackgroundTrans, OFF
 
 
-; Limbo Gloabls
-
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y390 w534 h120 cWhite, Detect and Contract Eden
-Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y440 w520 h145 BackgroundTrans, Temporary until I find the motivation to be able to clip all the Limbo Globals
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y410 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Not even tested lol)
-Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x183 y479 w400 h135 BackgroundTrans, 
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x230 y477 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y475 w80 h25 gToggleDetectLimbo vDetectLimboBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y478 w60 h25 vDetectLimboStatus BackgroundTrans, OFF
-
-
 ; Highlight Area
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y520 w534 h75 cWhite, Highlight Detection Area
+Gui, Add, GroupBox, x33 y420 w534 h75 cWhite, Highlight Detection Area
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
-Gui, Add, Text, x173 y566 w520 h145 BackgroundTrans, (Globals | Spamming = Lag)
-Gui, Add, Text, x470 y566 w520 h145 BackgroundTrans, (Transcendents)
+Gui, Add, Text, x45 y440 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
+Gui, Add, Text, x173 y466 w520 h145 BackgroundTrans, (Globals | Spamming = Lag)
+Gui, Add, Text, x470 y466 w520 h145 BackgroundTrans, (Transcendents)
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y561 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
-Gui, Add, Button, x345 y561 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
+Gui, Add, Button, x45 y461 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
+Gui, Add, Button, x345 y461 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x143 y566 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
-Gui, Add, Text, x440 y566 w60 h25 vTransAreaStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y466 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
+Gui, Add, Text, x440 y466 w60 h25 vTransAreaStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x30 y618 w520 h145 BackgroundTrans, F6 to Cancel Clipping
+Gui, Font, s11 cWhite Bold
+Gui, Add, Text, x220 y530 w520 h145 BackgroundTrans, F6 to Cancel Clipping
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y550 w520 h145 BackgroundTrans,When watermark appears but no global is rolled, it will clip anyway and F6 will stop the clipping process, preventing unnecessary amount of clips with no global.
 
 Gui, Tab, Webhook
 
@@ -630,14 +609,14 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y400 w271 h95 cWhite, Add Flows to Runic Device
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y420 w260 h60 BackgroundTrans, Automatically adds Flows to the Runic Device before going to the fish sell shop.
-Gui, Add, Text, x37 y500 w310 h60 BackgroundTrans, (ill prob not add the other auras, i had said i wasnt gonna add ts already)
+Gui, Add, Text, x37 y500 w250 h60 BackgroundTrans, (ill prob not add the other auras, i had said i wasnt gonna add ts already)
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Button, x37 y460 w70 h25 gToggleAddFlows vAddFlowsBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x120 y464 w60 h25 vAddFlowsStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x37 y550 w550 h60 BackgroundTrans, (I DO NOT RECOMMEND PUT THESE ON RN, SOMETIMES WHEN YOU OPEN CRAFT MENU YOUR SCREEN STAYS BLACK)
-Gui, Add, Text, x37 y600 w550 h60 BackgroundTrans, (AutoCraft Works)
+Gui, Add, Text, x37 y550 w550 h60 BackgroundTrans, (I DO NOT RECOMMEND YOU TURN THESE ON RN, SOMETIMES WHEN YOU OPEN CRAFT MENU, YOUR SCREEN STAYS BLACK)
+Gui, Add, Text, x37 y600 w550 h60 BackgroundTrans, Auto Craft Works
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Angel Device
@@ -748,10 +727,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.3
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.3
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishSol v1.3
+Gui, Show, w600 h670,  Aery's fishsol v1.3
 
 if (res = "1080p") {
     GuiControl, Choose, Resolution, 1
@@ -818,16 +797,6 @@ if (autoCloseChat) {
 } else {
     GuiControl,, AutoCloseChatStatus, OFF
     GuiControl, +c0xFF4444, AutoCloseChatStatus
-}
-if (detectLimbo) {
-    GuiControl,, DetectLimboStatus, ON
-    GuiControl, +c0x00DD00, DetectLimboStatus
-    triggerDelay3 := 20000
-    SetTimer, CheckPixel3, 50
-} else {
-    GuiControl,, DetectLimboStatus, OFF
-    GuiControl, +c0xFF4444, DetectLimboStatus
-    SetTimer, CheckPixel3, Off
 }
 if (biomeRandomizer) {
     GuiControl,, BiomeRandomizerStatus, ON
@@ -1254,21 +1223,6 @@ ToggleAddFlows:
     IniWrite, % (addFlows ? "true" : "false"), %iniFilePath%, Macro, addFlows
 return
 
-ToggleDetectLimbo:
-    detectLimbo := !detectLimbo
-    if (detectLimbo) {
-        GuiControl,, DetectLimboStatus, ON
-        GuiControl, +c0x00DD00, DetectLimboStatus
-        triggerDelay3 := 20000
-        SetTimer, CheckPixel3, 25
-    } else {
-        GuiControl,, DetectLimboStatus, OFF
-        GuiControl, +c0xFF4444, DetectLimboStatus
-        SetTimer, CheckPixel3, Off
-    }
-    IniWrite, % (detectLimbo ? "true" : "false"), %iniFilePath%, Macro, detectLimbo
-return
-
 ToggleDetectTranscendents:
     detectTranscendents := !detectTranscendents
     if (detectTranscendents) {
@@ -1350,15 +1304,12 @@ return
 
 ShowAllGlobalOutlines() {
     ShowGlobalOutline(1, 1111, 80)
-
     ShowGlobalOutline(2, 600, 80)
-    ShowGlobalOutline(3, 400, 80)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
     HideGlobalOutline(2)
-    HideGlobalOutline(3)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1447,9 +1398,8 @@ CheckPixel:
 
     PixelGetColor, pos1, 1111, 80, RGB
     PixelGetColor, pos2, 600, 80, RGB
-    PixelGetColor, pos3, 400, 80, RGB
 
-    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF && pos3 = 0xFFFFFF) {
+    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF) {
         ShowClipText()
         SetTimer, DoClip, -%triggerDelay%
     }
@@ -1495,25 +1445,6 @@ CheckPixel2:
     }
 return
 
-CheckPixel3:
-    global detectLimbo, triggerDelay3
-    global lastColor3, lastTranscendentColor2
-
-    if (!detectLimbo)
-        return
-
-    PixelGetColor, colorlimbo, 950, 180, RGB
-    PixelGetColor, colorlimbo2, 1200, 100, RGB
-    PixelGetColor, colorlimbo3, 676, 676, RGB
-
-    if (colorlimbo = 0xFFFFFF && colorlimbo2 = 0x000000 && colorlimbo3 = 0x000000) {
-            ShowClipText()
-            lastTranscendentColor2 := "Eden"
-            SetTimer, DoContract, -%triggerDelay3%
-            return
-        }
-return
-
 DoClip2:
 global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
 if (clipWebhook) {
@@ -1547,7 +1478,7 @@ if (clipWebhook) {
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2") {
+    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
     } else if (colorName = "Luminosity1") {
@@ -1586,36 +1517,6 @@ if (clipWebhook) {
     Send, !{F10}
     ToolTip
 }
-return
-
-
-DoContract:
-global lastTranscendentColor2
-    Send, e
-    sleep, 100
-    Send, e
-    sleep, 100
-    Send, e
-    sleep, 400
-    MouseMove, 800, 800, 3
-    sleep, 300
-    Click, Left
-    sleep, 800
-    MouseMove, 720, 930, 3
-    sleep, 400
-    Click, Left
-
-    if (clipWebhook && lastTranscendentColor2 = "Eden") {
-        try SendWebhook2(":tada: **Eden has been Contracted!** :tada:                                         White & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Eden.png")
-    }
-    if (!nvidiaReplay) {
-        ToolTip 
-    }
-    if (nvidiaReplay) {
-        Sleep, 30000
-        Send, !{F10}
-        ToolTip 
-    }
 return
 
 GetPingText() {
@@ -1661,7 +1562,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.3"","
+    . """text"": ""Aery's fishsol v1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1705,7 +1606,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.3"","
+    . """text"": ""Aery's fishsol v1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1740,7 +1641,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol V1.3"","
+    . """text"": ""Aery's fishsol v1.3"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1783,8 +1684,6 @@ Global Replay will NOT detect any global rolled under 99m.
 but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
-Limbo Globals: -
-Nyctophobia: -
 Eden: (Unsure)
 All Globals: +
 Pixelation: +
@@ -2759,141 +2658,78 @@ return
 
 
 F6::
-    if (!nvidiaReplay && !detectTranscendents && !detectLimbo)
+    if (!nvidiaReplay && !detectTranscendents)
         return
 
-    if (nvidiaReplay && detectTranscendents && detectLimbo) {
-        SetTimer, DoContract, Off
+    if (nvidiaReplay && detectTranscendents) {
         SetTimer, DoClip, Off
         SetTimer, DoClip2, Off
         if (clipWebhook) {
-            try SendWebhook(":x: Clipping and Contracting Canceled", 0)
+            try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping and Eden Detection Restarting in 5 Seconds..., 820, 25
+        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
         sleep, 1000
-        ToolTip,  Clipping and Eden Detection Restarting in 4 Seconds..., 820, 25
+        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
         sleep, 1000
-        ToolTip,  Clipping and Eden Detection Restarting in 3 Seconds..., 820, 25
+        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
         sleep, 1000
-        ToolTip,  Clipping and Eden Detection Restarting in 2 Seconds..., 820, 25
+        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
         sleep, 1000
-        ToolTip,  Clipping and Eden Detection Restarting in 1 Seconds..., 820, 25
+        ToolTip, Clipping Restarting in 1 Second..., 860, 25
         sleep, 1000
         ToolTip
-        SetTimer, DoContract, 50
         SetTimer, CheckPixel, 10
         SetTimer, CheckPixel2, 10
         if (clipWebhook) {
-        try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
+            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
     }
 
-    if (detectLimbo && !nvidiaReplay && detectTranscendents) {
-        SetTimer, DoContract, Off
-        if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 0)
-        }
-        ToolTip, Detecting will start in 5 Seconds, 888, 10
-        sleep, 5000
-        SetTimer, CheckPixel3, 50
-        ToolTip
-        if (clipWebhook) {
-        try SendWebhook(":warning: Eden Detection Started", 0)
-        }
-    } else if (detectLimbo && nvidiaReplay && !detectTranscendents) {
-        SetTimer, DoContract, Off
-        if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 0)
-        }
-        ToolTip, Detecting will start in 5 Seconds, 888, 10
-        sleep, 5000
-        SetTimer, CheckPixel3, 50
-        ToolTip
-        if (clipWebhook) {
-        try SendWebhook(":warning: Eden Detection Started", 0)
-        }
-    } else if (detectLimbo && !nvidiaReplay && !detectTranscendents) {
-        SetTimer, DoContract, Off
-        if (clipWebhook) {
-            try SendWebhook(":warning: Contracting Canceled", 0)
-        }
-        ToolTip, Detecting will start in 5 Seconds, 888, 10
-        sleep, 5000
-        SetTimer, CheckPixel3, 50
-        ToolTip
-        if (clipWebhook) {
-        try SendWebhook(":warning: Eden Detection Started", 0)
-        }
-        }
-
-    if (nvidiaReplay && !detectLimbo) {
+    if (nvidiaReplay && !detectTranscendents) {
         SetTimer, DoClip, Off
-        if (detectTranscendents) {
-            SetTimer, DoClip2, Off
-        }
-        if (clipWebhook) {
-            try SendWebhook(":x: Clipping Canceled", 0)
-        }
-        if (nvidiaReplay && detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip
-            SetTimer, CheckPixel, 10
-            SetTimer, CheckPixel2, 10
-            if (clipWebhook) {
-            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
-        }
-        }
-        if (nvidiaReplay && !detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip
-            SetTimer, CheckPixel, 10
-            if (clipWebhook) {
-            try SendWebhook(":warning: Clipping Re-Enabled", 0)
-        }
-        }
-    }
-    if (detectTranscendents && !detectLimbo && !nvidiaReplay) {
         SetTimer, DoClip2, Off
-        ToolTip
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        if (detectTranscendents) {
-            ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
-            sleep, 1000
-            ToolTip
-            SetTimer, CheckPixel2, 10
-            if (clipWebhook) {
+        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 1 Second..., 860, 25
+        sleep, 1000
+        ToolTip
+        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel2, 10
+        if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
     }
-}
+        
+    if (detectTranscendents && !nvidiaReplay) {
+        SetTimer, DoClip2, Off
+        if (clipWebhook) {
+             try SendWebhook(":x: Clipping Canceled", 0)
+        }
+        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
+        sleep, 1000
+        ToolTip
+        SetTimer, CheckPixel2, 10
+        if (clipWebhook) {
+                try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
+            }
+        }
 return
 
 
