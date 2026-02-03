@@ -1684,14 +1684,13 @@ Global Replay will NOT detect any global rolled under 99m.
 but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
-Eden: (Unsure)
 All Globals: +
 Pixelation: +
 Luminosity: +
-Leviathan (Unsure)
+Leviathan: (Unsure)
 Breakthrough: + 
 Equinox: +
-Monarch: idk
+Monarch: should be +
 
 
 
@@ -1766,6 +1765,7 @@ return
 CraftHeavenly:
 ToolTip
     if (IfAdded != "Heavenly") {
+        IfAdded := "Heavenly"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -1827,6 +1827,7 @@ return
 CraftBound:
 ToolTip
     if (IfAdded != "Bounded") {
+        IfAdded := "Bounded"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -1879,6 +1880,7 @@ return
 CraftJewerly:
 ToolTip
     if (IfAdded != "Jewerly") {
+        IfAdded := "Jewerly"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -1924,6 +1926,7 @@ return
 CraftZombie:
 ToolTip
     if (IfAdded != "Zombie") {
+        IfAdded := "Zombie"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -1969,6 +1972,7 @@ return
 CraftRage:
 ToolTip
     if (IfAdded != "Rage") {
+        IfAdded := "Rage"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -2014,6 +2018,7 @@ return
 CraftDiver:
 ToolTip
     if (IfAdded != "Diver") {
+        IfAdded := "Diver"
         MouseMove, 1500, 275, 3
         Sleep, 200
         Click, Left
@@ -2062,33 +2067,14 @@ CraftSelected:
 
     if (selectedItem = "Heavenly Potion") {
         Gosub, CraftHeavenly
-        Sleep, 500
-        IfAdded := "Heavenly"
-
     } else if (selectedItem = "Bound Potion") {
         Gosub, CraftBound
-        Sleep, 500
-        IfAdded := "Bounded"
-
     } else if (selectedItem = "Jewelry Potion") {
         Gosub, CraftJewerly
-        Sleep, 500
-        IfAdded := "Jewerly"
-
     } else if (selectedItem = "Zombie Potion") {
         Gosub, CraftZombie
-        Sleep, 500
-        IfAdded := "Zombie"
-
     } else if (selectedItem = "Rage Potion") {
         Gosub, CraftRage
-        Sleep, 500
-        IfAdded := "Rage"
-
-    } else if (selectedItem = "Diver Potion") {
-        Gosub, CraftDiver
-        Sleep, 500
-        IfAdded := "Diver"
     }
 return
 
@@ -2633,7 +2619,7 @@ return
 
 
 F5:: 
-if (!autocrafting)
+if (!autocrafting || toggle)
    return
 
    if (onoffWebhook) {
@@ -2643,6 +2629,7 @@ if (!autocrafting)
     autocrafting := false
     SetTimer, CraftSelected, Off
 
+    
     ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (5), 800, 10
     sleep 1000
     ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (4), 800, 10
@@ -2654,6 +2641,7 @@ if (!autocrafting)
     ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (1), 800, 10
     Sleep 1000
     ToolTip
+    IfAdded := ""
 return
 
 
@@ -2749,6 +2737,7 @@ if (toggle) {
     global DoStrangeController
     global CraftArchDevice
     global CraftMatrixSteampunk
+    global addFlows
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
