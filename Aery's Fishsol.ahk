@@ -148,7 +148,8 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDetectTranscendent, %iniFilePath%, Macro, detectTranscendents, false
     detectTranscendents := (tempDetectTranscendent = "true" || tempDetectTranscendent = "1")
 
-    IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, falsez
+    IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, false
+    autoCloseChat := (tempAutoCloseChat = "true" || tempAutoCloseChat = "1")
 
     IniRead, tempBiomeRandomizer, %iniFilePath%, Macro, biomeRandomizer
     if (tempBiomeRandomizer != "ERROR")
