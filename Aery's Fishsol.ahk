@@ -21,12 +21,11 @@ useNothing := false
 nvidiaReplay := false
 detectTranscendents :=false
 transcendentCounters := {}
-transcendentColors := [0x060908, 0xC2C2C2, 0xFEFEFE, 0x566980]
+transcendentColors := [0x060908, 0xC2C2C2, 0x566980]
 transcendentColorNames := {}
 transcendentColorNames[0x060908] := "Equinox1"
 transcendentColorNames[0xC2C2C2] := "Equinox2"
-transcendentColorNames[0xFEFEFE] := "Equinox3"
-transcendentColorNames[0x566980] := "Luminosity1"
+transcendentColorNames[0x566980] := "Luminosity"
 lastTranscendentColor := ""
 lastTranscendentColor2 := ""
 strangeController := false
@@ -149,8 +148,7 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDetectTranscendent, %iniFilePath%, Macro, detectTranscendents, false
     detectTranscendents := (tempDetectTranscendent = "true" || tempDetectTranscendent = "1")
 
-    IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, false
-    autoCloseChat := (tempAutoCloseChat = "true" || tempAutoCloseChat = "1")
+    IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, falsez
 
     IniRead, tempBiomeRandomizer, %iniFilePath%, Macro, biomeRandomizer
     if (tempBiomeRandomizer != "ERROR")
@@ -912,16 +910,13 @@ if (addFlows) {
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
-
     triggerDelay2 := 20000
-
     transcendentPixels := []
     transcendentPixels.Push({x: 1050, y: 49})
 
     transcendentCounters := {}
     for index, _ in transcendentPixels
-        transcendentCounters[index] := 0
-
+    transcendentCounters[index] := 0
     SetTimer, CheckPixel2, 10
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
@@ -1392,16 +1387,17 @@ HideTranscendentOutline() {
 
 CheckPixel:
     global nvidiaReplay, triggerDelay
-
+    
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, pos1, 1111, 80, RGB
-    PixelGetColor, pos2, 600, 80, RGB
-
-    if (pos1 = 0xFFFFFF && pos2 = 0xFFFFFF) {
-        ShowClipText()
+    
+    ErrorLevel := 1
+    
+    PixelSearch, FoundX2, FoundY2, 1110, 80, 1112, 82, 0xFFFFFF, 3, Fast RGB
+    if (ErrorLevel = 0) {
         SetTimer, DoClip, -%triggerDelay%
+        ShowClipTextGlobal()
     }
 return
 
@@ -1421,17 +1417,17 @@ CheckPixel2:
         if (colort = c) {
             transcendentCounters[index]++
             lastTranscendentColor := colort
-            ShowClipText()
             SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
         }
     }
     }
 
     PixelGetColor, levicolor, 950, 240, RGB
     if (levicolor = 0x000201) {
-        ShowClipText()
         lastTranscendentColor2 := "Leviathan"
         SetTimer, DoClip2, -%triggerDelay2%
+        ShowClipTextTrans()
     }
 
     PixelGetColor, colorbt, 950, 180, RGB
@@ -1439,9 +1435,9 @@ CheckPixel2:
     PixelGetColor, colorbt3, 10, 900, RGB
     PixelGetColor, colorbt4, 670, 750, RGB
     if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
-        ShowClipText()
         lastTranscendentColor2 := "Breakthrough"
         SetTimer, DoClip2, -%triggerDelay2%
+        ShowClipTextTrans()
     }
 return
 
@@ -1459,10 +1455,10 @@ if (clipWebhook) {
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3" ) {
+    if (colorName = "Equinox1" || colorName = "Equinox2") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
-    } else if (colorName = "Luminosity1") {
+    } else if (colorName = "Luminosity") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
     } else if (lastTranscendentColor2 = "Leviathan") {
@@ -1478,10 +1474,10 @@ if (clipWebhook) {
         ? transcendentColorNames[lastTranscendentColor]
         : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2" || colorName = "Equinox3") {
+    if (colorName = "Equinox1" || colorName = "Equinox2") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
-    } else if (colorName = "Luminosity1") {
+    } else if (colorName = "Luminosity") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
     } else if (lastTranscendentColor2 = "Leviathan") {
@@ -1499,9 +1495,8 @@ if (clipWebhook) {
 return
 
 DoClip:
+Send, !{F10}
 if (clipWebhook) {
-    Send, !{F10}
-
     sleep, 1500
     PixelGetColor, nvidiacolor, 1622, 155, RGB
 
@@ -1512,11 +1507,8 @@ if (clipWebhook) {
     if (nvidiacolor != 0x76B900) {
         try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
     }
-    ToolTip
-} else if (!clipWebhook) {
-    Send, !{F10}
-    ToolTip
 }
+ToolTip
 return
 
 GetPingText() {
@@ -1705,8 +1697,68 @@ CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
 
-ShowClipText() {
-    ToolTip, Clipped with Aery's Fishsol, 890, 10
+ShowClipTextGlobal() {
+    ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol, 900, 10
+}
+
+ShowClipTextTrans() {
+    ToolTip, Clipped with Aery's Fishsol (20), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (19), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (18), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (17), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (16), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (15), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (14), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (13), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (12), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (11), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+    sleep 1000
+    ToolTip, Clipped with Aery's Fishsol, 900, 10
 }
 
 DoStrangeController:
