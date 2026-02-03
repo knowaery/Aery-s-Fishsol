@@ -16,13 +16,7 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 
 • Auto Craft
 
-• Biome/Strange Controller Usage
-
-• Snowman Collect (Temporary)
-
-• Auto Add auras to Angel Device
-
-• Auto Add auras to Matrix: Steampunk
+• More
 
 
 # Credits
