@@ -1389,20 +1389,16 @@ HideTranscendentOutline() {
 
 CheckPixel:
     global nvidiaReplay, triggerDelay
-    
+
     if (!nvidiaReplay)
         return
 
-    
-    ErrorLevel := 1
-    
-    PixelSearch, FoundX2, FoundY2, 1110, 80, 1112, 82, 0xFFFFFF, 3, Fast RGB
-    if (ErrorLevel = 0) {
+    PixelGetColor, color, 950, 80, RGB
+    if (color = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
         ShowClipTextGlobal()
     }
 return
-
 
 CheckPixel2:
     global detectTranscendents, transcendentPixels, transcendentColors, lastTranscendentColor2
@@ -1426,7 +1422,8 @@ CheckPixel2:
     }
 
     PixelGetColor, levicolor, 950, 240, RGB
-    if (levicolor = 0x000201) {
+    PixelGetColor, levicolor2, 1300, 240, RGB
+    if (levicolor = 0x000201 && levicolor2 = 0x000201) {
         lastTranscendentColor2 := "Leviathan"
         SetTimer, DoClip2, -%triggerDelay2%
         ShowClipTextTrans()
@@ -1445,8 +1442,8 @@ return
 
 DoClip2:
 global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
+Send, !{F10}
 if (clipWebhook) {
-    Send, !{F10}
 
     sleep, 1500
     PixelGetColor, nvidiacolor, 1622, 155, RGB
@@ -1469,7 +1466,6 @@ if (clipWebhook) {
     } else if (lastTranscendentColor2 = "Breakthrough") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
     }
-    ToolTip
     } else if (nvidiacolor != 0x76B900) {
     colorHex := Format("0x{:06X}", lastTranscendentColor)
     colorName := transcendentColorNames.HasKey(lastTranscendentColor)
@@ -1488,12 +1484,9 @@ if (clipWebhook) {
     } else if (lastTranscendentColor2 = "Breakthrough") {
         SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
     }
-    ToolTip
 }
-} else if (!clipWebhook) {
-    Send, !{F10}
-    ToolTip
 }
+ToolTip
 return
 
 DoClip:
@@ -2780,15 +2773,15 @@ F6::
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 1 Second..., 860, 25
+        ToolTip, Clipping Restarting in 1 Second..., 880, 25
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel, 10
@@ -2804,15 +2797,15 @@ F6::
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 1 Second..., 860, 25
+        ToolTip, Clipping Restarting in 1 Second..., 880, 25
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel, 10
@@ -2827,15 +2820,15 @@ F6::
         if (clipWebhook) {
              try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping Restarting in 5 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 1 Seconds..., 860, 25
+        ToolTip, Clipping Restarting in 1 Seconds..., 880, 25
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel2, 10
