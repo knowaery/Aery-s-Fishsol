@@ -54,6 +54,7 @@ steampunkAura := false
 autoClicker := false
 addFlows := false
 IfAdded := ""
+blehblehbleh := ""
 
 
 if (FileExist(iniFilePath)) {
@@ -1699,67 +1700,136 @@ CloseNvidiaNotes:
 return
 
 ShowClipTextGlobal() {
-    ToolTip, Clipped with Aery's Fishsol (10), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (9), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (8), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (7), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (6), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (5), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (4), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (3), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (2), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol, 900, 10
+    global blehblehbleh
+
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol, 900, 10
+    }
+
+    blehblehbleh := ""
 }
 
+
 ShowClipTextTrans() {
-    ToolTip, Clipped with Aery's Fishsol (20), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (19), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (18), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (17), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (16), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (15), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (14), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (13), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (12), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (11), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (10), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (9), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (8), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (7), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (6), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (5), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (4), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (3), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol (2), 900, 10
-    sleep 1000
-    ToolTip, Clipped with Aery's Fishsol, 900, 10
+    global blehblehbleh
+
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (20), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (19), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (18), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (17), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (16), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (15), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (14), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (13), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (12), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (11), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+        sleep 1000
+    }
+    if (blehblehbleh != "hehe") {
+        ToolTip, Clipped with Aery's Fishsol, 900, 10
+    }
+
+    blehblehbleh := ""
 }
 
 DoStrangeController:
@@ -2701,6 +2771,8 @@ return
 F6::
     if (!nvidiaReplay && !detectTranscendents)
         return
+
+    blehblehbleh := "hehe"
 
     if (nvidiaReplay && detectTranscendents) {
         SetTimer, DoClip, Off
