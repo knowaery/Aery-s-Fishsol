@@ -55,6 +55,7 @@ autoClicker := false
 addFlows := false
 IfAdded := ""
 blehblehbleh := ""
+kurwa := ""
 
 
 if (FileExist(iniFilePath)) {
@@ -1879,302 +1880,483 @@ SelectItem:
 return
 
 CraftHeavenly:
-ToolTip
+    ToolTip
+
     if (IfAdded != "Heavenly") {
         IfAdded := "Heavenly"
+
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
+        if (kurwa != "ivaxa")
         Send, Heavenly Potion
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 200, 830, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1023, 437, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, 250
         Sleep, 200
     }
 
-    MouseMove, 1130, 437, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 1000
+        if (kurwa != "ivaxa") 
+        MouseMove, 1130, 437, 3
+        Sleep, 1000
+        if (kurwa != "ivaxa")
+        Click, Left
+        Sleep, 1000
 
-    if (useCelestial) {
-        MouseMove, 1130, 492, 3
-        Sleep, 500
+        if (useCelestial) {
+            MouseMove, 1130, 492, 3
+            Sleep, 500
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 500
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 500
+        }
+
+        if (useExotic) {
+            MouseMove, 1130, 542, 3
+            Sleep, 500
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 500
+        }
+
+        if (kurwa != "ivaxa")
+        MouseMove, 1130, 693, 3
+        Sleep, 1000
+        if (kurwa != "ivaxa")
         Click, Left
-        Sleep, 500
-        Click, Left
-        Sleep, 500
+        Sleep, 2500
+
+    if (kurwa = "ivaxa") {
+        kurwa := ""
     }
-
-    if (useExotic) {
-        MouseMove, 1130, 542, 3
-        Sleep, 500
-        Click, Left
-        Sleep, 500
-    }
-
-    MouseMove, 1130, 693, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 2500
 return
+
+
+
 CraftBound:
-ToolTip
+    ToolTip
+
     if (IfAdded != "Bounded") {
         IfAdded := "Bounded"
+
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
+        if (kurwa != "ivaxa")
         Send, Potion of Bound
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
-        Click, Left
+        if (kurwa != "ivaxa")
+         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1023, 597, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, 100
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1130, 597, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         sleep, 200
     }
 
     if (useBounded) {
+        if (kurwa != "ivaxa")
         MouseMove, 1130, 438, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 500
     }
 
-    MouseMove, 1130, 693, 3
-    Sleep, 1000
-    Click, Left
-    Sleep, 2500
+        if (kurwa != "ivaxa")
+        MouseMove, 1130, 693, 3
+        Sleep, 1000
+        if (kurwa != "ivaxa")
+        Click, Left
+        Sleep, 2500
+
+    if (kurwa = "ivaxa") {
+        kurwa := ""
+    }
 return
 
+
 CraftJewerly:
-ToolTip
+    ToolTip
+
     if (IfAdded != "Jewerly") {
         IfAdded := "Jewerly"
+
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
+        if (kurwa != "ivaxa")
         Send, Jewelry Potion
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1023, 432, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, 20
         Sleep, 200
     }
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 432, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 693, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
+
+    if (kurwa = "ivaxa") {
+        kurwa := ""
+    }
 return
+
 
 CraftZombie:
-ToolTip
+    ToolTip
+
     if (IfAdded != "Zombie") {
         IfAdded := "Zombie"
+
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
+        if (kurwa != "ivaxa")
         Send, Zombie Potion
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1023, 432, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, 10
         Sleep, 200
     }
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 432, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 693, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
+    
+    if (kurwa = "ivaxa") {
+        kurwa := ""
+    }
 return
+
 
 CraftRage:
-ToolTip
+    ToolTip
+
     if (IfAdded != "Rage") {
         IfAdded := "Rage"
+
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
+        if (kurwa != "ivaxa")
         Send, Rage Potion
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
+        if (kurwa != "ivaxa")
         MouseMove, 1023, 432, 3
         Sleep, 200
+        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 200
+        if (kurwa != "ivaxa")
         Send, 10
         Sleep, 200
     }
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 432, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
 
+    if (kurwa != "ivaxa")
     MouseMove, 1130, 693, 3
     Sleep, 1000
+    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 1000
+
+    if (kurwa = "ivaxa") {
+        kurwa := ""
+    }
 return
+
 
 CraftDiver:
 ToolTip
     if (IfAdded != "Diver") {
         IfAdded := "Diver"
+
+        if (kurwa != "ivaxa") {
         MouseMove, 1500, 275, 3
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Send, ^a
         Sleep, 100
+        }
+
+        if (kurwa != "ivaxa") {
         Send, Diver Potion
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Send {Enter}
         Sleep, 200
+        }
 
+        if (kurwa != "ivaxa") {
         MouseMove, 1500, 367, 3
         Sleep, 500
+        }
+
+        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
+        }
 
+        if (kurwa != "ivaxa") {
         MouseMove, 200, 832, 3
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
+        }
 
+        if (kurwa != "ivaxa") {
         MouseMove, 1023, 432, 3
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Send, ^a
         Sleep, 200
+        }
+
+        if (kurwa != "ivaxa") {
         Send, 20
         Sleep, 200
+        }
     }
 
+
+    
+    if (kurwa != "ivaxa") {
     MouseMove, 1130, 432, 3
     Sleep, 1000
+    }
+    if (kurwa != "ivaxa") {
     Click, Left
     Sleep, 1000
-
+    }
+    if (kurwa != "ivaxa") {
     MouseMove, 1130, 693, 3
     Sleep, 1000
+    }
+    if (kurwa != "ivaxa") {
     Click, Left
     Sleep, 1000
+    }
+
+    if (kurwa = "ivaxa") {
+        kurwa := ""
+    }
 return
 
 CraftSelected:
@@ -2191,6 +2373,8 @@ CraftSelected:
         Gosub, CraftZombie
     } else if (selectedItem = "Rage Potion") {
         Gosub, CraftRage
+    } else if (selectedItem = "Diver Potion") {
+        Gosub, CraftDiver
     }
 return
 
@@ -2743,6 +2927,7 @@ if (!autocrafting || toggle)
    }
 
     autocrafting := false
+    kurwa := "ivaxa"
     SetTimer, CraftSelected, Off
 
     
