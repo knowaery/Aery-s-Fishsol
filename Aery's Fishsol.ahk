@@ -1301,13 +1301,11 @@ UpdateAdvancedThreshold:
 return
 
 ShowAllGlobalOutlines() {
-    ShowGlobalOutline(1, 1111, 80)
-    ShowGlobalOutline(2, 600, 80)
+    ShowGlobalOutline(1, 950, 80)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
-    HideGlobalOutline(2)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1444,66 +1442,66 @@ return
 DoClip2:
 global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
 Send, !{F10}
-if (clipWebhook) {
+    if (clipWebhook) {
 
-    sleep, 1500
-    PixelGetColor, nvidiacolor, 1622, 155, RGB
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
 
-    if (nvidiacolor = 0x76B900) {
-    colorHex := Format("0x{:06X}", lastTranscendentColor)
-    colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-        ? transcendentColorNames[lastTranscendentColor]
-        : "Unknown Color"
+        if (nvidiacolor = 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
 
-    if (colorName = "Equinox1" || colorName = "Equinox2") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+        if (colorName = "Equinox1" || colorName = "Equinox2") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
-    } else if (colorName = "Luminosity") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+        } else if (colorName = "Luminosity") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
-    } else if (lastTranscendentColor2 = "Leviathan") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+        } else if (lastTranscendentColor2 = "Leviathan") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
-    } else if (lastTranscendentColor2 = "Breakthrough") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+        } else if (lastTranscendentColor2 = "Breakthrough") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+        }
+        } else if (nvidiacolor != 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
+
+        if (colorName = "Equinox1" || colorName = "Equinox2") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+        } else if (colorName = "Luminosity") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+        } else if (lastTranscendentColor2 = "Leviathan") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+        } else if (lastTranscendentColor2 = "Breakthrough") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+        }
     }
-    } else if (nvidiacolor != 0x76B900) {
-    colorHex := Format("0x{:06X}", lastTranscendentColor)
-    colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-        ? transcendentColorNames[lastTranscendentColor]
-        : "Unknown Color"
-
-    if (colorName = "Equinox1" || colorName = "Equinox2") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-    } else if (colorName = "Luminosity") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-    } else if (lastTranscendentColor2 = "Leviathan") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-    } else if (lastTranscendentColor2 = "Breakthrough") {
-        SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-    }
-}
 }
 ToolTip
 return
 
 DoClip:
 Send, !{F10}
-if (clipWebhook) {
-    sleep, 1500
-    PixelGetColor, nvidiacolor, 1622, 155, RGB
+    if (clipWebhook) {
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
 
-    if (nvidiacolor = 0x76B900) {
-        try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
-    }
+        if (nvidiacolor = 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
+        }
 
-    if (nvidiacolor != 0x76B900) {
-        try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
+        if (nvidiacolor != 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
+        }
     }
-}
 ToolTip
 return
 
@@ -1969,8 +1967,6 @@ CraftHeavenly:
     }
 return
 
-
-
 CraftBound:
     ToolTip
 
@@ -2050,7 +2046,6 @@ CraftBound:
     }
 return
 
-
 CraftJewerly:
     ToolTip
 
@@ -2120,7 +2115,6 @@ CraftJewerly:
         kurwa := ""
     }
 return
-
 
 CraftZombie:
     ToolTip
@@ -2192,7 +2186,6 @@ CraftZombie:
     }
 return
 
-
 CraftRage:
     ToolTip
 
@@ -2263,9 +2256,8 @@ CraftRage:
     }
 return
 
-
 CraftDiver:
-ToolTip
+    ToolTip
     if (IfAdded != "Diver") {
         IfAdded := "Diver"
 
@@ -2771,10 +2763,7 @@ StopAutoClicker:
 return
 
 AutoClickTick:
-    if (!autoClicker)
-        return
-
-    Click
+Click
 return
 
 
@@ -2928,21 +2917,17 @@ if (!autocrafting || toggle)
 
     autocrafting := false
     kurwa := "ivaxa"
+    IfAdded := ""
     SetTimer, CraftSelected, Off
 
-    
-    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (5), 800, 10
-    sleep 1000
-    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (4), 800, 10
-    sleep 1000
-    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (3), 800, 10
+
+    ToolTip, Crafting has Stopped. (3), 865, 10
     Sleep 1000
-    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (2), 800, 10
+    ToolTip, Crafting has Stopped. (2), 865, 10
     Sleep 1000
-    ToolTip, Crafting has Stopped. Plese wait Until Crafting finishes it's Cycle. (1), 800, 10
+    ToolTip, Crafting has Stopped. (1), 865, 10
     Sleep 1000
     ToolTip
-    IfAdded := ""
 return
 
 
@@ -2958,15 +2943,15 @@ F6::
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
+        ToolTip, Clipping Restarting in 5 Seconds..., 900, 10
         sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
+        ToolTip, Clipping Restarting in 4 Seconds..., 900, 10
         sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
+        ToolTip, Clipping Restarting in 3 Seconds..., 900, 10
         sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
+        ToolTip, Clipping Restarting in 2 Seconds..., 900, 10
         sleep, 1000
-        ToolTip, Clipping Restarting in 1 Second..., 880, 25
+        ToolTip, Clipping Restarting in 1 Second..., 900, 10
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel, 10
@@ -2994,7 +2979,6 @@ F6::
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel, 10
-        SetTimer, CheckPixel2, 10
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
