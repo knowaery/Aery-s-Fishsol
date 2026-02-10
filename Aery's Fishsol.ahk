@@ -1440,7 +1440,7 @@ CheckPixel2:
             ShowClipTextTrans()
         }
 
-        PixelGetColor, colormonarch, 960, 548, RGB
+      ; PixelGetColor, colormonarch, 960, 548, RGB
         if (colormonarch = 0x020000 || colormonarch = 0x10003 || colormonarch = 0x20005) {
             SetTimer, DoClip2, -%triggerDelay2%
             lastTranscendentColor2 := "Monarch"
@@ -4154,3 +4154,4 @@ return
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
 return
+
