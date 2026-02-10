@@ -1441,7 +1441,7 @@ CheckPixel2:
         }
 
         PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x00002 || colormonarch = 0x020000 || colormonarch = 0x10003 || colormonarch = 0x20005) {
+        if (colormonarch = 0x020000 || colormonarch = 0x10003 || colormonarch = 0x20005) {
             SetTimer, DoClip2, -%triggerDelay2%
             lastTranscendentColor2 := "Monarch"
             ShowClipTextTrans()
