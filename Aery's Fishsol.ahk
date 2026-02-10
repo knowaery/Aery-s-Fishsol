@@ -1301,11 +1301,13 @@ UpdateAdvancedThreshold:
 return
 
 ShowAllGlobalOutlines() {
-    ShowGlobalOutline(1, 950, 80)
+    ShowGlobalOutline(1, 950, 120)
+    ShowGlobalOutline(2, 1200, 120)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
+    HideGlobalOutline(2)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1392,51 +1394,51 @@ CheckPixel:
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, color, 950, 80, RGB
-    if (color = 0xFFFFFF) {
+    PixelGetColor, color, 950, 120, RGB
+    PixelGetColor, color2, 1200, 120, RGB
+    if (color = 0xFFFFFF && color2 = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
         ShowClipTextGlobal()
     }
 return
 
 CheckPixel2:
-    global detectTranscendents, transcendentPixels, transcendentColors, lastTranscendentColor2
-    global triggerDelay2, transcendentCounters, nvidiaReplay
+    global detectTranscendents, transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
 
     if (!detectTranscendents)
         return
     
 
-    for index, pos in transcendentPixels {
-        PixelGetColor, colort, % pos.x, % pos.y, RGB
+        for index, pos in transcendentPixels {
+            PixelGetColor, colort, % pos.x, % pos.y, RGB
 
-        for _, c in transcendentColors {
-        if (colort = c) {
-            transcendentCounters[index]++
-            lastTranscendentColor := colort
+            for _, c in transcendentColors {
+            if (colort = c) {
+                transcendentCounters[index]++
+                lastTranscendentColor := colort
+                SetTimer, DoClip2, -%triggerDelay2%
+                ShowClipTextTrans()
+            }
+        }
+    }
+
+        PixelGetColor, levicolor, 950, 240, RGB
+        PixelGetColor, levicolor2, 1300, 240, RGB
+        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
+            lastTranscendentColor2 := "Leviathan"
             SetTimer, DoClip2, -%triggerDelay2%
             ShowClipTextTrans()
         }
-    }
-    }
 
-    PixelGetColor, levicolor, 950, 240, RGB
-    PixelGetColor, levicolor2, 1300, 240, RGB
-    if (levicolor = 0x000201 && levicolor2 = 0x000201) {
-        lastTranscendentColor2 := "Leviathan"
-        SetTimer, DoClip2, -%triggerDelay2%
-        ShowClipTextTrans()
-    }
-
-    PixelGetColor, colorbt, 950, 180, RGB
-    PixelGetColor, colorbt2, 1200, 500, RGB
-    PixelGetColor, colorbt3, 10, 900, RGB
-    PixelGetColor, colorbt4, 670, 750, RGB
-    if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
-        lastTranscendentColor2 := "Breakthrough"
-        SetTimer, DoClip2, -%triggerDelay2%
-        ShowClipTextTrans()
-    }
+        PixelGetColor, colorbt, 950, 180, RGB
+        PixelGetColor, colorbt2, 1200, 500, RGB
+        PixelGetColor, colorbt3, 10, 900, RGB
+        PixelGetColor, colorbt4, 670, 750, RGB
+        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
+            lastTranscendentColor2 := "Breakthrough"
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
 return
 
 DoClip2:
@@ -1478,10 +1480,10 @@ Send, !{F10}
             SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
         } else if (lastTranscendentColor2 = "Leviathan") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation | Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
         } else if (lastTranscendentColor2 = "Breakthrough") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
         }
     }
 }
