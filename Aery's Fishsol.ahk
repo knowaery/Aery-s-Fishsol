@@ -493,7 +493,7 @@ Gui, Add, Text, x143 y211 w70 h25 vNvidiaReplayStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y265 w534 h120 cWhite, Clip Transcendents
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y285 w515 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's cutscene. Not guaranteed to work. Works for Pixelation, Luminosity, Breakthrough, Equinox and Leviathan
+Gui, Add, Text, x45 y285 w515 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's cutscene. Not guaranteed to work. Works for Pixelation, Luminosity, Breakthrough, Leviathan, Equinox and Monarch.
 Gui, Font, s9 cWhite Bold
 Gui, Add, Text, x183 y350 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -1441,7 +1441,7 @@ CheckPixel2:
         }
 
         PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x00002 || colormonarch = 0x020000 || colormonarch = 0x010101 || colormonarch = 0x10003 || colormonarch = 0x10102|| colormonarch = 0x20005) {
+        if (colormonarch = 0x00002 || colormonarch = 0x020000 || colormonarch = 0x10003 || colormonarch = 0x20005) {
             SetTimer, DoClip2, -%triggerDelay2%
             lastTranscendentColor2 := "Monarch"
             ShowClipTextTrans()
