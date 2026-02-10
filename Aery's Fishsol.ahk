@@ -1439,6 +1439,12 @@ CheckPixel2:
             SetTimer, DoClip2, -%triggerDelay2%
             ShowClipTextTrans()
         }
+
+        PixelGetColor, colormonarch, 960, 548, RGB
+        if (colormonarch = 0x00002 || colormonarch = 0x020000 || colormonarch = 0x010101 || colormonarch = 0x10003 || colormonarch = 0x10102|| colormonarch = 0x20005) {
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
 return
 
 DoClip2:
@@ -1462,10 +1468,13 @@ Send, !{F10}
             SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ") | Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
         } else if (lastTranscendentColor2 = "Leviathan") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  Leviathan/Pixelation | Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation | Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
         } else if (lastTranscendentColor2 = "Breakthrough") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+
+        } else if (lastTranscendentColor2 = "Monarch") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch | Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
         }
         } else if (nvidiacolor != 0x76B900) {
         colorHex := Format("0x{:06X}", lastTranscendentColor)
@@ -1484,6 +1493,9 @@ Send, !{F10}
 
         } else if (lastTranscendentColor2 = "Breakthrough") {
             SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+        
+        } else if (lastTranscendentColor2 = "Monarch") {
+            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch | Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
         }
     }
 }
@@ -1550,7 +1562,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3"","
+    . """text"": ""Aery's fishsol v1.3.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1594,7 +1606,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3"","
+    . """text"": ""Aery's fishsol v1.3.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1629,7 +1641,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3"","
+    . """text"": ""Aery's fishsol v1.3.1"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1678,7 +1690,7 @@ Luminosity: +
 Leviathan: (Unsure)
 Breakthrough: + 
 Equinox: +
-Monarch: should be +
+Monarch: +
 
 
 
