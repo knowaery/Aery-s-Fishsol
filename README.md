@@ -23,6 +23,9 @@ https://github.com/ivelchampion249/FishSol-Macro/blob/main/README.md
 (Original fishSol) https://github.com/ivelchampion249/FishSol-Macro
 
 Breakthrough Cutscene Image: https://www.youtube.com/watch?v=9N3FhGT0Mlc 
+
 Leviathan Cutscene Image: https://www.youtube.com/watch?v=dtTOPCvqvjA
+
 Equinox Cutscene Image: https://www.youtube.com/watch?v=o-u3_KUMKgk
+
 Monarch Cutscene Image: https://www.youtube.com/watch?v=EPidBCDgtso
