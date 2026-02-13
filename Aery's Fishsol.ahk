@@ -56,6 +56,7 @@ addFlows := false
 IfAdded := ""
 blehblehbleh := ""
 kurwa := ""
+lookIsland := false
 
 
 if (FileExist(iniFilePath)) {
@@ -208,6 +209,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAddFlows, %iniFilePath%, Macro, addFlows
     if (tempAddFlows != "ERROR")
     addFlows := (tempAddFlows = "true" || tempAddFlows = "1")
+
+    IniRead, tempLookIsland, %iniFilePath%, Macro, lookIsland
+    if (tempLookIsland != "ERROR")
+    lookIsland := (tempLookIsland = "true" || tempLookIsland = "1")
 
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
@@ -505,22 +510,31 @@ Gui, Add, Text, x143 y348 w70 h25 vDetectTranscendentsStatus BackgroundTrans, OF
 ; Highlight Area
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y420 w534 h75 cWhite, Highlight Detection Area
+Gui, Add, GroupBox, x33 y400 w534 h75 cWhite, Highlight Detection Area
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y440 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
-Gui, Add, Text, x173 y466 w520 h145 BackgroundTrans, (Globals | Spamming = Lag)
-Gui, Add, Text, x470 y466 w520 h145 BackgroundTrans, (Transcendents)
+Gui, Add, Text, x45 y420 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
+Gui, Add, Text, x173 y446 w520 h145 BackgroundTrans, (Globals)
+Gui, Add, Text, x470 y446 w520 h145 BackgroundTrans, (Transcendents)
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y461 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
-Gui, Add, Button, x345 y461 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
+Gui, Add, Button, x45 y441 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
+Gui, Add, Button, x345 y441 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x143 y466 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
-Gui, Add, Text, x440 y466 w60 h25 vTransAreaStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y446 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
+Gui, Add, Text, x440 y446 w60 h25 vTransAreaStatus BackgroundTrans, OFF
+
+; Gui, Font, s10 cWhite Bold
+; Gui, Add, GroupBox, x33 y480 w534 h75 cWhite, Look at Island
+; Gui, Font, s9 c0xCCCCCC Normal
+; Gui, Add, Text, x45 y500 w520 h145 BackgroundTrans, Looks at the main island to try and help capture globals better. Applies after the first fish sell loop.
+; Gui, Font, s10 cWhite Bold
+; Gui, Add, Button, x45 y521 w80 h25 gToggleLookIsland vLookIslandBtn, Toggle
+; Gui, Font, s10 c0xCCCCCC Bold
+; Gui, Add, Text, x143 y526 w60 h25 vLookIslandStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x220 y530 w520 h145 BackgroundTrans, F6 to Cancel Clipping
+Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y550 w520 h145 BackgroundTrans,When watermark appears but no global is rolled, it will clip anyway and F6 will stop the clipping process, preventing unnecessary amount of clips with no global.
+Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F6 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
 
 Gui, Tab, Webhook
 
@@ -910,6 +924,13 @@ if (addFlows) {
     GuiControl,, AddFlowsStatus, OFF
     GuiControl, +c0xFF4444, AddFlowsStatus
 }
+if (lookIsland) {
+    GuiControl,, LookIslandStatus, ON
+    GuiControl, +c0x00DD00, LookIslandStatus
+} else {
+    GuiControl,, LookIslandStatus, OFF
+    GuiControl, +c0xFF4444, LookIslandStatus
+}
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -930,7 +951,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 10
+    SetTimer, CheckPixel, 25
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1221,6 +1242,18 @@ ToggleAddFlows:
     IniWrite, % (addFlows ? "true" : "false"), %iniFilePath%, Macro, addFlows
 return
 
+ToggleLookIsland:
+    lookIsland := !lookIsland
+    if (lookIsland) {
+        GuiControl,, LookIslandStatus, ON
+        GuiControl, +c0x00DD00, LookIslandStatus
+    } else {
+        GuiControl,, LookIslandStatus, OFF
+        GuiControl, +c0xFF4444, LookIslandStatus
+    }
+    IniWrite, % (lookIsland ? "true" : "false"), %iniFilePath%, Macro, lookIsland
+return
+
 ToggleDetectTranscendents:
     detectTranscendents := !detectTranscendents
     if (detectTranscendents) {
@@ -1251,7 +1284,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel, 25
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1301,8 +1334,8 @@ UpdateAdvancedThreshold:
 return
 
 ShowAllGlobalOutlines() {
-    ShowGlobalOutline(1, 950, 120)
-    ShowGlobalOutline(2, 1200, 120)
+    ShowGlobalOutline(1, 405, 900)
+    ShowGlobalOutline(2, 1500, 900)
 }
 
 HideAllGlobalOutlines() {
@@ -1394,8 +1427,8 @@ CheckPixel:
     if (!nvidiaReplay)
         return
 
-    PixelGetColor, color, 950, 120, RGB
-    PixelGetColor, color2, 1200, 120, RGB
+    PixelGetColor, color, 405, 900, RGB
+    PixelGetColor, color2, 1500, 900, RGB
     if (color = 0xFFFFFF && color2 = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
         ShowClipTextGlobal()
@@ -1440,8 +1473,8 @@ CheckPixel2:
             ShowClipTextTrans()
         }
 
-      ; PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x020000 || colormonarch = 0x10003 || colormonarch = 0x20005) {
+        PixelGetColor, colormonarch, 960, 548, RGB
+        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
             SetTimer, DoClip2, -%triggerDelay2%
             lastTranscendentColor2 := "Monarch"
             ShowClipTextTrans()
@@ -2969,7 +3002,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Second..., 900, 10
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel, 25
         SetTimer, CheckPixel2, 10
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
@@ -4154,4 +4187,5 @@ return
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
 return
+
 
