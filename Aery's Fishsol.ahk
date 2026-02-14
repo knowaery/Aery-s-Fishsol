@@ -941,7 +941,7 @@ if (detectTranscendents) {
     transcendentCounters := {}
     for index, _ in transcendentPixels
     transcendentCounters[index] := 0
-    SetTimer, CheckPixel2, 10
+    SetTimer, CheckPixel2, 30
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
     GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -951,7 +951,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 25
+    SetTimer, CheckPixel, 30
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1268,7 +1268,7 @@ ToggleDetectTranscendents:
         for index, _ in transcendentPixels
             transcendentCounters[index] := 0
 
-        SetTimer, CheckPixel2, 10
+        SetTimer, CheckPixel2, 30
     } else {
         GuiControl,, DetectTranscendentsStatus, OFF
         GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -1284,7 +1284,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 25
+        SetTimer, CheckPixel, 30
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1495,42 +1495,42 @@ Send, !{F10}
             ? transcendentColorNames[lastTranscendentColor]
             : "Unknown Color"
 
-        if (colorName = "Equinox1" || colorName = "Equinox2") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
-        } else if (colorName = "Luminosity") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
-        } else if (lastTranscendentColor2 = "Leviathan") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
-        } else if (lastTranscendentColor2 = "Breakthrough") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
 
-        } else if (lastTranscendentColor2 = "Monarch") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-        }
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
         } else if (nvidiacolor != 0x76B900) {
         colorHex := Format("0x{:06X}", lastTranscendentColor)
         colorName := transcendentColorNames.HasKey(lastTranscendentColor)
             ? transcendentColorNames[lastTranscendentColor]
             : "Unknown Color"
 
-        if (colorName = "Equinox1" || colorName = "Equinox2") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
 
-        } else if (colorName = "Luminosity") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
-        } else if (lastTranscendentColor2 = "Leviathan") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
-        } else if (lastTranscendentColor2 = "Breakthrough") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-        
-        } else if (lastTranscendentColor2 = "Monarch") {
-            SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-        }
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
     }
 }
 ToolTip
@@ -3002,8 +3002,8 @@ F6::
         ToolTip, Clipping Restarting in 1 Second..., 900, 10
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel, 25
-        SetTimer, CheckPixel2, 10
+        SetTimer, CheckPixel, 30
+        SetTimer, CheckPixel2, 30
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
@@ -3026,7 +3026,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Second..., 880, 25
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel, 10
+        SetTimer, CheckPixel, 30
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
@@ -3048,7 +3048,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Seconds..., 880, 25
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel2, 10
+        SetTimer, CheckPixel2, 30
         if (clipWebhook) {
                 try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
             }
