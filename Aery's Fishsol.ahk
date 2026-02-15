@@ -56,8 +56,13 @@ addFlows := false
 IfAdded := ""
 blehblehbleh := ""
 kurwa := ""
-lookIsland := false
-
+strangeControllerLastRun := 0
+strangeControllerInterval := 1260000
+strangeControllerTime := 0
+biomeRandomizerLastRun := 0
+biomeRandomizerInterval := 1260000
+biomeRandomizerTime := 300000
+hue := 0
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -209,11 +214,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAddFlows, %iniFilePath%, Macro, addFlows
     if (tempAddFlows != "ERROR")
     addFlows := (tempAddFlows = "true" || tempAddFlows = "1")
-
-    IniRead, tempLookIsland, %iniFilePath%, Macro, lookIsland
-    if (tempLookIsland != "ERROR")
-    lookIsland := (tempLookIsland = "true" || tempLookIsland = "1")
-
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -455,21 +455,21 @@ Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y296 w270 h139 cWhite, Biome/Strange Controller:
+Gui, Add, GroupBox, x22 y296 w270 h159 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x37 y318 w255 h30 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller before going to the fish sell shop.
+Gui, Add, Text, x37 y318 w255 h50 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller after their cooldowns. Biome Randomizer is used 5 minutes after macro start.
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y355 w120 h25 BackgroundTrans, Strange Controller:
-Gui, Add, Button, x157 y355 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
+Gui, Add, Text, x30 y375 w120 h25 BackgroundTrans, Strange Controller:
+Gui, Add, Button, x157 y375 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x257 y360 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y380 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y395 w125 h25 BackgroundTrans, Biome Randomizer:
-Gui, Add, Button, x157 y395 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
+Gui, Add, Text, x30 y415 w125 h25 BackgroundTrans, Biome Randomizer:
+Gui, Add, Button, x157 y415 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x257 y398 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y418 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
 
 
@@ -521,15 +521,6 @@ Gui, Add, Button, x345 y441 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x143 y446 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
 Gui, Add, Text, x440 y446 w60 h25 vTransAreaStatus BackgroundTrans, OFF
-
-; Gui, Font, s10 cWhite Bold
-; Gui, Add, GroupBox, x33 y480 w534 h75 cWhite, Look at Island
-; Gui, Font, s9 c0xCCCCCC Normal
-; Gui, Add, Text, x45 y500 w520 h145 BackgroundTrans, Looks at the main island to try and help capture globals better. Applies after the first fish sell loop.
-; Gui, Font, s10 cWhite Bold
-; Gui, Add, Button, x45 y521 w80 h25 gToggleLookIsland vLookIslandBtn, Toggle
-; Gui, Font, s10 c0xCCCCCC Bold
-; Gui, Add, Text, x143 y526 w60 h25 vLookIslandStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
@@ -590,8 +581,10 @@ Gui, Add, Text, x138 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Add, Text, x138 y249 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c9B8CFF Bold, Trajan Pro
 Gui, Add, Text, x164 y209 w600 h100 BackgroundTrans, Celestial:
-Gui, Font, s9 cFF0000 Bold, Trajan Pro
-Gui, Add, Text, x164 y249 w600 h100 BackgroundTrans, Exotic:
+Gui, Font, s10 cWhite Normal, Trajan Pro
+Gui, Add, Text, vExoticText x164 y247 w600 h100 BackgroundTrans, Exotic:
+SetTimer, RainbowText, 50
+
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x358 y245 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
@@ -630,8 +623,6 @@ Gui, Add, Button, x37 y460 w70 h25 gToggleAddFlows vAddFlowsBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x120 y464 w60 h25 vAddFlowsStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x37 y550 w550 h60 BackgroundTrans, (I DO NOT RECOMMEND YOU TURN THESE ON RN, SOMETIMES WHEN YOU OPEN CRAFT MENU, YOUR SCREEN STAYS BLACK)
-Gui, Add, Text, x37 y600 w550 h60 BackgroundTrans, Auto Craft Works
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Angel Device
@@ -853,11 +844,11 @@ if (globalArea) {
 if (transArea) {
     GuiControl,, TransAreaStatus, ON
     GuiControl, +c0x00DD00, TransAreaStatus
-    ShowTranscendentOutline()
+    ShowAllTranscendentOutlines()
 } else {
     GuiControl,, TransAreaStatus, OFF
     GuiControl, +c0xFF4444, TransAreaStatus
-    HideTranscendentOutline()
+    HideAllTranscendentOutlines()
 }
 if (doPing) {
     GuiControl,, DoPingStatus, ON
@@ -923,13 +914,6 @@ if (addFlows) {
 } else {
     GuiControl,, AddFlowsStatus, OFF
     GuiControl, +c0xFF4444, AddFlowsStatus
-}
-if (lookIsland) {
-    GuiControl,, LookIslandStatus, ON
-    GuiControl, +c0x00DD00, LookIslandStatus
-} else {
-    GuiControl,, LookIslandStatus, OFF
-    GuiControl, +c0xFF4444, LookIslandStatus
 }
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1147,11 +1131,11 @@ ToggleTransArea:
     if (transArea) {
         GuiControl,, TransAreaStatus, ON
         GuiControl, +c0x00DD00, TransAreaStatus
-        ShowTranscendentOutline()
+        ShowAllTranscendentOutlines()
     } else {
         GuiControl,, TransAreaStatus, OFF
         GuiControl, +c0xFF4444, TransAreaStatus
-        HideTranscendentOutline()
+        HideAllTranscendentOutlines()
     }
     IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
 return
@@ -1242,18 +1226,6 @@ ToggleAddFlows:
     IniWrite, % (addFlows ? "true" : "false"), %iniFilePath%, Macro, addFlows
 return
 
-ToggleLookIsland:
-    lookIsland := !lookIsland
-    if (lookIsland) {
-        GuiControl,, LookIslandStatus, ON
-        GuiControl, +c0x00DD00, LookIslandStatus
-    } else {
-        GuiControl,, LookIslandStatus, OFF
-        GuiControl, +c0xFF4444, LookIslandStatus
-    }
-    IniWrite, % (lookIsland ? "true" : "false"), %iniFilePath%, Macro, lookIsland
-return
-
 ToggleDetectTranscendents:
     detectTranscendents := !detectTranscendents
     if (detectTranscendents) {
@@ -1333,6 +1305,43 @@ UpdateAdvancedThreshold:
     }
 return
 
+RainbowText:
+    hue += 3
+    if (hue > 360)
+        hue := 0
+
+    RGB := HSLtoRGB(hue, 1, 0.5)
+
+    Gui, Font, s10 c%RGB% Normal, Trojan Pro
+    GuiControl, Font, ExoticText
+return
+
+
+HSLtoRGB(h, s, l) {
+    c := (1 - Abs(2*l - 1)) * s
+    x := c * (1 - Abs(Mod(h/60, 2) - 1))
+    m := l - c/2
+
+    if (h < 60)
+        r:=c, g:=x, b:=0
+    else if (h < 120)
+        r:=x, g:=c, b:=0
+    else if (h < 180)
+        r:=0, g:=c, b:=x
+    else if (h < 240)
+        r:=0, g:=x, b:=c
+    else if (h < 300)
+        r:=x, g:=0, b:=c
+    else
+        r:=c, g:=0, b:=x
+
+    r := Round((r+m)*255)
+    g := Round((g+m)*255)
+    b := Round((b+m)*255)
+
+    return Format("{:02X}{:02X}{:02X}", r, g, b)
+}
+
 ShowAllGlobalOutlines() {
     ShowGlobalOutline(1, 405, 900)
     ShowGlobalOutline(2, 1500, 900)
@@ -1381,44 +1390,66 @@ HideGlobalOutline(id) {
     Gui, GBoxRight%id%:Destroy
 }
 
-ShowTranscendentOutline() {
+ShowAllTranscendentOutlines() {
+    ShowTranscendentOutline(1, 1050, 49)
+    ShowTranscendentOutline(2, 950, 240)
+    ShowTranscendentOutline(3, 1300, 240)
+    ShowTranscendentOutline(4, 960, 548)
+    ShowTranscendentOutline(5, 950, 180)
+    ShowTranscendentOutline(6, 1200, 500)
+    ShowTranscendentOutline(7, 10, 900)
+    ShowTranscendentOutline(8, 670, 750)
+}
+
+HideAllTranscendentOutlines() {
+    HideTranscendentOutline(1)
+    HideTranscendentOutline(2)
+    HideTranscendentOutline(3)
+    HideTranscendentOutline(4)
+    HideTranscendentOutline(5)
+    HideTranscendentOutline(6)
+    HideTranscendentOutline(7)
+    HideTranscendentOutline(8)
+}
+
+
+ShowTranscendentOutline(id, centerX, centerY) {
     size := 40
     thickness := 2
+    color := "66CCFF"
 
-    x := 1050 - size//2
-    y := 49 - size//2
+    x := centerX - size//2
+    y := centerY - size//2
 
     yBottom := y + size - thickness
     xRight  := x + size - thickness
 
-    color := "66CCFF"
+    Gui, TBoxTop%id%:Destroy
+    Gui, TBoxTop%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxTop%id%:Color, %color%
+    Gui, TBoxTop%id%:Show, x%x% y%y% w%size% h%thickness% NA
 
-    Gui, TBoxTop:Destroy
-    Gui, TBoxTop:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxTop:Color, %color%
-    Gui, TBoxTop:Show, x%x% y%y% w%size% h%thickness% NA
+    Gui, TBoxBottom%id%:Destroy
+    Gui, TBoxBottom%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxBottom%id%:Color, %color%
+    Gui, TBoxBottom%id%:Show, x%x% y%yBottom% w%size% h%thickness% NA
 
-    Gui, TBoxBottom:Destroy
-    Gui, TBoxBottom:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxBottom:Color, %color%
-    Gui, TBoxBottom:Show, x%x% y%yBottom% w%size% h%thickness% NA
+    Gui, TBoxLeft%id%:Destroy
+    Gui, TBoxLeft%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxLeft%id%:Color, %color%
+    Gui, TBoxLeft%id%:Show, x%x% y%y% w%thickness% h%size% NA
 
-    Gui, TBoxLeft:Destroy
-    Gui, TBoxLeft:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxLeft:Color, %color%
-    Gui, TBoxLeft:Show, x%x% y%y% w%thickness% h%size% NA
-
-    Gui, TBoxRight:Destroy
-    Gui, TBoxRight:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxRight:Color, %color%
-    Gui, TBoxRight:Show, x%xRight% y%y% w%thickness% h%size% NA
+    Gui, TBoxRight%id%:Destroy
+    Gui, TBoxRight%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, TBoxRight%id%:Color, %color%
+    Gui, TBoxRight%id%:Show, x%xRight% y%y% w%thickness% h%size% NA
 }
 
-HideTranscendentOutline() {
-    Gui, TBoxTop:Destroy
-    Gui, TBoxBottom:Destroy
-    Gui, TBoxLeft:Destroy
-    Gui, TBoxRight:Destroy
+HideTranscendentOutline(id) {
+    Gui, TBoxTop%id%:Destroy
+    Gui, TBoxBottom%id%:Destroy
+    Gui, TBoxLeft%id%:Destroy
+    Gui, TBoxRight%id%:Destroy
 }
 
 CheckPixel:
@@ -1719,9 +1750,9 @@ but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
 All Globals: +
-Pixelation: +
+Pixelation: eh
 Luminosity: +
-Leviathan: (Unsure)
+Leviathan: eh
 Breakthrough: + 
 Equinox: +
 Monarch: +
@@ -1872,7 +1903,7 @@ ShowClipTextTrans() {
     blehblehbleh := ""
 }
 
-DoStrangeController:
+DoStrangeController() {
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -1894,9 +1925,9 @@ DoStrangeController:
     sleep 300
     Click, Left
     sleep, 600
-return
+}
 
-DoBiomeRandomizer:
+DoBiomeRandomizer() {
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -1918,7 +1949,7 @@ DoBiomeRandomizer:
     sleep 300
     Click, Left
     sleep, 600
-return
+}
 
 SelectItem:
     Gui, Submit, NoHide
@@ -2880,12 +2911,16 @@ if (!toggle) {
         fishingLoopCount := FishingLoopInput
     }
     toggle := true
+    strangeControllerLastRun := 0
+    biomeRandomizerLastRun := 0
     if (startTick = "") {
         startTick := A_TickCount
     }
     if (cycleCount = "") {
         cycleCount := 0
     }
+    strangeControllerLastRun := 0
+    biomeRandomizerLastRun := 0
     IniWrite, %res%, %iniFilePath%, Macro, resolution
     IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
     IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
@@ -3068,11 +3103,15 @@ if (toggle) {
     global autoCloseChat
     global strangeController
     global biomeRandomizer
-    global DoBiomeRandomizer
-    global DoStrangeController
     global CraftArchDevice
     global CraftMatrixSteampunk
     global addFlows
+    global strangeControllerTime
+    global biomeRandomizerTime
+    global strangeControllerInterval
+    global biomeRandomizerInterval
+    global strangeControllerLastRun
+    global biomeRandomizerLastRun
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
@@ -3081,6 +3120,28 @@ if (toggle) {
         restartPathing := false
         if (!toggle) {
             break
+        }
+
+        if (strangeController) {
+            elapsed := A_TickCount - startTick
+            if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
+                DoStrangeController()
+                strangeControllerLastRun := elapsed
+            } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
+                DoStrangeController()
+                strangeControllerLastRun := elapsed
+            }
+        }
+
+        if (biomeRandomizer) {
+            elapsed := A_TickCount - startTick
+            if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
+                DoBiomeRandomizer()
+                biomeRandomizerLastRun := elapsed
+            } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
+                DoBiomeRandomizer()
+                biomeRandomizerLastRun := elapsed
+            }
         }
 
         loopCount++
@@ -3172,16 +3233,6 @@ if (toggle) {
             Click, Left
             sleep 150
         }
-
-    if (strangeController && biomeRandomizer) {
-        Gosub, DoStrangeController
-        Sleep, 500
-        Gosub, DoBiomeRandomizer
-    } else if (strangeController && !biomeRandomizer) {
-        Gosub, DoStrangeController
-    } else if (biomeRandomizer && !strangeController) {
-        Gosub, DoBiomeRandomizer
-    }
 
         MouseMove, 47, 467, 3
         sleep 220
