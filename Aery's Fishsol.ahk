@@ -925,7 +925,7 @@ if (detectTranscendents) {
     transcendentCounters := {}
     for index, _ in transcendentPixels
     transcendentCounters[index] := 0
-    SetTimer, CheckPixel2, 30
+    SetTimer, CheckPixel2, 15
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
     GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -1240,7 +1240,7 @@ ToggleDetectTranscendents:
         for index, _ in transcendentPixels
             transcendentCounters[index] := 0
 
-        SetTimer, CheckPixel2, 30
+        SetTimer, CheckPixel2, 15
     } else {
         GuiControl,, DetectTranscendentsStatus, OFF
         GuiControl, +c0xFF4444, DetectTranscendentsStatus
@@ -3038,7 +3038,7 @@ F6::
         sleep, 1000
         ToolTip
         SetTimer, CheckPixel, 30
-        SetTimer, CheckPixel2, 30
+        SetTimer, CheckPixel2, 15
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
@@ -3083,7 +3083,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Seconds..., 880, 25
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel2, 30
+        SetTimer, CheckPixel2, 15
         if (clipWebhook) {
                 try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
             }
