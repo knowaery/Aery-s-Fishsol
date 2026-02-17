@@ -935,7 +935,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    SetTimer, CheckPixel, 30
+    SetTimer, CheckPixel, 35
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1256,7 +1256,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
-        SetTimer, CheckPixel, 30
+        SetTimer, CheckPixel, 35
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
         GuiControl, +c0xFF4444, NvidiaReplayStatus
@@ -1453,24 +1453,26 @@ HideTranscendentOutline(id) {
 }
 
 CheckPixel:
-    global nvidiaReplay, triggerDelay
+    global triggerDelay
 
-    if (!nvidiaReplay)
-        return
-
-    PixelGetColor, color, 405, 900, RGB
-    PixelGetColor, color2, 1500, 900, RGB
-    if (color = 0xFFFFFF && color2 = 0xFFFFFF) {
+    PixelGetColor, position1, 405, 900, RGB
+    PixelGetColor, position2, 1300, 900, RGB
+    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
         ShowClipTextGlobal()
+    } else if (position1 = 0xFFFFFF && position2 != 0xFFFFFF) {
+        ToolTip, Only 1 Pixel has been detected as white! Removing in 5 Seconds..., 900, 10
+        sleep, 5000
+        ToolTip
+    } else if (position1 != 0xFFFFFF && position2 = 0xFFFFFF) {
+        ToolTip, Only 1 Pixel has been detected as white! Removing in 5 Seconds..., 900, 10
+        sleep, 5000
+        ToolTip
     }
 return
 
 CheckPixel2:
-    global detectTranscendents, transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
-
-    if (!detectTranscendents)
-        return
+    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
     
 
         for index, pos in transcendentPixels {
@@ -2936,8 +2938,6 @@ if (onoffWebhook) {
 }
 return
 
-
-
 F2::
     toggle := false
     firstLoop := true
@@ -3037,7 +3037,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Second..., 900, 10
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel, 30
+        SetTimer, CheckPixel, 35
         SetTimer, CheckPixel2, 15
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
@@ -3061,7 +3061,7 @@ F6::
         ToolTip, Clipping Restarting in 1 Second..., 880, 25
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel, 30
+        SetTimer, CheckPixel, 35
         if (clipWebhook) {
             try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
         }
@@ -3112,6 +3112,8 @@ if (toggle) {
     global biomeRandomizerInterval
     global strangeControllerLastRun
     global biomeRandomizerLastRun
+    global nvidiaReplay
+    global detectTranscendents
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
@@ -3153,99 +3155,112 @@ if (toggle) {
         Send, {Enter}
         sleep 3000
 
-    if (autoCloseChat) {
-        PixelGetColor, chatcolor, 138, 40, RGB
-        if (chatcolor != 0x121215) {
-            Send, {Esc}
-            Sleep, 300
-            MouseMove, 800, 210, 3
-            Sleep, 300
-            Click, Left
-            MouseMove, 800, 460, 3
-            Sleep, 300
-            Click, WheelDown, 25
-            Sleep, 300
-            MouseMove, 1285, 340, 3
-            Sleep, 300
-            Click, Left
-            Sleep, 300
-            Send, {Esc}
-            Sleep, 1000
+        if (nvidiaReplay) {
+            SetTimer, CheckPixel, Off
+            sleep, 500
+            SetTimer, CheckPixel, 35
         }
 
-        PixelGetColor, chatcolor2, 138, 40, RGB
-        if (chatcolor2 = 0xF7F7F8) {
-            Sleep, 300
-            MouseMove, 145, 40, 3
-            Sleep, 300
-            MouseClick, Left
-            Sleep, 300
-        } else if (chatcolor2 = 0x121215) {
-            Sleep, 300
+        if (detectTranscendents) {
+            SetTimer, CheckPixel2, Off
+            sleep, 500
+            SetTimer, CheckPixel2, 15
         }
-    }
 
-    if (autoUnequip && useNothing) {
-            MouseMove, 45, 412, 3
-            sleep 150
+
+        if (autoCloseChat) {
+            PixelGetColor, chatcolor, 138, 40, RGB
+            if (chatcolor != 0x121215) {
+                Send, {Esc}
+                Sleep, 300
+                MouseMove, 800, 210, 3
+                Sleep, 300
+                Click, Left
+                MouseMove, 800, 460, 3
+                Sleep, 300
+                Click, WheelDown, 25
+                Sleep, 300
+                MouseMove, 1285, 340, 3
+                Sleep, 300
+                Click, Left
+                Sleep, 300
+                Send, {Esc}
+                Sleep, 1000
+            }
+
+            PixelGetColor, chatcolor2, 138, 40, RGB
+            if (chatcolor2 = 0xF7F7F8) {
+                Sleep, 300
+                MouseMove, 145, 40, 3
+                Sleep, 300
+                MouseClick, Left
+                Sleep, 300
+            } else if (chatcolor2 = 0x121215) {
+                Sleep, 300
+            }
+        }
+
+        if (autoUnequip && useNothing) {
+                MouseMove, 45, 412, 3
+                sleep 150
+                Click, Left
+                sleep 150
+                MouseMove, 820, 370, 3
+                sleep 250
+                Click, Left
+                Send, Nothing
+                sleep 150
+                MouseMove, 830, 441, 3
+                sleep 500
+                Send, {WheelUp 25}
+                Sleep, 750
+                Click, Left
+                sleep 300
+                MouseMove, 634, 638, 3
+                sleep 150
+                Click, Left
+                sleep 700
+                Click, Left
+                Sleep, 250
+                MouseMove, 1425, 303, 3
+                sleep 150
+                Click, Left
+                sleep 150
+            }
+
+        if (autoUnequip && !useNothing) {
+                MouseMove, 45, 412, 3
+                sleep 150
+                Click, Left
+                sleep 150
+                MouseMove, 830, 441, 3
+                sleep 150
+                Click, Left
+                sleep 150
+                MouseMove, 634, 638, 3
+                sleep 159
+                Click, Left
+                sleep 1200
+                Click, Left
+                sleep 150
+                MouseMove, 1425, 303, 3
+                sleep 150
+                Click, Left
+                sleep 150
+            }
+
+            MouseMove, 47, 467, 3
+            sleep 220
             Click, Left
-            sleep 150
-            MouseMove, 820, 370, 3
-            sleep 250
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
             Click, Left
-            Send, Nothing
-            sleep 150
-            MouseMove, 830, 441, 3
+            sleep 220
+            Click, WheelUp 80
             sleep 500
-            Send, {WheelUp 25}
-            Sleep, 750
-            Click, Left
+            Click, WheelDown 45
             sleep 300
-            MouseMove, 634, 638, 3
-            sleep 150
-            Click, Left
-            sleep 700
-            Click, Left
-            Sleep, 250
-            MouseMove, 1425, 303, 3
-            sleep 150
-            Click, Left
-            sleep 150
-        }
-
-    if (autoUnequip && !useNothing) {
-            MouseMove, 45, 412, 3
-            sleep 150
-            Click, Left
-            sleep 150
-            MouseMove, 830, 441, 3
-            sleep 150
-            Click, Left
-            sleep 150
-            MouseMove, 634, 638, 3
-            sleep 159
-            Click, Left
-            sleep 1200
-            Click, Left
-            sleep 150
-            MouseMove, 1425, 303, 3
-            sleep 150
-            Click, Left
-            sleep 150
-        }
-
-        MouseMove, 47, 467, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        MouseMove, 382, 126, 3
-        sleep 220
-        Click, Left
-        sleep 220
-		Click, WheelUp 80
-		sleep 500
-		Click, WheelDown 45
-		sleep 300
 
         if (archDevice && !steampunkAura && !addFlows) {
             Gosub, CraftArchDevice
