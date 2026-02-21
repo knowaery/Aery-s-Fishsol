@@ -49,10 +49,7 @@ useCelestial := false
 useExotic := false
 useBounded := false
 advancedFishingThreshold := 25
-archDevice := false
-steampunkAura := false
 autoClicker := false
-addFlows := false
 IfAdded := ""
 blehblehbleh := ""
 kurwa := ""
@@ -63,6 +60,7 @@ biomeRandomizerLastRun := 0
 biomeRandomizerInterval := 1260000
 biomeRandomizerTime := 300000
 hue := 0
+manualCraft := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -199,21 +197,13 @@ if (FileExist(iniFilePath)) {
     if (tempBounded != "ERROR")
     useBounded := (tempBounded = "true" || tempBounded = "1")
 
-    IniRead, tempArchDevice, %iniFilePath%, Macro, archDevice
-    if (tempArchDevice != "ERROR")
-    archDevice := (tempArchDevice = "true" || tempArchDevice = "1")
-
-    IniRead, tempSteampunkAura, %iniFilePath%, Macro, steampunkAura
-    if (tempSteampunkAura != "ERROR")
-    steampunkAura := (tempSteampunkAura = "true" || tempSteampunkAura = "1")
-
     IniRead, tempAutoClicker, %iniFilePath%, Macro, autoClicker
     if (tempAutoClicker != "ERROR")
     autoClicker := (tempAutoClicker = "true" || tempAutoClicker = "1")
 
-    IniRead, tempAddFlows, %iniFilePath%, Macro, addFlows
-    if (tempAddFlows != "ERROR")
-    addFlows := (tempAddFlows = "true" || tempAddFlows = "1")
+    IniRead, tempManualCraft, %iniFilePath%, Macro, manualCraft
+    if (tempManualCraft != "ERROR")
+    manualCraft := (tempManualCraft = "true" || tempManualCraft = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -565,73 +555,53 @@ Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 Gui, Tab, Crafting
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y85 w554 h210 cWhite, Auto Craft
-; Gui, Add, GroupBox, x45 y385 w200 h100 cWhite, Watch AD
-Gui, Add, GroupBox, x130 y185 w210 h100 cWhite, Heavenly Potion
-Gui, Add, GroupBox, x347 y185 w130 h100 cWhite, Bound Potion 
-Gui, Add, Text, x60 y157 w150 h50 BackgroundTrans, F4 = Start | F5 = Stop
+Gui, Add, GroupBox, x22 y85 w554 h130 cWhite, Auto Craft
+Gui, Add, GroupBox, x22 y225 w554 h130 cWhite, Manual Craft
+Gui, Add, GroupBox, x130 y385 w210 h100 cWhite, Heavenly Potion
+Gui, Add, GroupBox, x347 y385 w130 h100 cWhite, Bound Potion 
+Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F4 = Start | F5 = Stop
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x218 y205 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
-Gui, Add, Button, x218 y245 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
-Gui, Add, Text, x308 y209 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
-Gui, Add, Text, x308 y249 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Add, Button, x218 y405 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
+Gui, Add, Button, x218 y445 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
+Gui, Add, Text, x308 y409 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x308 y449 w60 h25 vUseExoticStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x138 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add 
-Gui, Add, Text, x138 y249 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x138 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add 
+Gui, Add, Text, x138 y449 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c9B8CFF Bold, Trajan Pro
-Gui, Add, Text, x164 y209 w600 h100 BackgroundTrans, Celestial:
+Gui, Add, Text, x164 y409 w600 h100 BackgroundTrans, Celestial:
 Gui, Font, s10 cWhite Normal, Trajan Pro
-Gui, Add, Text, vExoticText x164 y247 w600 h100 BackgroundTrans, Exotic:
+Gui, Add, Text, vExoticText x164 y447 w600 h100 BackgroundTrans, Exotic:
 SetTimer, RainbowText, 50
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x358 y245 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
-Gui, Add, Text, x446 y249 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Add, Button, x358 y445 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
+Gui, Add, Text, x446 y449 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x358 y209 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x358 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c1559C9 Bold, Trajan Pro
-Gui, Add, Text, x385 y209 w600 h100 BackgroundTrans, Bounded:
+Gui, Add, Text, x385 y409 w600 h100 BackgroundTrans, Bounded:
 
 
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Adding the auras listed below means adding them to the desired potion from your inventory.
-
+Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, DropDownList, x245 y155 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+Gui, Add, DropDownList, x245 y165 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory.
+Gui, Font, s11 cWhite Bold
+Gui, Add, Text, x160 y275 w534 h100 BackgroundTrans c0xCCCCCC, REQUIRES Click to Move movement mode.
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x153 y308 w70 h25 vManualCraftStatus BackgroundTrans, OFF
 
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x300 y300 w276 h95 cWhite, Craft Matrix: Steampunk
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x315 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x315 y360 w70 h25 gToggleSteampunkAura vSteampunkAuraBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x403 y364 w60 h25 vSteampunkAuraStatus BackgroundTrans, OFF
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y400 w271 h95 cWhite, Add Flows to Runic Device
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x37 y420 w260 h60 BackgroundTrans, Automatically adds Flows to the Runic Device before going to the fish sell shop.
-Gui, Add, Text, x37 y500 w250 h60 BackgroundTrans, (ill prob not add the other auras, i had said i wasnt gonna add ts already)
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x37 y460 w70 h25 gToggleAddFlows vAddFlowsBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x120 y464 w60 h25 vAddFlowsStatus BackgroundTrans, OFF
-Gui, Font, s10 cWhite Bold
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y300 w271 h95 cWhite, Craft Angel Device
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x37 y320 w260 h60 BackgroundTrans, Automatically adds auras to the Angel Device before going to the fish sell shop.
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Button, x37 y360 w70 h25 gToggleArchDevice vArchDeviceBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x120 y364 w60 h25 vArchDeviceStatus BackgroundTrans, OFF
 
 
 Gui, Tab, Failsafes
@@ -885,20 +855,6 @@ if (useBounded) {
     GuiControl,, UseBoundedStatus, OFF
     GuiControl, +c0xFF4444, UseBoundedStatus
 }
-if (archDevice) {
-    GuiControl,, ArchDeviceStatus, ON
-    GuiControl, +c0x00DD00, ArchDeviceStatus
-} else {
-    GuiControl,, ArchDeviceStatus, OFF
-    GuiControl, +c0xFF4444, ArchDeviceStatus
-}
-if (steampunkAura) {
-    GuiControl,, SteampunkAuraStatus, ON
-    GuiControl, +c0x00DD00, SteampunkAuraStatus
-} else {
-    GuiControl,, SteampunkAuraStatus, OFF
-    GuiControl, +c0xFF4444, SteampunkAuraStatus
-}
 if (autoClicker) {
     GuiControl, Disable, AutoClickStart
     GuiControl, Enable, AutoClickStop
@@ -908,12 +864,12 @@ if (autoClicker) {
     GuiControl, Disable, AutoClickStop
     GuiControl, +c0xFF4444, AutoClickerStatus, OFF
 }
-if (addFlows) {
-    GuiControl,, AddFlowsStatus, ON
-    GuiControl, +c0x00DD00, AddFlowsStatus
+if (manualCraft) {
+    GuiControl,, ManualCraftStatus, ON
+    GuiControl, +c0x00DD00, ManualCraftStatus
 } else {
-    GuiControl,, AddFlowsStatus, OFF
-    GuiControl, +c0xFF4444, AddFlowsStatus
+    GuiControl,, ManualCraftStatus, OFF
+    GuiControl, +c0xFF4444, ManualCraftStatus
 }
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
@@ -1176,29 +1132,6 @@ ToggleUseBounded:
     IniWrite, % (useBounded ? "true" : "false"), %iniFilePath%, Macro, useBounded
 return
 
-ToggleArchDevice:
-    archDevice := !archDevice
-    if (archDevice) {
-        GuiControl,, ArchDeviceStatus, ON
-        GuiControl, +c0x00DD00, ArchDeviceStatus
-    } else {
-        GuiControl,, ArchDeviceStatus, OFF
-        GuiControl, +c0xFF4444, ArchDeviceStatus
-    }
-    IniWrite, % (archDevice ? "true" : "false"), %iniFilePath%, Macro, archDevice
-return
-
-ToggleSteampunkAura:
-    steampunkAura := !steampunkAura
-    if (steampunkAura) {
-        GuiControl,, SteampunkAuraStatus, ON
-        GuiControl, +c0x00DD00, SteampunkAuraStatus
-    } else {
-        GuiControl,, SteampunkAuraStatus, OFF
-        GuiControl, +c0xFF4444, SteampunkAuraStatus
-    }
-    IniWrite, % (steampunkAura ? "true" : "false"), %iniFilePath%, Macro, steampunkAura
-return
 ToggleAutoClicker:
     autoClicker := !autoClicker
         if (autoClicker) {
@@ -1214,16 +1147,16 @@ ToggleAutoClicker:
     IniWrite, % (autoClicker ? "true" : "false"), %iniFilePath%, Macro, autoClicker
 return
 
-ToggleAddFlows:
-    addFlows := !addFlows
-    if (addFlows) {
-        GuiControl,, AddFlowsStatus, ON
-        GuiControl, +c0x00DD00, AddFlowsStatus
+ToggleManualCraft:
+    manualCraft := !manualCraft
+    if (manualCraft) {
+        GuiControl,, ManualCraftStatus, ON
+        GuiControl, +c0x00DD00, ManualCraftStatus
     } else {
-        GuiControl,, AddFlowsStatus, OFF
-        GuiControl, +c0xFF4444, AddFlowsStatus
+        GuiControl,, ManualCraftStatus, OFF
+        GuiControl, +c0xFF4444, ManualCraftStatus
     }
-    IniWrite, % (addFlows ? "true" : "false"), %iniFilePath%, Macro, addFlows
+    IniWrite, % (manualCraft ? "true" : "false"), %iniFilePath%, Macro, manualCraft
 return
 
 ToggleDetectTranscendents:
@@ -1344,12 +1277,14 @@ HSLtoRGB(h, s, l) {
 
 ShowAllGlobalOutlines() {
     ShowGlobalOutline(1, 405, 900)
-    ShowGlobalOutline(2, 1500, 900)
+    ShowGlobalOutline(2, 1300, 900)
+    ShowGlobalOutline(3, 1300, 200)
 }
 
 HideAllGlobalOutlines() {
     HideGlobalOutline(1)
     HideGlobalOutline(2)
+    HideGlobalOutline(3)
 }
 
 ShowGlobalOutline(id, centerX, centerY) {
@@ -1457,17 +1392,10 @@ CheckPixel:
 
     PixelGetColor, position1, 405, 900, RGB
     PixelGetColor, position2, 1300, 900, RGB
-    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
+    PixelGetColor, position3, 1300, 200, RGB
+    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF && position3 = 0xFFFFFF) {
         SetTimer, DoClip, -%triggerDelay%
         ShowClipTextGlobal()
-    } else if (position1 = 0xFFFFFF && position2 != 0xFFFFFF) {
-        ToolTip, Only 1 Pixel has been detected as white! Removing in 5 Seconds..., 900, 10
-        sleep, 5000
-        ToolTip
-    } else if (position1 != 0xFFFFFF && position2 = 0xFFFFFF) {
-        ToolTip, Only 1 Pixel has been detected as white! Removing in 5 Seconds..., 900, 10
-        sleep, 5000
-        ToolTip
     }
 return
 
@@ -1535,13 +1463,13 @@ Send, !{F10}
                 SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
 
             } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
 
             } else if (lastTranscendentColor2 = "Breakthrough") {
                 SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
 
             } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
             }
         } else if (nvidiacolor != 0x76B900) {
         colorHex := Format("0x{:06X}", lastTranscendentColor)
@@ -1905,6 +1833,30 @@ ShowClipTextTrans() {
     blehblehbleh := ""
 }
 
+ManualCraftAlert() {
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (10), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (9), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (8), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (7), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (6), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (5), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (4), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (3), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (2), 790, 10
+    sleep, 1000
+    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (1), 790, 10
+    sleep, 1000
+    ToolTip
+}
+
 DoStrangeController() {
     MouseMove, 45, 521, 3
     sleep 300
@@ -1956,6 +1908,11 @@ DoBiomeRandomizer() {
 SelectItem:
     Gui, Submit, NoHide
     selectedItem := AutoCraft
+return
+
+SelectItem2:
+    Gui, Submit, NoHide
+    selectedItem2 := ManualCraft
 return
 
 CraftHeavenly:
@@ -2018,7 +1975,7 @@ CraftHeavenly:
         Sleep, 1000
 
         if (useCelestial) {
-            MouseMove, 1130, 492, 3
+            MouseMove, 1130, 487, 3
             Sleep, 500
             if (kurwa != "ivaxa")
             Click, Left
@@ -2029,7 +1986,7 @@ CraftHeavenly:
         }
 
         if (useExotic) {
-            MouseMove, 1130, 542, 3
+            MouseMove, 1130, 537, 3
             Sleep, 500
             if (kurwa != "ivaxa")
             Click, Left
@@ -2433,8 +2390,6 @@ CraftDiver:
 return
 
 CraftSelected:
-    if (!autocrafting)
-        return
 
     if (selectedItem = "Heavenly Potion") {
         Gosub, CraftHeavenly
@@ -2448,6 +2403,29 @@ CraftSelected:
         Gosub, CraftRage
     } else if (selectedItem = "Diver Potion") {
         Gosub, CraftDiver
+    }
+return
+
+CraftSelected2:
+
+    if (selectedItem2 = "Heavenly Potion") {
+        Gosub, CraftHeavenly
+        IfAdded := ""
+    } else if (selectedItem2 = "Bound Potion") {
+        Gosub, CraftBound
+        IfAdded := ""
+    } else if (selectedItem2 = "Jewelry Potion") {
+        Gosub, CraftJewerly
+        IfAdded := ""
+    } else if (selectedItem2 = "Zombie Potion") {
+        Gosub, CraftZombie
+        IfAdded := ""
+    } else if (selectedItem2 = "Rage Potion") {
+        Gosub, CraftRage
+        IfAdded := ""
+    } else if (selectedItem2 = "Diver Potion") {
+        Gosub, CraftDiver
+        IfAdded := ""
     }
 return
 
@@ -2847,10 +2825,6 @@ AutoClickTick:
 Click
 return
 
-
-
-
-
 UpdateGUI:
 if (toggle) {
     GuiControl,, StatusText, Running
@@ -2901,6 +2875,10 @@ ManualGUIUpdate() {
 }
 
 F1::
+if (manualCraft && selectedItem2 = "") {
+    ManualCraftAlert()
+}
+
 if (!res) {
     res := "1080p"
 }
@@ -2933,10 +2911,12 @@ if (!toggle) {
         SetTimer, DoMouseMove, 100
     }
 }
+
 if (onoffWebhook) {
     try SendWebhook3(":green_circle: Macro Started!", "7909721")
 }
 return
+
 
 F2::
     toggle := false
@@ -3279,7 +3259,7 @@ if (toggle) {
             sleep 300
         }
 
-        if !archDevice && steampunkAura && !addFlows {
+        if (!archDevice && steampunkAura && !addFlows) {
             Gosub, CraftMatrixSteampunk
             sleep, 500
             MouseMove, 47, 467, 3
@@ -3296,7 +3276,7 @@ if (toggle) {
             sleep 300
         }
 
-        if !archDevice && !steampunkAura && addFlows {
+        if (!archDevice && !steampunkAura && addFlows) {
             Gosub, CraftRunicDevice
             sleep, 500
             MouseMove, 47, 467, 3
@@ -3312,7 +3292,7 @@ if (toggle) {
             Click, WheelDown 45
         }
 
-        if archDevice && steampunkAura && !addFlows {
+        if (archDevice && steampunkAura && !addFlows) {
             Gosub, CraftArchDevice
             sleep, 500
             MouseMove, 47, 467, 3
@@ -3342,7 +3322,7 @@ if (toggle) {
             Click, WheelDown 45
         }
 
-        if !archDevice && steampunkAura && addFlows {
+        if (!archDevice && steampunkAura && addFlows) {
             Gosub, CraftMatrixSteampunk
             sleep, 500
             MouseMove, 47, 467, 3
@@ -3372,7 +3352,7 @@ if (toggle) {
             Click, WheelDown 45
         }
 
-        if archDevice && !steampunkAura && addFlows {
+        if (archDevice && !steampunkAura && addFlows) {
             Send, {a Down}
             Sleep, 3000
             Send, {a Up}
@@ -3574,7 +3554,7 @@ if (toggle) {
             Click, WheelDown 45
         }
 
-        if archDevice && steampunkAura && addFlows {
+        if (archDevice && steampunkAura && addFlows) {
             Send, {a Down}
             Sleep, 3000
             Send, {a Up}
@@ -3833,8 +3813,101 @@ if (toggle) {
             Click, WheelUp 80
             sleep 500
             Click, WheelDown 45
+
+        }
             
-    } 
+
+        if (manualCraft) {
+            if (selectedItem2 = "") {
+                return
+            }
+
+            Send, {a Down}
+            Sleep, 3000
+            Send, {a Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 5000
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {a Down}
+            Sleep, 1100
+            Send, {a Up}
+            Sleep, 200
+
+            Send, {w Down}
+            Sleep, 100
+            Send, {w Up}
+            Sleep, 50
+
+            Send, {Space Down}
+            Sleep, 50
+            Send, {Space Up}
+            Sleep, 50
+
+            Send, {s Down}
+            Sleep, 2250
+            Send, {s Up}
+            Sleep, 50
+
+            Send, {Shift}
+            Sleep, 250
+
+            Send, {d Down}
+            Sleep, 1800
+            Send, {d Up}
+            Sleep, 250
+
+            Send, {Shift}
+            Sleep, 250
+
+            Send, e
+            Sleep, 600
+            MouseMove, 960, 800, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 600
+            MouseMove, 670, 949, 3
+            Sleep, 250
+            Click, Left
+            Sleep, 2000
+            
+            MouseMove, 1858, 186, 3
+            Sleep, 300
+            Click, Left
+            Sleep, 700
+
+            ; Send, {Esc}
+            ; Sleep, 300
+            ; MouseMove, 800, 210, 3
+            ; Sleep, 300
+            ; Click, Left
+            ; 0x646464
+            MouseMove, 1365, 490, 3
+            Sleep, 500
+            Click, Right
+            Sleep, 16000
+
+            MouseMove, 1480, 54
+            Sleep, 500
+            Click, Right
+            Sleep, 1500
+
+            Send, f
+            Sleep, 1000
+            Gosub, CraftSelected2
+            Sleep, 1000
+
+            Send, {Esc}
+            Sleep, 650
+            Send, R
+            Sleep, 650
+            Send, {Enter}
+            sleep 3000
+
+        }
 
 
 
