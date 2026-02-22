@@ -3332,6 +3332,19 @@ if (toggle) {
             Send, {Enter}
             sleep 3000
 
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+
         }
 
 
