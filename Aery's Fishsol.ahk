@@ -225,11 +225,8 @@ if (FileExist(iniFilePath)) {
     }
 }
 
-hasGlobalScript := FileExist(A_ScriptDir "\addons\checkpixelsglobal.ahk")
-hasTransScript := FileExist(A_ScriptDir "\addons\checkpixelstrans.ahk")
 
-
-version := "Aery's v1.3"
+version := "Aery's v1.4"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -944,8 +941,6 @@ if (nvidiaReplay) {
     GuiControl, +c0xFF4444, NvidiaReplayStatus
     SetTimer, CheckPixel, Off
 }
-
-SetTimer, AuraDetect, 1000
 
 CheckPixel:
     global triggerDelay
