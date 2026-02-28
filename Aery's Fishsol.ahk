@@ -8,6 +8,8 @@ iconFilePath := A_ScriptDir "\img\icon.ico"
 if (FileExist(iconFilePath)) {
     Menu, Tray, Icon, %iconFilePath%
 }
+EnvGet, LocalAppData, LOCALAPPDATA
+SetWorkingDir %A_ScriptDir%
 
 res := "1080p"
 maxLoopCount := 30
@@ -44,6 +46,7 @@ GlobalArea := false
 TransArea := false
 doPing := false
 doPing2 := false
+doPing3 := false
 autocrafting := false
 useCelestial := false
 useExotic := false
@@ -61,6 +64,8 @@ biomeRandomizerInterval := 1260000
 biomeRandomizerTime := 300000
 hue := 0
 manualCraft := false
+auraDetection := false
+prevState := "None"
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -185,6 +190,10 @@ if (FileExist(iniFilePath)) {
     if (tempDoPing2 != "ERROR")
     doPing2 := (tempDoPing2 = "true" || tempDoPing2 = "1")
 
+    IniRead, tempDoPing3, %iniFilePath%, Macro, doPing3
+    if (tempDoPing3 != "ERROR")
+    doPing3 := (tempDoPing3 = "true" || tempDoPing3 = "1")
+
     IniRead, tempCelestial, %iniFilePath%, Macro, useCelestial
     if (tempCelestial != "ERROR")
     useCelestial := (tempCelestial = "true" || tempCelestial = "1")
@@ -205,12 +214,19 @@ if (FileExist(iniFilePath)) {
     if (tempManualCraft != "ERROR")
     manualCraft := (tempManualCraft = "true" || tempManualCraft = "1")
 
+    IniRead, tempAuraDetection, %iniFilePath%, Macro, auraDetection
+    if (tempAuraDetection != "ERROR")
+    auraDetection := (tempAuraDetection = "true" || tempAuraDetection = "1")
+
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
         advancedFishingThreshold := tempAdvancedThreshold
     }
 }
+
+hasGlobalScript := FileExist(A_ScriptDir "\addons\checkpixelsglobal.ahk")
+hasTransScript := FileExist(A_ScriptDir "\addons\checkpixelstrans.ahk")
 
 
 version := "Aery's v1.3"
@@ -314,7 +330,7 @@ if (dev3_name = "ivelchampion249") {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.3
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.4
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -461,7 +477,14 @@ Gui, Add, Button, x157 y415 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y418 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
-
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x307 y325 w270 h131 cWhite, Aura Detection (Beta)
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x317 y345 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped sends a notification through a discord webhook.
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x320 y412 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x415 y417 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 
 Gui, Tab, Replay
 Gui, Font, s13 cWhite Bold, Segoe UI
@@ -548,9 +571,17 @@ Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 Gui, Font, s7 cWhite Normal
 Gui, Add, Text, x465 y376 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
-Gui, Font, s10 c0xCCCCCC Bold
+Gui, Font, s10 c0xCCCCCC Bold   
 Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
 Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x33 y435 w534 h65 cWhite, Aura Detection Ping
+Gui, Add, Button, x320 y460 w80 h25 gToggleDoPing3 vDoPing3Btn, Toggle
+Gui, Font, s10 cWhite Normal
+Gui, Add, Text, x50 y464 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
+Gui, Font, s10 c0xCCCCCC Bold
+Gui, Add, Text, x410 y464 w60 h25 vDoPing3Status BackgroundTrans, OFF
 
 Gui, Tab, Crafting
 
@@ -586,20 +617,18 @@ Gui, Add, Text, x385 y409 w600 h100 BackgroundTrans, Bounded:
 
 
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory.
+Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y165 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory.
-Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x160 y275 w534 h100 BackgroundTrans c0xCCCCCC, REQUIRES Click to Move movement mode.
+Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x153 y308 w70 h25 vManualCraftStatus BackgroundTrans, OFF
 
 
@@ -703,10 +732,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.3
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.4 (2026-02-28)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishsol v1.3
+Gui, Show, w600 h670,  Aery's fishsol v1.4
 
 if (res = "1080p") {
     GuiControl, Choose, Resolution, 1
@@ -834,6 +863,13 @@ if (doPing2) {
     GuiControl,, DoPing2Status, OFF
     GuiControl, +c0xFF4444, DoPing2Status
 }
+if (doPing3) {
+    GuiControl,, DoPing3Status, ON
+    GuiControl, +c0x00DD00, DoPing3Status
+} else {
+    GuiControl,, DoPing3Status, OFF
+    GuiControl, +c0xFF4444, DoPing3Status
+}
 if (useCelestial) {
     GuiControl,, UseCelestialStatus, ON
     GuiControl, +c0x00DD00, UseCelestialStatus
@@ -871,6 +907,15 @@ if (manualCraft) {
     GuiControl,, ManualCraftStatus, OFF
     GuiControl, +c0xFF4444, ManualCraftStatus
 }
+if (auraDetection) {
+    GuiControl,, AuraDetectionStatus, ON
+    GuiControl, +c0x00DD00, AuraDetectionStatus
+    SetTimer, AuraDetect, 1000
+} else {
+    GuiControl,, AuraDetectionStatus, OFF
+    GuiControl, +c0xFF4444, AuraDetectionStatus
+    SetTimer, AuraDetect, Off
+}
 if (detectTranscendents) {
     GuiControl,, DetectTranscendentsStatus, ON
     GuiControl, +c0x00DD00, DetectTranscendentsStatus
@@ -881,6 +926,7 @@ if (detectTranscendents) {
     transcendentCounters := {}
     for index, _ in transcendentPixels
     transcendentCounters[index] := 0
+    sleep, 1000
     SetTimer, CheckPixel2, 15
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
@@ -891,6 +937,7 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
+    sleep, 1000
     SetTimer, CheckPixel, 35
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
@@ -898,7 +945,133 @@ if (nvidiaReplay) {
     SetTimer, CheckPixel, Off
 }
 
+SetTimer, AuraDetect, 1000
 
+CheckPixel:
+    global triggerDelay
+
+    PixelGetColor, position1, 405, 900, RGB
+    PixelGetColor, position2, 1300, 900, RGB
+    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
+        SetTimer, DoClip, -%triggerDelay%
+        ShowClipTextGlobal()
+    }
+return
+
+CheckPixel2:
+    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
+    
+
+        for index, pos in transcendentPixels {
+            PixelGetColor, colort, % pos.x, % pos.y, RGB
+
+            for _, c in transcendentColors {
+            if (colort = c) {
+                transcendentCounters[index]++
+                lastTranscendentColor := colort
+                SetTimer, DoClip2, -%triggerDelay2%
+                ShowClipTextTrans()
+            }
+        }
+    }
+
+        PixelGetColor, levicolor, 950, 240, RGB
+        PixelGetColor, levicolor2, 1300, 240, RGB
+        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
+            lastTranscendentColor2 := "Leviathan"
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
+
+        PixelGetColor, colorbt, 950, 180, RGB
+        PixelGetColor, colorbt2, 1200, 500, RGB
+        PixelGetColor, colorbt3, 10, 900, RGB
+        PixelGetColor, colorbt4, 670, 750, RGB
+        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
+            lastTranscendentColor2 := "Breakthrough"
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
+
+        PixelGetColor, colormonarch, 960, 548, RGB
+        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
+            SetTimer, DoClip2, -%triggerDelay2%
+            lastTranscendentColor2 := "Monarch"
+            ShowClipTextTrans()
+        }
+return
+
+DoClip2:
+global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
+Send, !{F10}
+    if (clipWebhook) {
+
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+        if (nvidiacolor = 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
+
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
+        } else if (nvidiacolor != 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
+
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
+    }
+}
+ToolTip
+return
+
+DoClip:
+Send, !{F10}
+    if (clipWebhook) {
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+        if (nvidiacolor = 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
+        }
+
+        if (nvidiacolor != 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
+        }
+    }
+ToolTip
+return
 
 return
 
@@ -1032,6 +1205,18 @@ ToggleDoPing2:
     IniWrite, % (doPing2 ? "true" : "false"), %iniFilePath%, Macro, doPing2
 return
 
+ToggleDoPing3:
+    doPing3 := !doPing3
+    if (doPing3) {
+        GuiControl,, DoPing3Status, ON
+        GuiControl, +c0x00DD00, DoPing3Status
+    } else {
+        GuiControl,, DoPing3Status, OFF
+        GuiControl, +c0xFF4444, DoPing3Status
+    }
+    IniWrite, % (doPing3 ? "true" : "false"), %iniFilePath%, Macro, doPing3
+return
+
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
     if (onoffWebhook) {
@@ -1159,6 +1344,21 @@ ToggleManualCraft:
     IniWrite, % (manualCraft ? "true" : "false"), %iniFilePath%, Macro, manualCraft
 return
 
+ToggleAuraDetection:
+    auraDetection := !auraDetection
+    if (auraDetection) {
+        GuiControl,, AuraDetectionStatus, ON
+        GuiControl, +c0x00DD00, AuraDetectionStatus
+        SetTimer, AuraDetect, 1000
+    } else {
+        GuiControl,, AuraDetectionStatus, OFF
+        GuiControl, +c0xFF4444, AuraDetectionStatus
+        SetTimer, AuraDetect, Off
+    }
+    IniWrite, % (auraDetection ? "true" : "false"), %iniFilePath%, Macro, auraDetection
+return
+
+
 ToggleDetectTranscendents:
     detectTranscendents := !detectTranscendents
     if (detectTranscendents) {
@@ -1172,7 +1372,7 @@ ToggleDetectTranscendents:
         transcendentCounters := {}
         for index, _ in transcendentPixels
             transcendentCounters[index] := 0
-
+            sleep, 1000
         SetTimer, CheckPixel2, 15
     } else {
         GuiControl,, DetectTranscendentsStatus, OFF
@@ -1189,6 +1389,7 @@ ToggleNvidiaReplay:
         GuiControl,, NvidiaReplayStatus, ON
         GuiControl, +c0x00DD00, NvidiaReplayStatus
         triggerDelay := 10000
+        sleep, 1000
         SetTimer, CheckPixel, 35
     } else {
         GuiControl,, NvidiaReplayStatus, OFF
@@ -1387,131 +1588,172 @@ HideTranscendentOutline(id) {
     Gui, TBoxRight%id%:Destroy
 }
 
-CheckPixel:
-    global triggerDelay
+AuraDetect:
+global webhookURL, webhookID, doPing2, prevState
+    logDir := LocalAppData "\Roblox\logs"
 
-    PixelGetColor, position1, 405, 900, RGB
-    PixelGetColor, position2, 1300, 900, RGB
-    PixelGetColor, position3, 1300, 200, RGB
-    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF && position3 = 0xFFFFFF) {
-        SetTimer, DoClip, -%triggerDelay%
-        ShowClipTextGlobal()
-    }
-return
-
-CheckPixel2:
-    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
-    
-
-        for index, pos in transcendentPixels {
-            PixelGetColor, colort, % pos.x, % pos.y, RGB
-
-            for _, c in transcendentColors {
-            if (colort = c) {
-                transcendentCounters[index]++
-                lastTranscendentColor := colort
-                SetTimer, DoClip2, -%triggerDelay2%
-                ShowClipTextTrans()
-            }
+    newestTime := 0
+    newestFile := ""
+    Loop, Files, %logDir%\*.log, F
+    {
+        if (A_LoopFileTimeModified > newestTime) {
+            newestTime := A_LoopFileTimeModified
+            newestFile := A_LoopFileFullPath
         }
     }
 
-        PixelGetColor, levicolor, 950, 240, RGB
-        PixelGetColor, levicolor2, 1300, 240, RGB
-        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
-            lastTranscendentColor2 := "Leviathan"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
+    if !newestFile
+        return
 
-        PixelGetColor, colorbt, 950, 180, RGB
-        PixelGetColor, colorbt2, 1200, 500, RGB
-        PixelGetColor, colorbt3, 10, 900, RGB
-        PixelGetColor, colorbt4, 670, 750, RGB
-        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
-            lastTranscendentColor2 := "Breakthrough"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
+    file := FileOpen(newestFile, "r")
+    if !IsObject(file)
+        return
 
-        PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
-            SetTimer, DoClip2, -%triggerDelay2%
-            lastTranscendentColor2 := "Monarch"
-            ShowClipTextTrans()
-        }
-return
+    size := file.Length
+    chunkSize := 10240
+    if (size > chunkSize)
+        file.Seek(-chunkSize, 2)
+    content := file.Read()
+    file.Close()
 
-DoClip2:
-global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
-Send, !{F10}
-    if (clipWebhook) {
-
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
-
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+    lines := StrSplit(content, "`n")
+    regexLine := """state"":""((?:\\.|[^""])*)"".*?""largeImage"":\{""hoverText"":""((?:\\.|[^""])*)"""
+    Loop % lines.MaxIndex()
+    {
+        line := lines[lines.MaxIndex() - A_Index + 1]
+        if InStr(line, "[BloxstrapRPC]")
+        {
+            if RegExMatch(line, regexLine, m) {
+                state := m1
+                biome := m2
+                break
             }
-        } else if (nvidiacolor != 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
 
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-            
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-            }
+        }
     }
+
+    if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState)
+        {
+        if (prevState != "None") {
+            needle := Chr(92) Chr(34), pos1 := InStr(state, needle), auraName := (pos1 ? (pos2 := InStr(state, needle, false, pos1 + StrLen(needle))) && pos2>pos1 ? SubStr(state, pos1 + StrLen(needle), pos2 - (pos1 + StrLen(needle))) : state : state)
+
+            time := A_NowUTC
+            timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+            auraName := StrReplace(auraName, "\", "\\")
+            auraName := StrReplace(auraName, """", "\""")
+
+
+        if (auraName = "Starscourge_Radiant" 
+            || auraName = "Chromatic_Genesis" 
+            || auraName = "Spectraflow" 
+            || auraName = "Overture" 
+            || auraName = "Symphony" 
+            || auraName = "Twilight_Withering Grace" 
+            || auraName = "Felled"  
+            || auraName = "Impeached" 
+            || auraName = "Lumenpool" 
+            || auraName = "Hyper-Volt_Ever-Storm" 
+            || auraName = "Astral_Legendarium" 
+            || auraName = "Prophecy" 
+            || auraName = "Exotic_Void" 
+            || auraName = "BLOODLUST" 
+            || auraName = "Overture_History" 
+            || auraName = "Maelstrom"
+            || auraName = "Perpetual"
+            || auraName = "LOTUSFALL"
+            || auraName = "Jazz_Orchestra"
+            || auraName = "Archangel"
+            || auraName = "Atlas"
+            || auraName = "Flora_Evergreen"
+            || auraName = "CHILLSEAR"
+            || auraName = "AbyssalHunter"
+            || auraName = "GARGANTUA"
+            || auraName = "APOSTOLOS"
+            || auraName = "Kyawthuite_Remembrance"
+            || auraName = "Ruins"
+            || auraName = "Matrix_Overdrive"
+            || auraName = "Sophyra" 
+            || auraName = "Matrix_Reality"
+            || auraName = "PYTHIOS"
+            || auraName = "Sovereign"
+            || auraName = "Ruins_Withered"
+            || auraName = "Aegis"
+            || auraName = "ASCENDANT"
+            || auraName = "Sailor_Admiral"
+            || auraName = "SAILOR_ADMIRAL"
+            || auraName = "Lily"
+            || auraName = "LILY"
+
+            ; Limbo
+            || auraName = "PROLOGUE"
+            ; im unsure of these
+            || auraName = "Unknown"
+            || auraName = "UNKNOWN"
+            || auraName = "Elude"
+            || auraName = "Dreamscape"
+            || auraName = "Nyctophobia"
+            || auraName = "NYCTOPHOBIA"
+            || auraName = "Raven_Plauge") {
+
+                if (doPing3 && webhookID != "")
+                {
+                    contentStr := """content"": ""<@" webhookID ">"","
+                    mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
+                }
+                else
+                {
+                    contentStr := """content"": """","
+                    mentionsStr := ""
+                }
+        
+                
+                json := "{"
+                    . mentionsStr
+                    . contentStr
+                    . """embeds"": [{"
+                    . """description"": ""> ### Aura Equipped - " auraName ""","
+                    . """footer"": {""text"": ""Aery's fishSol v1.4"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
+                    . """timestamp"": """ timestamp """"
+                    . "}]}"
+
+                http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                http.Open("POST", webhookURL, false)
+                http.SetRequestHeader("Content-Type", "application/json")
+                http.Send(json)
+            } 
+                else if (auraName = "Pixelation" 
+                || auraName = "Luminosity"     
+                || auraName = "LEVIATHAN"
+                || auraName = "Leviathan"
+                || auraName = "Breakthrough"
+                || auraName = "BREAKTHROUGH"
+                || auraName = "Equinox"
+                || auraName = "EQUINOX"
+                || auraName = "Monarch"
+                || auraName = "MONARCH"
+                || auraName = "illusionary"
+                || auraName = "ILLUSIONARY") {
+
+                if (auraName = "Equinox" || auraName = "EQUINOX") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                             0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                } else if (auraName = "Monarch"|| auraName = "MONARCH") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                } else if (auraName = "Luminosity") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                } else if (auraName = "Pixelation") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                                0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             ███'█ P3f3cT pUpP3T: " auraName,                                                0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                }
+            }
+        }
+    prevState := state
 }
-ToolTip
-return
-
-DoClip:
-Send, !{F10}
-    if (clipWebhook) {
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
-        }
-
-        if (nvidiacolor != 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
-        }
-    }
-ToolTip
 return
 
 GetPingText() {
@@ -1533,7 +1775,7 @@ return
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
-    global webhookURL, webhookID, doPing, doPing2
+    global webhookURL, webhookID, doPing, doPing2,
 
     if (!InStr(webhookURL, "discord"))
         return
@@ -1557,51 +1799,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3.1"","
-    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
-    . "},"
-    . """timestamp"": """ timestamp """"
-    . "}]"
-    . "}"
-
-    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    http.Open("POST", webhookURL, false)
-    http.SetRequestHeader("Content-Type", "application/json")
-    http.Send(json)
-}
-
-SendWebhook2(text, color := 16777215, imageURL := "") {
-    global webhookURL, webhookID, doPing2
-
-    if (!InStr(webhookURL, "discord"))
-        return
-
-    time := A_NowUTC
-    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
-              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
-
-    content := ""
-    allowedMentions := ""
-
-    if (doPing2 && webhookID != "") {
-        content := "<@" webhookID ">"
-        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
-    }
-
-    imageBlock := ""
-    if (imageURL != "") {
-        imageBlock := """image"": {""url"": """ imageURL """},"
-    }
-
-    json := "{"
-    . """content"": """ content ""","
-    . allowedMentions
-    . """embeds"": [{"
-    . """title"": """ text ""","
-    . """color"": " color ","
-    . imageBlock
-    . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3.1"","
+    . """text"": ""Aery's fishsol v1.4"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1636,7 +1834,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.3.1"","
+    . """text"": ""Aery's fishsol v1.4"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1649,7 +1847,49 @@ SendWebhook(text, color := 16777215) {
     http.Send(json)
 }
 
+SendWebhook2(text, color := 16777215, imageURL := "") {
+    global webhookURL, webhookID, doPing, doPing2, auraName
 
+    if (!InStr(webhookURL, "discord"))
+        return
+
+    time := A_NowUTC
+    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
+              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+    content := ""
+    allowedMentions := ""
+
+    if (doPing2 && webhookID != "") {
+        content := "<@" webhookID ">"
+        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
+    }
+
+    imageBlock := ""
+    if (imageURL != "") {
+        imageBlock := """image"": {""url"": """ imageURL """},"
+    }
+
+    json := "{"
+    . """content"": """ content ""","
+    . allowedMentions
+    . """embeds"": [{"
+    . """title"": """ text ""","
+    . """color"": " color ","
+    . imageBlock
+    . """footer"": {"
+    . """text"": ""Aery's fishsol v1.4"","
+    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . "},"
+    . """timestamp"": """ timestamp """"
+    . "}]"
+    . "}"
+
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("POST", webhookURL, false)
+    http.SetRequestHeader("Content-Type", "application/json")
+    http.Send(json)
+}
 
 OpenNvidiaNotes:
     Gui, NvidiaNotes:New, +AlwaysOnTop +Resize, Nvidia Replay - Tutorial
@@ -1679,10 +1919,10 @@ Global Replay will NOT detect any global rolled under 99m.
 but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
 
 Status: (+ = true | - = false)
-All Globals: +
+All Globals: 50/50
 Pixelation: eh
 Luminosity: +
-Leviathan: eh
+Leviathan: -
 Breakthrough: + 
 Equinox: +
 Monarch: +
@@ -1745,7 +1985,6 @@ ShowClipTextGlobal() {
 
     blehblehbleh := ""
 }
-
 
 ShowClipTextTrans() {
     global blehblehbleh
@@ -1951,30 +2190,30 @@ CraftHeavenly:
         if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1023, 437, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 200
-
-        if (kurwa != "ivaxa")
-        Send, ^a
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, 250
-        Sleep, 200
     }
 
-        if (kurwa != "ivaxa") 
-        MouseMove, 1130, 437, 3
-        Sleep, 1000
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 1000
+        if (!useCelestial || !useExotic){
+            if (kurwa != "ivaxa")
+            MouseMove, 1023, 437, 3
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Send, ^a
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Send, 250
+            Sleep, 200
+            if (kurwa != "ivaxa") 
+            MouseMove, 1130, 437, 3
+            Sleep, 1000
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 1000
+        }
 
-        if (useCelestial) {
+        if (useCelestial && !useExotic) {
             MouseMove, 1130, 487, 3
             Sleep, 500
             if (kurwa != "ivaxa")
@@ -1985,7 +2224,7 @@ CraftHeavenly:
             Sleep, 500
         }
 
-        if (useExotic) {
+        if (useExotic && !useCelestial) {
             MouseMove, 1130, 537, 3
             Sleep, 500
             if (kurwa != "ivaxa")
@@ -1993,8 +2232,16 @@ CraftHeavenly:
             Sleep, 500
         }
 
+        if (useExotic && useCelestial) {
+            MouseMove, 850, 688, 3
+            Sleep, 500
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 500
+        }
+
         if (kurwa != "ivaxa")
-        MouseMove, 1130, 693, 3
+        MouseMove, 1084, 688, 3
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
@@ -2041,39 +2288,39 @@ CraftBound:
         if (kurwa != "ivaxa")
          Click, Left
         Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1023, 597, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, ^a
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, 100
-        Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1130, 597, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        sleep, 200
     }
+        If  (!useBounded) {
+            if (kurwa != "ivaxa")
+            MouseMove, 1023, 597, 3
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Send, ^a
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Send, 100
+            Sleep, 200
 
-    if (useBounded) {
-        if (kurwa != "ivaxa")
-        MouseMove, 1130, 438, 3
-        Sleep, 500
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 500
-    }
+            if (kurwa != "ivaxa")
+            MouseMove, 1130, 597, 3
+            Sleep, 200
+            if (kurwa != "ivaxa")
+            Click, Left
+            sleep, 200
+        }
+
+        if (useBounded) {
+            MouseMove, 850, 688, 3
+            Sleep, 500
+            if (kurwa != "ivaxa")
+            Click, Left
+            Sleep, 500
+        }
 
         if (kurwa != "ivaxa")
-        MouseMove, 1130, 693, 3
+        MouseMove, 1084, 688, 3
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
@@ -2120,30 +2367,16 @@ CraftJewerly:
         if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1023, 432, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, ^a
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, 20
-        Sleep, 200
     }
 
-    if (kurwa != "ivaxa")
-    MouseMove, 1130, 432, 3
-    Sleep, 1000
+    if (kurwa != "ivaxa") 
+    MouseMove, 850, 688, 3
+    Sleep, 500
     if (kurwa != "ivaxa")
     Click, Left
-    Sleep, 1000
-
+    Sleep, 2000
     if (kurwa != "ivaxa")
-    MouseMove, 1130, 693, 3
+    MouseMove, 1084, 688, 3
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
@@ -2190,30 +2423,17 @@ CraftZombie:
         if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1023, 432, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, ^a
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, 10
-        Sleep, 200
     }
 
-    if (kurwa != "ivaxa")
-    MouseMove, 1130, 432, 3
-    Sleep, 1000
+    if (kurwa != "ivaxa") 
+    MouseMove, 850, 688, 3
+    Sleep, 500
     if (kurwa != "ivaxa")
     Click, Left
-    Sleep, 1000
+    Sleep, 2000
 
     if (kurwa != "ivaxa")
-    MouseMove, 1130, 693, 3
+    MouseMove, 1084, 688, 3
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
@@ -2260,30 +2480,17 @@ CraftRage:
         if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1023, 432, 3
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Click, Left
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, ^a
-        Sleep, 200
-        if (kurwa != "ivaxa")
-        Send, 10
-        Sleep, 200
     }
 
     if (kurwa != "ivaxa")
-    MouseMove, 1130, 432, 3
-    Sleep, 1000
-    if (kurwa != "ivaxa")
+    MouseMove, 850, 688, 3
+    Sleep, 500
+    if (kurwa != "ivaxa") 
     Click, Left
-    Sleep, 1000
+    Sleep, 2000
 
     if (kurwa != "ivaxa")
-    MouseMove, 1130, 693, 3
+    MouseMove, 1084, 688, 3
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
@@ -2343,45 +2550,23 @@ CraftDiver:
         Click, Left
         Sleep, 200
         }
-
-        if (kurwa != "ivaxa") {
-        MouseMove, 1023, 432, 3
-        Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
-        Click, Left
-        Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
-        Send, ^a
-        Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
-        Send, 20
-        Sleep, 200
-        }
     }
 
-
-    
     if (kurwa != "ivaxa") {
-    MouseMove, 1130, 432, 3
+    MouseMove, 850, 688, 3
+    Sleep, 500
+    }
+    if (kurwa != "ivaxa") {
+    Click, Left
+    Sleep, 2000
+    }
+    if (kurwa != "ivaxa") {
+    MouseMove, 1084, 688, 3
     Sleep, 1000
     }
     if (kurwa != "ivaxa") {
     Click, Left
-    Sleep, 1000
-    }
-    if (kurwa != "ivaxa") {
-    MouseMove, 1130, 693, 3
-    Sleep, 1000
-    }
-    if (kurwa != "ivaxa") {
-    Click, Left
-    Sleep, 1000
+    Sleep, 2000
     }
 
     if (kurwa = "ivaxa") {
@@ -2427,370 +2612,6 @@ CraftSelected2:
         Gosub, CraftDiver
         IfAdded := ""
     }
-return
-
-CraftArchDevice:
-    Send, {a Down}
-    Sleep, 3000
-    Send, {a Up}
-    Sleep, 50
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-    Send, {a Down}
-    Sleep, 1100
-    Send, {a Up}
-    Sleep, 200
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 2250
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {Shift}
-    Sleep, 250
-
-    Send, {d Down}
-    Sleep, 1800
-    Send, {d Up}
-    Sleep, 250
-    Send, {Shift}
-    Sleep, 250
-
-    Send, e
-    Sleep, 600
-    MouseMove, 960, 800, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 600
-    MouseMove, 670, 949, 3
-    Sleep, 800
-    Click, Left
-    Sleep, 1500
-    MouseMove, 1500, 267, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 350
-    Send, ^a
-    Sleep, 100
-    Send, Heavenly Device
-    Sleep, 350
-    Send, {Enter} 
-    Sleep, 350
-    MouseMove, 1500, 367, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    MouseMove, 220, 830, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 400
-    MouseMove, 967, 500, 3
-    Send, {WheelUp 25}
-    Sleep, 800
-    Send, {WheelDown 25}
-    Sleep, 800
-
-    ; Divnus Angel (7)
-    MouseMove, 1140, 630, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 250
-
-    ; Hope (5)
-    MouseMove, 1140, 575, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 250
-
-    ; Faith (1)
-    MouseMove, 1140, 525, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 1000
-    MouseMove, 1858, 186, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-
-    Send, {Esc}
-    Sleep, 500
-    Send, r
-    Sleep, 500
-    Send, {Enter}
-    Sleep, 3500
-return
-
-CraftMatrixSteampunk:
-    Send, {a Down}
-    Sleep, 3000
-    Send, {a Up}
-    Sleep, 50
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-    Send, {a Down}
-    Sleep, 1100
-    Send, {a Up}
-    Sleep, 200
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 2250
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {Shift}
-    Sleep, 250
-
-    Send, {d Down}
-    Sleep, 1800
-    Send, {d Up}
-    Sleep, 250
-    Send, {Shift}
-    Sleep, 250
-
-    Send, e
-    Sleep, 600
-    MouseMove, 960, 800, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 600
-    MouseMove, 670, 949, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 1500
-
-
-    MouseMove, 1640, 230,3
-    Sleep, 250
-    Click, Left
-    MouseMove, 1500, 267, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 350
-    Send, ^a
-    sleep, 100
-    Send, Steampunk
-    Sleep, 100
-    Send, {Enter}
-    MouseMove, 1500, 367, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    MouseMove, 220, 830, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 400
-    MouseMove, 967, 500, 3
-    Send, {WheelUp 25}
-    Sleep, 800
-
-    ; Magnetic Polarity (5)
-    MouseMove, 1140, 490, 3
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-
-    ; Virtual (3)
-    MouseMove, 1140, 540, 3
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-
-    ; Zeus (2)
-    MouseMove, 1140, 595, 3
-    Sleep, 300
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-
-    ; Hypervolt (1)
-    MouseMove, 540, 650, 3
-    Sleep, 300
-    Click, Left
-    Sleep, 1000
-
-    MouseMove, 1858, 186, 3
-    Sleep, 300
-    Click, Left
-
-    Send, {Esc}
-    Sleep, 500
-    Send, r
-    Sleep, 500
-    Send, {Enter}
-    Sleep, 3500
-return
-
-CraftRunicDevice:
-    Send, {a Down}
-    Sleep, 3000
-    Send, {a Up}
-    Sleep, 50
-    Send, {s Down}
-    Sleep, 5000
-    Send, {s Up}
-    Sleep, 50
-    Send, {a Down}
-    Sleep, 1100
-    Send, {a Up}
-    Sleep, 200
-    Send, {w Down}
-    Sleep, 100
-    Send, {w Up}
-    Sleep, 50
-
-    Send, {Space Down}
-    Sleep, 50
-    Send, {Space Up}
-    Sleep, 50
-
-    Send, {s Down}
-    Sleep, 2250
-    Send, {s Up}
-    Sleep, 50
-
-    Send, {Shift}
-    Sleep, 250
-
-    Send, {d Down}
-    Sleep, 1800
-    Send, {d Up}
-    Sleep, 250
-    Send, {Shift}
-    Sleep, 250
-
-    Send, e
-    Sleep, 600
-    MouseMove, 960, 800, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 600
-    MouseMove, 670, 949, 3
-    Sleep, 800
-    Click, Left
-    Sleep, 1500
-    MouseMove, 1500, 267, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 350
-    Send, ^a
-    Sleep, 100
-    Send, Unfathomable Ruins
-    Sleep, 350
-    Send, {Enter} 
-    Sleep, 350
-    MouseMove, 1500, 367, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    MouseMove, 220, 830, 3
-    Sleep, 350
-    Click, Left
-    Sleep, 400
-    MouseMove, 967, 500, 3
-    Send, {WheelUp 25}
-    Sleep, 800
-    Send, {WheelDown 25}
-    Sleep, 800
-
-    ; Flows (15)
-    MouseMove, 1140, 580, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 500
-    Click, Left
-    Sleep, 1000
-
-    MouseMove, 1858, 186, 3
-    Sleep, 250
-    Click, Left
-    Sleep, 500
-
-
-    Send, {Esc}
-    Sleep, 500
-    Send, r
-    Sleep, 500
-    Send, {Enter}
-    Sleep, 3500
 return
 
 StartAutoClicker:
@@ -2950,10 +2771,6 @@ F4::
 
     autocrafting := true
 
-    if (onoffWebhook) {
-        try SendWebhook(":tools: Crafting Started", 7909721)
-    }
-
     ToolTip, Crafting will start in 5 seconds..., 900, 10
     Sleep, 1000
     ToolTip, Crafting will start in 4 seconds..., 900, 10
@@ -2965,6 +2782,9 @@ F4::
     ToolTip, Crafting will start in 1 second..., 900, 10
     Sleep, 1000
     ToolTip
+    if (onoffWebhook) {
+        try SendWebhook(":tools: Crafting Started", 7909721)
+    }
 
     SetTimer, CraftSelected, 1000
 return
@@ -2973,10 +2793,6 @@ return
 F5:: 
 if (!autocrafting || toggle)
    return
-
-   if (onoffWebhook) {
-        try SendWebhook(":tools: Crafting Stopped", "14495300")
-   }
 
     autocrafting := false
     kurwa := "ivaxa"
@@ -2991,8 +2807,10 @@ if (!autocrafting || toggle)
     ToolTip, Crafting has Stopped. (1), 865, 10
     Sleep 1000
     ToolTip
+    if (onoffWebhook) {
+        try SendWebhook(":tools: Crafting Stopped", "14495300")
+   }
 return
-
 
 F6::
     if (!nvidiaReplay && !detectTranscendents)
@@ -3070,7 +2888,6 @@ F6::
         }
 return
 
-
 ;1080p
 DoMouseMove:
 if (toggle) {
@@ -3083,17 +2900,13 @@ if (toggle) {
     global autoCloseChat
     global strangeController
     global biomeRandomizer
-    global CraftArchDevice
-    global CraftMatrixSteampunk
-    global addFlows
     global strangeControllerTime
     global biomeRandomizerTime
     global strangeControllerInterval
     global biomeRandomizerInterval
     global strangeControllerLastRun
     global biomeRandomizerLastRun
-    global nvidiaReplay
-    global detectTranscendents
+    global manualCraft
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
@@ -3133,19 +2946,7 @@ if (toggle) {
         Send, R
         Sleep, 650
         Send, {Enter}
-        sleep 3000
-
-        if (nvidiaReplay) {
-            SetTimer, CheckPixel, Off
-            sleep, 500
-            SetTimer, CheckPixel, 35
-        }
-
-        if (detectTranscendents) {
-            SetTimer, CheckPixel2, Off
-            sleep, 500
-            SetTimer, CheckPixel2, 15
-        }
+        sleep 3000  
 
 
         if (autoCloseChat) {
@@ -3288,37 +3089,76 @@ if (toggle) {
             Send, {Shift}
             Sleep, 250
 
-            Send, e
-            Sleep, 600
-            MouseMove, 960, 800, 3
+            Send, {a Down}
+            Sleep, 380
+            Send, {a Up}
             Sleep, 250
-            Click, Left
-            Sleep, 600
-            MouseMove, 670, 949, 3
+
+            Send, {s Down}
+            Sleep, 4400
+            Send, {s Up}
             Sleep, 250
-            Click, Left
+
+            Send, {a Down}
+            Sleep, 1465
+            Send, {a Up}
+            Sleep, 250
+
+            Send, {s Down}
+            Sleep, 1800
+            Send, {s Up}
+            Sleep, 250
+
+            Send, {a Down}
+            Sleep, 125
+            Send, {a Up}
+            Sleep, 250
+
+            Send, {s Down}
             Sleep, 2000
-            
-            MouseMove, 1858, 186, 3
-            Sleep, 300
-            Click, Left
-            Sleep, 700
+            Send, {s Up}
+            Sleep, 250
 
-            ; Send, {Esc}
-            ; Sleep, 300
-            ; MouseMove, 800, 210, 3
-            ; Sleep, 300
-            ; Click, Left
-            ; 0x646464
-            MouseMove, 1365, 490, 3
-            Sleep, 500
-            Click, Right
-            Sleep, 16000
+            Send, {d Down}
+            Sleep, 50
+            Send, {d Up}
+            Sleep, 250
 
-            MouseMove, 1480, 54
-            Sleep, 500
-            Click, Right
+            Send, {Shift}
+            Sleep, 250
+
+            Send, {Space Down}
+            Sleep, 50
+            Send, {Space Up}
+            Sleep, 50
+
+            Send, {a Down}
+            Sleep, 800
+            Send, {a Up}
+            Sleep, 250
+
+            Send, {Shift}
+            Sleep, 250
+
+            Send, {Space Down}
+            Sleep, 50
+            Send, {Space Up}
+            Sleep, 50
+
+            Send, {a Down}
+            Sleep, 2900
+            Send, {a Up}
+            Sleep, 250
+
+            Send, {s Down}
+            Sleep, 2000
+            Send, {s Up}
+            Sleep, 2000
+
+            Send, {a Down}
             Sleep, 1500
+            Send, {a Up}
+            Sleep, 250
 
             Send, f
             Sleep, 1000
@@ -3331,19 +3171,6 @@ if (toggle) {
             Sleep, 650
             Send, {Enter}
             sleep 3000
-
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
 
         }
 
