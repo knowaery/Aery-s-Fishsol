@@ -29,3 +29,5 @@ Leviathan Cutscene Image: https://www.youtube.com/watch?v=dtTOPCvqvjA
 Equinox Cutscene Image: https://www.youtube.com/watch?v=o-u3_KUMKgk
 
 Monarch Cutscene Image: https://www.youtube.com/watch?v=EPidBCDgtso
+
+Auras In Collection GIFS: https://sol-rng.fandom.com/wiki/Sol%27s_RNG_Wiki
