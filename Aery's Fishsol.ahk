@@ -1698,7 +1698,7 @@ global webhookURL, webhookID, doPing2, prevState
                 mentionsStr := ""
             }
 
-            if (!AuraListTrans.HasKey(auraName)) {
+            if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
                 json := "{"
                     . mentionsStr
                     . contentStr
