@@ -66,6 +66,72 @@ hue := 0
 manualCraft := false
 auraDetection := false
 prevState := "None"
+detectGlobal := false
+detectTrans := false
+legacyReplay := false
+triggerDelayGlobal := 10000
+triggerDelayTrans := 20000
+
+AuraList := {"Starscourge_Radiant": 1
+, "Chromatic_Genesis": 1
+, "Spectraflow": 1
+, "Overture": 1
+, "Symphony": 1
+, "Twilight_Withering Grace": 1
+, "Felled": 1
+, "Impeached": 1
+, "Lumenpool": 1
+, "Hyper-Volt_Ever-Storm": 1
+, "Astral_Legendarium": 1
+, "Prophecy": 1
+, "Exotic_Void": 1
+, "BLOODLUST": 1
+, "Overture_History": 1
+, "Maelstrom": 1
+, "Perpetual": 1
+, "LOTUSFALL": 1
+, "Jazz_Orchestra": 1
+, "Archangel": 1
+, "Atlas": 1
+, "Flora_Evergreen": 1
+, "CHILLSEAR": 1
+, "AbyssalHunter": 1
+, "GARGANTUA": 1
+, "APOSTOLOS": 1
+, "Kyawthuite_Remembrance": 1
+, "Ruins": 1
+, "Matrix_Overdrive": 1
+, "Sophyra": 1
+, "Matrix_Reality": 1
+, "PYTHIOS": 1
+, "Sovereign": 1
+, "Ruins_Withered": 1
+, "Aegis": 1
+, "ASCENDANT": 1
+, "Sailor_Admiral": 1
+, "SAILOR_ADMIRAL": 1
+, "Lily": 1
+, "PROLOGUE": 1
+, "Unknown": 1
+, "UNKNOWN": 1
+, "Elude": 1
+, "Dreamscape": 1
+, "Nyctophobia": 1
+, "NYCTOPHOBIA": 1
+, "Raven_Plauge": 1}
+
+AuraListTrans := {"Pixelation": 1
+, "Luminosity": 1
+, "LEVIATHAN": 1
+, "Leviathan": 1
+, "Breakthrough": 1
+, "BREAKTHROUGH": 1
+, "Equinox": 1
+, "EQUINOX": 1
+, "Monarch": 1
+, "MONARCH": 1
+, "illusionary": 1
+, "ILLUSIONARY": 1}
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -218,6 +284,18 @@ if (FileExist(iniFilePath)) {
     if (tempAuraDetection != "ERROR")
     auraDetection := (tempAuraDetection = "true" || tempAuraDetection = "1")
 
+    IniRead, tempDetectGlobal, %iniFilePath%, Macro, detectGlobal
+    if (tempDetectGlobal != "ERROR")
+    detectGlobal := (tempDetectGlobal = "true" || tempDetectGlobal = "1")
+
+    IniRead, tempDetectTrans, %iniFilePath%, Macro, detectTrans
+    if (tempDetectTrans != "ERROR")
+    detectTrans := (tempDetectTrans = "true" || tempDetectTrans = "1")
+
+    IniRead, tempLegacyReplay, %iniFilePath%, Macro, legacyReplay
+    if (tempLegacyReplay != "ERROR")
+    legacyReplay := (tempLegacyReplay = "true" || tempLegacyReplay = "1")
+
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
@@ -332,7 +410,16 @@ Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
 Gui, Font, s10 cWhite Normal, Segoe UI
-Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, Main|Misc|Replay|Webhook|Crafting|Failsafes|About
+
+tabList := "Main|Misc|Webhook"
+if (legacyReplay)
+tabList .= "|Replay"
+tabList .= "|ReplayV2"
+tabList .= "|Crafting"
+tabList .= "|Failsafes"
+tabList .= "|About"
+
+Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
 Gui, Tab, Main
 Gui, Font, s9 cWhite Normal, Segoe UI
@@ -416,6 +503,15 @@ Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, Legacy Replay
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x45 y495 w80 h25 gToggleLegacyReplay vLegacyReplayBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x140 y498 w60 h25 vLegacyReplayStatus BackgroundTrans, OFF
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x40 y465 w240 h45 BackgroundTrans c0xCCCCCC, If toggled on, please restart the app.
+
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
 
@@ -474,15 +570,7 @@ Gui, Add, Button, x157 y415 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y418 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y325 w270 h131 cWhite, Aura Detection (Beta)
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x317 y345 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped sends a notification through a discord webhook.
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x320 y412 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y417 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
-
+if (legacyReplay) {
 Gui, Tab, Replay
 Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Text, x230 y93 w250 h75 BackgroundTrans, [ Nvidia Replay ]
@@ -536,6 +624,47 @@ Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F6 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
+}
+
+Gui, Tab, ReplayV2
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x157 y125 w270 h121 cWhite, Aura Detection (Beta)
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x167 y145 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped sends a notification through a discord webhook.
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x170 y202 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x265 y207 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
+
+Gui, Font, s13 cWhite Bold, Segoe UI
+Gui, Add, Text, x130 y93 w400 h75 BackgroundTrans, [ Nvidia Replay V2 - Improved Detection ]
+
+Gui, Font, s11 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x33 y300 w534 h100 cWhite, Clip Globals
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y320 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y359 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y361 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
+
+; Transcendents
+
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y405 w534 h100 cWhite, Clip Transcendents
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y425 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's has been equipped. Also gives a special webhook!
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y465 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y468 w70 h25 vDetectTransStatus BackgroundTrans, OFF
+
+Gui, Font, s11 cWhite Bold
+Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F6 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
+
 
 Gui, Tab, Webhook
 
@@ -734,16 +863,7 @@ Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x20
 
 Gui, Show, w600 h670,  Aery's fishsol v1.4
 
-if (res = "1080p") {
-    GuiControl, Choose, Resolution, 1
-} else if (res = "1440p") {
-    GuiControl, Choose, Resolution, 2
-} else if (res = "1366x768") {
-    GuiControl, Choose, Resolution, 3
-} else {
-    GuiControl, Choose, Resolution, 1
-    res := "1080p"
-}
+GuiControl, Choose, Resolution, 1
 
 if (sellAllToggle) {
     GuiControl,, SellAllStatus, ON
@@ -923,7 +1043,6 @@ if (detectTranscendents) {
     transcendentCounters := {}
     for index, _ in transcendentPixels
     transcendentCounters[index] := 0
-    sleep, 1000
     SetTimer, CheckPixel2, 15
 } else {
     GuiControl,, DetectTranscendentsStatus, OFF
@@ -934,139 +1053,33 @@ if (nvidiaReplay) {
     GuiControl,, NvidiaReplayStatus, ON
     GuiControl, +c0x00DD00, NvidiaReplayStatus
     triggerDelay := 10000
-    sleep, 1000
     SetTimer, CheckPixel, 35
 } else {
     GuiControl,, NvidiaReplayStatus, OFF
     GuiControl, +c0xFF4444, NvidiaReplayStatus
     SetTimer, CheckPixel, Off
 }
-
-CheckPixel:
-    global triggerDelay
-
-    PixelGetColor, position1, 405, 900, RGB
-    PixelGetColor, position2, 1300, 900, RGB
-    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
-        SetTimer, DoClip, -%triggerDelay%
-        ShowClipTextGlobal()
-    }
-return
-
-CheckPixel2:
-    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
-    
-
-        for index, pos in transcendentPixels {
-            PixelGetColor, colort, % pos.x, % pos.y, RGB
-
-            for _, c in transcendentColors {
-            if (colort = c) {
-                transcendentCounters[index]++
-                lastTranscendentColor := colort
-                SetTimer, DoClip2, -%triggerDelay2%
-                ShowClipTextTrans()
-            }
-        }
-    }
-
-        PixelGetColor, levicolor, 950, 240, RGB
-        PixelGetColor, levicolor2, 1300, 240, RGB
-        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
-            lastTranscendentColor2 := "Leviathan"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
-
-        PixelGetColor, colorbt, 950, 180, RGB
-        PixelGetColor, colorbt2, 1200, 500, RGB
-        PixelGetColor, colorbt3, 10, 900, RGB
-        PixelGetColor, colorbt4, 670, 750, RGB
-        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
-            lastTranscendentColor2 := "Breakthrough"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
-
-        PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
-            SetTimer, DoClip2, -%triggerDelay2%
-            lastTranscendentColor2 := "Monarch"
-            ShowClipTextTrans()
-        }
-return
-
-DoClip2:
-global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
-Send, !{F10}
-    if (clipWebhook) {
-
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
-
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-            }
-        } else if (nvidiacolor != 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
-
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-            
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-            }
-    }
+if (detectGlobal) {
+    GuiControl,, DetectGlobalStatus, ON
+    GuiControl, +c0x00DD00, DetectGlobalStatus
+} else {
+    GuiControl,, DetectGlobalStatus, OFF
+    GuiControl, +c0xFF4444, DetectGlobalStatus
 }
-ToolTip
-return
-
-DoClip:
-Send, !{F10}
-    if (clipWebhook) {
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
-        }
-
-        if (nvidiacolor != 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
-        }
-    }
-ToolTip
-return
+if (detectTrans) {
+    GuiControl,, DetectTransStatus, ON
+    GuiControl, +c0x00DD00, DetectTransStatus
+} else {
+    GuiControl,, DetectTransStatus, OFF
+    GuiControl, +c0xFF4444, DetectTransStatus
+}
+if (legacyReplay) {
+    GuiControl,, LegacyReplayStatus, ON
+    GuiControl, +c0x00DD00, LegacyReplayStatus  
+} else {
+    GuiControl,, LegacyReplayStatus, OFF
+    GuiControl, +c0xFF4444, LegacyReplayStatus
+}
 
 return
 
@@ -1395,6 +1408,44 @@ ToggleNvidiaReplay:
     IniWrite, % (nvidiaReplay ? "true" : "false"), %iniFilePath%, Macro, nvidiaReplay
 return
 
+ToggleDetectGlobal:
+    detectGlobal := !detectGlobal
+
+    if (detectGlobal) {
+        GuiControl,, DetectGlobalStatus, ON
+        GuiControl, +c0x00DD00, DetectGlobalStatus
+    } else {
+        GuiControl,, DetectGlobalStatus, OFF
+        GuiControl, +c0xFF4444, DetectGlobalStatus
+        SetTimer, CheckPixel, Off
+    }
+
+    IniWrite, % (detectGlobal ? "true" : "false"), %iniFilePath%, Macro, detectGlobal
+return
+
+ToggleDetectTrans:
+    detectTrans := !detectTrans
+    if (detectTrans) {
+        GuiControl,, DetectTransStatus, ON
+        GuiControl, +c0x00DD00, DetectTransStatus
+    } else {
+        GuiControl,, DetectTransStatus, OFF
+        GuiControl, +c0xFF4444, DetectTransStatus
+    }
+    IniWrite, % (detectTrans ? "true" : "false"), %iniFilePath%, Macro, detectTrans
+return
+
+ToggleLegacyReplay:
+    legacyReplay := !legacyReplay
+    if (legacyReplay) {
+        GuiControl,, LegacyReplayStatus, ON
+        GuiControl, +c0x00DD00, LegacyReplayStatus
+    } else {
+        GuiControl,, LegacyReplayStatus, OFF
+        GuiControl, +c0xFF4444, LegacyReplayStatus
+    }
+    IniWrite, % (legacyReplay ? "true" : "false"), %iniFilePath%, Macro, legacyReplay
+return
 
 UpdatePrivateServer:
     Gui, Submit, NoHide
@@ -1623,14 +1674,15 @@ global webhookURL, webhookID, doPing2, prevState
                 biome := m2
                 break
             }
-
         }
     }
 
     if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState)
-        {
+    {
         if (prevState != "None") {
-            needle := Chr(92) Chr(34), pos1 := InStr(state, needle), auraName := (pos1 ? (pos2 := InStr(state, needle, false, pos1 + StrLen(needle))) && pos2>pos1 ? SubStr(state, pos1 + StrLen(needle), pos2 - (pos1 + StrLen(needle))) : state : state)
+            needle := Chr(92) Chr(34)
+            pos1 := InStr(state, needle)
+            auraName := (pos1 ? (pos2 := InStr(state, needle, false, pos1 + StrLen(needle))) && pos2>pos1 ? SubStr(state, pos1 + StrLen(needle), pos2 - (pos1 + StrLen(needle))) : state : state)
 
             time := A_NowUTC
             timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
@@ -1638,76 +1690,20 @@ global webhookURL, webhookID, doPing2, prevState
             auraName := StrReplace(auraName, "\", "\\")
             auraName := StrReplace(auraName, """", "\""")
 
+            if AuraList.HasKey(auraName) {
+                contentStr := """content"": ""<@" webhookID ">"","
+                mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
+            } else {
+                contentStr := """content"": """","
+                mentionsStr := ""
+            }
 
-        if (auraName = "Starscourge_Radiant" 
-            || auraName = "Chromatic_Genesis" 
-            || auraName = "Spectraflow" 
-            || auraName = "Overture" 
-            || auraName = "Symphony" 
-            || auraName = "Twilight_Withering Grace" 
-            || auraName = "Felled"  
-            || auraName = "Impeached" 
-            || auraName = "Lumenpool" 
-            || auraName = "Hyper-Volt_Ever-Storm" 
-            || auraName = "Astral_Legendarium" 
-            || auraName = "Prophecy" 
-            || auraName = "Exotic_Void" 
-            || auraName = "BLOODLUST" 
-            || auraName = "Overture_History" 
-            || auraName = "Maelstrom"
-            || auraName = "Perpetual"
-            || auraName = "LOTUSFALL"
-            || auraName = "Jazz_Orchestra"
-            || auraName = "Archangel"
-            || auraName = "Atlas"
-            || auraName = "Flora_Evergreen"
-            || auraName = "CHILLSEAR"
-            || auraName = "AbyssalHunter"
-            || auraName = "GARGANTUA"
-            || auraName = "APOSTOLOS"
-            || auraName = "Kyawthuite_Remembrance"
-            || auraName = "Ruins"
-            || auraName = "Matrix_Overdrive"
-            || auraName = "Sophyra" 
-            || auraName = "Matrix_Reality"
-            || auraName = "PYTHIOS"
-            || auraName = "Sovereign"
-            || auraName = "Ruins_Withered"
-            || auraName = "Aegis"
-            || auraName = "ASCENDANT"
-            || auraName = "Sailor_Admiral"
-            || auraName = "SAILOR_ADMIRAL"
-            || auraName = "Lily"
-            || auraName = "LILY"
-
-            ; Limbo
-            || auraName = "PROLOGUE"
-            ; im unsure of these
-            || auraName = "Unknown"
-            || auraName = "UNKNOWN"
-            || auraName = "Elude"
-            || auraName = "Dreamscape"
-            || auraName = "Nyctophobia"
-            || auraName = "NYCTOPHOBIA"
-            || auraName = "Raven_Plauge") {
-
-                if (doPing3 && webhookID != "")
-                {
-                    contentStr := """content"": ""<@" webhookID ">"","
-                    mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
-                }
-                else
-                {
-                    contentStr := """content"": """","
-                    mentionsStr := ""
-                }
-        
-                
+            if (!AuraListTrans.HasKey(auraName)) {
                 json := "{"
                     . mentionsStr
                     . contentStr
                     . """embeds"": [{"
-                    . """description"": ""> ### Aura Equipped - " auraName ""","
+                    . """description"": "" ### Aura Equipped - " auraName ""","
                     . """footer"": {""text"": ""Aery's fishSol v1.4"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
                     . """timestamp"": """ timestamp """"
                     . "}]}"
@@ -1716,39 +1712,51 @@ global webhookURL, webhookID, doPing2, prevState
                 http.Open("POST", webhookURL, false)
                 http.SetRequestHeader("Content-Type", "application/json")
                 http.Send(json)
-            } 
-                else if (auraName = "Pixelation" 
-                || auraName = "Luminosity"     
-                || auraName = "LEVIATHAN"
-                || auraName = "Leviathan"
-                || auraName = "Breakthrough"
-                || auraName = "BREAKTHROUGH"
-                || auraName = "Equinox"
-                || auraName = "EQUINOX"
-                || auraName = "Monarch"
-                || auraName = "MONARCH"
-                || auraName = "illusionary"
-                || auraName = "ILLUSIONARY") {
+            }
 
-                if (auraName = "Equinox" || auraName = "EQUINOX") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                             0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
-                } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
-                } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
-                } else if (auraName = "Monarch"|| auraName = "MONARCH") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
-                } else if (auraName = "Luminosity") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                            11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
-                } else if (auraName = "Pixelation") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName,                                                0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
-                } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             ███'█ P3f3cT pUpP3T: " auraName,                                                0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
-                }
+            if (auraName = "Equinox" || auraName = "EQUINOX") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+            } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+            } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+            } else if (auraName = "Monarch" || auraName = "MONARCH") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+            } else if (auraName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                             Aura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+            } else if (auraName = "Pixelation") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+            } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
+                SendWebhook2(" **████████████ D3T3ct3d..**                                         ███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+            }
+
+            if (AuraList.HasKey(auraName)) {
+                SetTimer, V2Clip, -%triggerDelayGlobal%
+                ShowClipTextGlobal()
+            }
+                
+            if (AuraListTrans.HasKey(auraName) && (detectTrans)) {
+                SetTimer, V2Clip, -%triggerDelayTrans%
+                ShowClipTextTrans()
             }
         }
-    prevState := state
-}
+        prevState := state
+    }
+return
+
+V2Clip:
+    Send, !{F10}
+    if (clipWebhook) {
+            Sleep, 1500
+            PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+            if (nvidiacolor = 0x76B900) {
+                try SendWebhook(auraName . " has been Clipped!", 0)
+            } else {
+                try SendWebhook(auraName . " has not been Clipped!", 0)
+            }
+        }
+    ToolTip
 return
 
 GetPingText() {
@@ -1933,6 +1941,132 @@ return
 
 CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
+return
+
+CheckPixel:
+    global triggerDelay
+
+    PixelGetColor, position1, 405, 900, RGB
+    PixelGetColor, position2, 1300, 900, RGB
+    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
+        SetTimer, DoClip, -%triggerDelay%
+        ShowClipTextGlobal()
+    }
+return
+
+CheckPixel2:
+    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
+    
+
+        for index, pos in transcendentPixels {
+            PixelGetColor, colort, % pos.x, % pos.y, RGB
+
+            for _, c in transcendentColors {
+            if (colort = c) {
+                transcendentCounters[index]++
+                lastTranscendentColor := colort
+                SetTimer, DoClip2, -%triggerDelay2%
+                ShowClipTextTrans()
+            }
+        }
+    }
+
+        PixelGetColor, levicolor, 950, 240, RGB
+        PixelGetColor, levicolor2, 1300, 240, RGB
+        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
+            lastTranscendentColor2 := "Leviathan"
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
+
+        PixelGetColor, colorbt, 950, 180, RGB
+        PixelGetColor, colorbt2, 1200, 500, RGB
+        PixelGetColor, colorbt3, 10, 900, RGB
+        PixelGetColor, colorbt4, 670, 750, RGB
+        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
+            lastTranscendentColor2 := "Breakthrough"
+            SetTimer, DoClip2, -%triggerDelay2%
+            ShowClipTextTrans()
+        }
+
+        PixelGetColor, colormonarch, 960, 548, RGB
+        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
+            SetTimer, DoClip2, -%triggerDelay2%
+            lastTranscendentColor2 := "Monarch"
+            ShowClipTextTrans()
+        }
+return
+
+DoClip2:
+global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
+Send, !{F10}
+    if (clipWebhook) {
+
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+        if (nvidiacolor = 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
+
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
+        } else if (nvidiacolor != 0x76B900) {
+        colorHex := Format("0x{:06X}", lastTranscendentColor)
+        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
+            ? transcendentColorNames[lastTranscendentColor]
+            : "Unknown Color"
+
+            if (colorName = "Equinox1" || colorName = "Equinox2") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
+
+            } else if (colorName = "Luminosity") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
+
+            } else if (lastTranscendentColor2 = "Leviathan") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
+
+            } else if (lastTranscendentColor2 = "Breakthrough") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
+            
+            } else if (lastTranscendentColor2 = "Monarch") {
+                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
+            }
+    }
+}
+ToolTip
+return
+
+DoClip:
+Send, !{F10}
+    if (clipWebhook) {
+        sleep, 1500
+        PixelGetColor, nvidiacolor, 1622, 155, RGB
+
+        if (nvidiacolor = 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
+        }
+
+        if (nvidiacolor != 0x76B900) {
+            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
+        }
+    }
+ToolTip
 return
 
 ShowClipTextGlobal() {
@@ -2808,8 +2942,6 @@ if (!autocrafting || toggle)
 return
 
 F6::
-    if (!nvidiaReplay && !detectTranscendents)
-        return
 
     blehblehbleh := "hehe"
 
@@ -2880,6 +3012,19 @@ F6::
         if (clipWebhook) {
                 try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
             }
+        }
+
+        if (detectGlobal || detectTrans && auraDetection) {
+            SetTimer, V2Clip, Off
+            SetTimer, AuraDetect, Off
+            ToolTip, Detection Restarting in 3 Seconds..., 880, 25
+            sleep, 1000
+            ToolTip, Detection Restarting in 2 Seconds..., 880, 25
+            sleep, 1000
+            ToolTip, Detection Restarting in 1 Seconds..., 880, 25
+            sleep, 1000
+            ToolTip
+            SetTimer, AuraDetect, 1000
         }
 return
 
