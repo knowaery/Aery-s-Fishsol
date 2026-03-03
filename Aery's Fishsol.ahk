@@ -71,6 +71,7 @@ detectTrans := false
 legacyReplay := false
 triggerDelayGlobal := 10000
 triggerDelayTrans := 20000
+webReponse := "false"
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -1635,7 +1636,7 @@ HideTranscendentOutline(id) {
 }
 
 AuraDetect:
-global webhookURL, webhookID, doPing2, prevState
+global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detectTrans, triggerDelayGlobal, triggerDelayTrans
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1699,6 +1700,12 @@ global webhookURL, webhookID, doPing2, prevState
             }
 
             if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
+                if AuraList.HasKey(auraName) {
+                    ClipCountdownGlobal()
+                } else {
+                    ClipCountdown()
+                }
+                if (webResponse = "false") {
                 json := "{"
                     . mentionsStr
                     . contentStr
@@ -1713,34 +1720,57 @@ global webhookURL, webhookID, doPing2, prevState
                 http.SetRequestHeader("Content-Type", "application/json")
                 http.Send(json)
             }
+        }
 
             if (auraName = "Equinox" || auraName = "EQUINOX") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                }
             } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                }
             } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                }
             } else if (auraName = "Monarch" || auraName = "MONARCH") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                }
             } else if (auraName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                             Aura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                }
             } else if (auraName = "Pixelation") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                }
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
-                SendWebhook2(" **████████████ D3T3ct3d..**                                         ███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(" **████████████ D3T3ct3d..**                                         ███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                }
             }
 
-            if (AuraList.HasKey(auraName)) {
+            if (AuraList.HasKey(auraName) && (detectGlobal) && (webResponse = "false")) {
                 SetTimer, V2Clip, -%triggerDelayGlobal%
                 ShowClipTextGlobal()
             }
                 
-            if (AuraListTrans.HasKey(auraName) && (detectTrans)) {
+            if (AuraListTrans.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
                 SetTimer, V2Clip, -%triggerDelayTrans%
                 ShowClipTextTrans()
             }
         }
         prevState := state
+        webResponse := "false"
     }
 return
 
@@ -2068,6 +2098,101 @@ Send, !{F10}
     }
 ToolTip
 return
+
+ClipCountdownGlobal() {
+    global webResponse
+
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (10), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (9), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (8), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (7), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (6), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (5), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (4), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (3), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (2), 880, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook and clip (1), 880, 10
+        Sleep, 1000
+    }
+
+    ToolTip
+}
+
+ClipCountdown() {
+    global webResponse
+
+
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (10), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (9), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (8), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (7), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (6), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (5), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (4), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (3), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (2), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F7 to cancel webhook (1), 900, 10
+        Sleep, 1000
+    }
+    
+    ToolTip
+}
 
 ShowClipTextGlobal() {
     global blehblehbleh
@@ -3017,6 +3142,13 @@ F6::
         if (detectGlobal || detectTrans && auraDetection) {
             SetTimer, V2Clip, Off
             SetTimer, AuraDetect, Off
+            if (clipWebhook) {
+                try SendWebhook(":x: Clipping Canceled", 0)
+            }
+            ToolTip, Detection Restarting in 5 Seconds..., 880, 25
+            sleep, 1000
+            ToolTip, Detection Restarting in 4 Seconds..., 880, 25
+            sleep, 1000
             ToolTip, Detection Restarting in 3 Seconds..., 880, 25
             sleep, 1000
             ToolTip, Detection Restarting in 2 Seconds..., 880, 25
@@ -3026,6 +3158,11 @@ F6::
             ToolTip
             SetTimer, AuraDetect, 1000
         }
+return
+
+F7:: 
+    webResponse := "true"
+    ToolTip
 return
 
 ;1080p
