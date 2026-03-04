@@ -1,15 +1,14 @@
 #NoEnv
 #SingleInstance Force
+EnvGet, LocalAppData, LOCALAPPDATA
 SetWorkingDir %A_ScriptDir%
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 iniFilePath := A_ScriptDir "\settings.ini"
-iconFilePath := A_ScriptDir "\img\icon.ico"
+iconFilePath := A_ScriptDir "\img\icon2.ico"
 if (FileExist(iconFilePath)) {
     Menu, Tray, Icon, %iconFilePath%
 }
-EnvGet, LocalAppData, LOCALAPPDATA
-SetWorkingDir %A_ScriptDir%
 
 res := "1080p"
 maxLoopCount := 30
@@ -20,16 +19,6 @@ pathingMode := "Vip Pathing"
 azertyPathing := false
 autoUnequip := false
 useNothing := false
-nvidiaReplay := false
-detectTranscendents :=false
-transcendentCounters := {}
-transcendentColors := [0x060908, 0xC2C2C2, 0x566980]
-transcendentColorNames := {}
-transcendentColorNames[0x060908] := "Equinox1"
-transcendentColorNames[0xC2C2C2] := "Equinox2"
-transcendentColorNames[0x566980] := "Luminosity"
-lastTranscendentColor := ""
-lastTranscendentColor2 := ""
 strangeController := false
 biomeRandomizer := false
 autoCloseChat := false
@@ -42,8 +31,6 @@ webhookURL := ""
 webhookID := ""
 clipWebhook := false
 onoffWebhook := false
-GlobalArea := false
-TransArea := false
 doPing := false
 doPing2 := false
 doPing3 := false
@@ -66,12 +53,14 @@ hue := 0
 manualCraft := false
 auraDetection := false
 prevState := "None"
+prevBiome := "None"
 detectGlobal := false
 detectTrans := false
-legacyReplay := false
 triggerDelayGlobal := 10000
 triggerDelayTrans := 20000
 webReponse := "false"
+pendingUnequip := false
+autoWarp := false
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -220,12 +209,6 @@ if (FileExist(iniFilePath)) {
     if (tempOnoffWebhook != "ERROR")
     onoffWebhook := (tempOnoffWebhook = "true" || tempOnoffWebhook = "1")
 
-    IniRead, tempNvidiaReplay, %iniFilePath%, Macro, nvidiaReplay, false
-    nvidiaReplay := (tempNvidiaReplay = "true" || tempNvidiaReplay = "1")
-
-    IniRead, tempDetectTranscendent, %iniFilePath%, Macro, detectTranscendents, false
-    detectTranscendents := (tempDetectTranscendent = "true" || tempDetectTranscendent = "1")
-
     IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, false
     autoCloseChat := (tempAutoCloseChat = "true" || tempAutoCloseChat = "1")
 
@@ -240,14 +223,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAzerty, %iniFilePath%, Macro, azertyPathing
     if (tempAzerty != "ERROR")
     azertyPathing := (tempAzerty = "true" || tempAzerty = "1")
-
-    IniRead, tempGlobalArea, %iniFilePath%, Macro, globalArea
-    if (tempGlobalArea != "ERROR")
-    globalArea := (tempGlobalArea = "true" || tempGlobalArea = "1")
-
-    IniRead, tempTransArea, %iniFilePath%, Macro, transArea
-    if (tempTransArea != "ERROR")
-    transArea := (tempTransArea = "true" || tempTransArea = "1")
 
     IniRead, tempDoPing, %iniFilePath%, Macro, doPing
     if (tempDoPing != "ERROR")
@@ -293,9 +268,9 @@ if (FileExist(iniFilePath)) {
     if (tempDetectTrans != "ERROR")
     detectTrans := (tempDetectTrans = "true" || tempDetectTrans = "1")
 
-    IniRead, tempLegacyReplay, %iniFilePath%, Macro, legacyReplay
-    if (tempLegacyReplay != "ERROR")
-    legacyReplay := (tempLegacyReplay = "true" || tempLegacyReplay = "1")
+    IniRead, tempAutoWarp, %iniFilePath%, Macro, autoWarp
+    if (tempAutoWarp != "ERROR")
+    autoWarp := (tempAutoWarp = "true" || tempAutoWarp = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -413,9 +388,7 @@ Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works 
 Gui, Font, s10 cWhite Normal, Segoe UI
 
 tabList := "Main|Misc|Webhook"
-if (legacyReplay)
 tabList .= "|Replay"
-tabList .= "|ReplayV2"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
@@ -435,8 +408,6 @@ Gui, Add, Button, x45 y140 w70 h35 gStartScript vStartBtn c0x00AA00 +0x8000, Sta
 Gui, Add, Button, x125 y140 w70 h35 gPauseScript vPauseBtn c0xFFAA00 +0x8000, Pause
 Gui, Add, Button, x205 y140 w70 h35 gCloseScript vStopBtn c0xFF4444 +0x8000, Stop
 
-Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x45 y185 w240 h15 BackgroundTrans, Hotkeys: F1=Start - F2=Pause - F3=Stop
 
 Gui, Add, GroupBox, x305 y85 w260 h120 cWhite, Configuration
 Gui, Font, s10 cWhite Bold
@@ -504,17 +475,13 @@ Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, Legacy Replay
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y495 w80 h25 gToggleLegacyReplay vLegacyReplayBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x140 y498 w60 h25 vLegacyReplayStatus BackgroundTrans, OFF
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x40 y465 w240 h45 BackgroundTrans c0xCCCCCC, If toggled on, please restart the app.
-
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x175 y570 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
+Gui, Add, Text, x175 y550 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
+Gui, Font, s8 c0xCCCCCC
+Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
+Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
+Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
+Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Clip - F6=Stop Webhook and Clip
 
 Gui, Tab, Misc
 
@@ -571,63 +538,19 @@ Gui, Add, Button, x157 y415 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y418 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
-if (legacyReplay) {
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x307 y330 w270 h124 cWhite, Auto-Warp in Cyberspace
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Warp Potion. This will not send a webhook through discord about the biome.
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x415 y413 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
+
 Gui, Tab, Replay
+
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Text, x230 y93 w250 h75 BackgroundTrans, [ Nvidia Replay ]
 Gui, Add, Button, x208 y600 w180 h40 gOpenNvidiaNotes, Tutorial/Disclaimers
-
-; Globals
-
-Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x33 y120 w534 h135 cWhite, Clip Globals
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y140 w515 h135 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting if your screen has turned white. This means it only clips auras rolled above 99M+.                                   Example: Clips breakthrough Gargantua, but not in starfall/rune.
-Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y237 w534 h135 BackgroundTrans, May clip Pixelation too.
-Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x183 y211 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y209 w80 h25 gToggleNvidiaReplay vNvidiaReplayBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y211 w70 h25 vNvidiaReplayStatus BackgroundTrans, OFF
-
-; Transcendents
-
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y265 w534 h120 cWhite, Clip Transcendents
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y285 w515 h145 BackgroundTrans, (BETA) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's cutscene. Not guaranteed to work. Works for Pixelation, Luminosity, Breakthrough, Leviathan, Equinox and Monarch.
-Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x183 y350 w424 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y345 w80 h25 gToggleDetectTranscendents vDetectTranscendentsBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y348 w70 h25 vDetectTranscendentsStatus BackgroundTrans, OFF
-
-
-; Highlight Area
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y400 w534 h75 cWhite, Highlight Detection Area
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y420 w520 h145 BackgroundTrans, Highlights where it is detecting to clip Globals and Transcendents
-Gui, Add, Text, x173 y446 w520 h145 BackgroundTrans, (Globals)
-Gui, Add, Text, x470 y446 w520 h145 BackgroundTrans, (Transcendents)
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y441 w80 h25 gToggleGlobalArea vGlobalAreaBtn, Toggle
-Gui, Add, Button, x345 y441 w80 h25 gToggleTransArea vTransAreaBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x143 y446 w60 h25 vGlobalAreaStatus BackgroundTrans, OFF
-Gui, Add, Text, x440 y446 w60 h25 vTransAreaStatus BackgroundTrans, OFF
-
-Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F6 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
-}
-
-Gui, Tab, ReplayV2
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x157 y125 w270 h121 cWhite, Aura Detection (Beta)
@@ -639,7 +562,7 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x265 y207 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Text, x130 y93 w400 h75 BackgroundTrans, [ Nvidia Replay V2 - Improved Detection ]
+Gui, Add, Text, x130 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
 
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y300 w534 h100 cWhite, Clip Globals
@@ -717,7 +640,7 @@ Gui, Add, GroupBox, x22 y85 w554 h130 cWhite, Auto Craft
 Gui, Add, GroupBox, x22 y225 w554 h130 cWhite, Manual Craft
 Gui, Add, GroupBox, x130 y385 w210 h100 cWhite, Heavenly Potion
 Gui, Add, GroupBox, x347 y385 w130 h100 cWhite, Bound Potion 
-Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F4 = Start | F5 = Stop
+Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F3 = Start | F4 = Stop
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x218 y405 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -949,24 +872,6 @@ if (onoffWebhook) {
     GuiControl,, OnoffWebhookStatus, OFF
     GuiControl, +c0xFF4444, OnoffWebhookStatus
 }
-if (globalArea) {
-    GuiControl,, GlobalAreaStatus, ON
-    GuiControl, +c0x00DD00, GlobalAreaStatus
-    ShowAllGlobalOutlines()
-} else {
-    GuiControl,, GlobalAreaStatus, OFF
-    GuiControl, +c0xFF4444, GlobalAreaStatus
-    HideAllGlobalOutlines()
-}
-if (transArea) {
-    GuiControl,, TransAreaStatus, ON
-    GuiControl, +c0x00DD00, TransAreaStatus
-    ShowAllTranscendentOutlines()
-} else {
-    GuiControl,, TransAreaStatus, OFF
-    GuiControl, +c0xFF4444, TransAreaStatus
-    HideAllTranscendentOutlines()
-}
 if (doPing) {
     GuiControl,, DoPingStatus, ON
     GuiControl, +c0x00DD00, DoPingStatus
@@ -1034,32 +939,6 @@ if (auraDetection) {
     GuiControl, +c0xFF4444, AuraDetectionStatus
     SetTimer, AuraDetect, Off
 }
-if (detectTranscendents) {
-    GuiControl,, DetectTranscendentsStatus, ON
-    GuiControl, +c0x00DD00, DetectTranscendentsStatus
-    triggerDelay2 := 20000
-    transcendentPixels := []
-    transcendentPixels.Push({x: 1050, y: 49})
-
-    transcendentCounters := {}
-    for index, _ in transcendentPixels
-    transcendentCounters[index] := 0
-    SetTimer, CheckPixel2, 15
-} else {
-    GuiControl,, DetectTranscendentsStatus, OFF
-    GuiControl, +c0xFF4444, DetectTranscendentsStatus
-    SetTimer, CheckPixel2, Off
-}
-if (nvidiaReplay) {
-    GuiControl,, NvidiaReplayStatus, ON
-    GuiControl, +c0x00DD00, NvidiaReplayStatus
-    triggerDelay := 10000
-    SetTimer, CheckPixel, 35
-} else {
-    GuiControl,, NvidiaReplayStatus, OFF
-    GuiControl, +c0xFF4444, NvidiaReplayStatus
-    SetTimer, CheckPixel, Off
-}
 if (detectGlobal) {
     GuiControl,, DetectGlobalStatus, ON
     GuiControl, +c0x00DD00, DetectGlobalStatus
@@ -1074,12 +953,12 @@ if (detectTrans) {
     GuiControl,, DetectTransStatus, OFF
     GuiControl, +c0xFF4444, DetectTransStatus
 }
-if (legacyReplay) {
-    GuiControl,, LegacyReplayStatus, ON
-    GuiControl, +c0x00DD00, LegacyReplayStatus  
+if (autoWarp) {
+    GuiControl,, AutoWarpStatus, ON
+    GuiControl, +c0x00DD00, AutoWarpStatus
 } else {
-    GuiControl,, LegacyReplayStatus, OFF
-    GuiControl, +c0xFF4444, LegacyReplayStatus
+    GuiControl,, AutoWarpStatus, OFF
+    GuiControl, +c0xFF4444, AutoWarpStatus
 }
 
 return
@@ -1262,34 +1141,6 @@ ToggleBiomeRandomizer:
     IniWrite, % (biomeRandomizer ? "true" : "false"), %iniFilePath%, Macro, biomeRandomizer
 return
 
-ToggleGlobalArea:
-    globalArea := !globalArea
-    if (globalArea) {
-        GuiControl,, GlobalAreaStatus, ON
-        GuiControl, +c0x00DD00, GlobalAreaStatus
-        ShowAllGlobalOutlines()
-    } else {
-        GuiControl,, GlobalAreaStatus, OFF
-        GuiControl, +c0xFF4444, GlobalAreaStatus
-        HideAllGlobalOutlines()
-    }
-    IniWrite, % (globalArea ? "true" : "false"), %iniFilePath%, Macro, globalArea
-return
-
-ToggleTransArea:
-    transArea := !transArea
-    if (transArea) {
-        GuiControl,, TransAreaStatus, ON
-        GuiControl, +c0x00DD00, TransAreaStatus
-        ShowAllTranscendentOutlines()
-    } else {
-        GuiControl,, TransAreaStatus, OFF
-        GuiControl, +c0xFF4444, TransAreaStatus
-        HideAllTranscendentOutlines()
-    }
-    IniWrite, % (transArea ? "true" : "false"), %iniFilePath%, Macro, transArea
-return
-
 ToggleUseCelestial:
     useCelestial := !useCelestial
     if (useCelestial) {
@@ -1367,48 +1218,6 @@ ToggleAuraDetection:
     IniWrite, % (auraDetection ? "true" : "false"), %iniFilePath%, Macro, auraDetection
 return
 
-
-ToggleDetectTranscendents:
-    detectTranscendents := !detectTranscendents
-    if (detectTranscendents) {
-        GuiControl,, DetectTranscendentsStatus, ON
-        GuiControl, +c0x00DD00, DetectTranscendentsStatus
-
-        triggerDelay2 := 20000
-        transcendentPixels := []
-        transcendentPixels.Push({x: 1050, y: 49})
-
-        transcendentCounters := {}
-        for index, _ in transcendentPixels
-            transcendentCounters[index] := 0
-            sleep, 1000
-        SetTimer, CheckPixel2, 15
-    } else {
-        GuiControl,, DetectTranscendentsStatus, OFF
-        GuiControl, +c0xFF4444, DetectTranscendentsStatus
-        SetTimer, CheckPixel2, Off
-    }
-    IniWrite, % (detectTranscendents ? "true" : "false"), %iniFilePath%, Macro, detectTranscendents
-return
-
-ToggleNvidiaReplay:
-    nvidiaReplay := !nvidiaReplay
-
-    if (nvidiaReplay) {
-        GuiControl,, NvidiaReplayStatus, ON
-        GuiControl, +c0x00DD00, NvidiaReplayStatus
-        triggerDelay := 10000
-        sleep, 1000
-        SetTimer, CheckPixel, 35
-    } else {
-        GuiControl,, NvidiaReplayStatus, OFF
-        GuiControl, +c0xFF4444, NvidiaReplayStatus
-        SetTimer, CheckPixel, Off
-    }
-
-    IniWrite, % (nvidiaReplay ? "true" : "false"), %iniFilePath%, Macro, nvidiaReplay
-return
-
 ToggleDetectGlobal:
     detectGlobal := !detectGlobal
 
@@ -1418,7 +1227,6 @@ ToggleDetectGlobal:
     } else {
         GuiControl,, DetectGlobalStatus, OFF
         GuiControl, +c0xFF4444, DetectGlobalStatus
-        SetTimer, CheckPixel, Off
     }
 
     IniWrite, % (detectGlobal ? "true" : "false"), %iniFilePath%, Macro, detectGlobal
@@ -1436,16 +1244,16 @@ ToggleDetectTrans:
     IniWrite, % (detectTrans ? "true" : "false"), %iniFilePath%, Macro, detectTrans
 return
 
-ToggleLegacyReplay:
-    legacyReplay := !legacyReplay
-    if (legacyReplay) {
-        GuiControl,, LegacyReplayStatus, ON
-        GuiControl, +c0x00DD00, LegacyReplayStatus
+ToggleAutoWarp:
+    autoWarp := !autoWarp
+    if (autoWarp) {
+        GuiControl,, AutoWarpStatus, ON
+        GuiControl, +c0x00DD00, AutoWarpStatus
     } else {
-        GuiControl,, LegacyReplayStatus, OFF
-        GuiControl, +c0xFF4444, LegacyReplayStatus
+        GuiControl,, AutoWarpStatus, OFF
+        GuiControl, +c0xFF4444, AutoWarpStatus
     }
-    IniWrite, % (legacyReplay ? "true" : "false"), %iniFilePath%, Macro, legacyReplay
+    IniWrite, % (autoWarp ? "true" : "false"), %iniFilePath%, Macro, autoWarp
 return
 
 UpdatePrivateServer:
@@ -1521,111 +1329,6 @@ HSLtoRGB(h, s, l) {
     b := Round((b+m)*255)
 
     return Format("{:02X}{:02X}{:02X}", r, g, b)
-}
-
-ShowAllGlobalOutlines() {
-    ShowGlobalOutline(1, 405, 900)
-    ShowGlobalOutline(2, 1300, 900)
-    ShowGlobalOutline(3, 1300, 200)
-}
-
-HideAllGlobalOutlines() {
-    HideGlobalOutline(1)
-    HideGlobalOutline(2)
-    HideGlobalOutline(3)
-}
-
-ShowGlobalOutline(id, centerX, centerY) {
-    size := 40
-    thickness := 2
-
-    x := centerX - size//2
-    y := centerY - size//2
-
-    yBottom := y + size - thickness
-    xRight  := x + size - thickness
-
-    Gui, GBoxTop%id%:Destroy
-    Gui, GBoxTop%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxTop%id%:Color, 00FF00
-    Gui, GBoxTop%id%:Show, x%x% y%y% w%size% h%thickness% NA
-
-    Gui, GBoxBottom%id%:Destroy
-    Gui, GBoxBottom%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxBottom%id%:Color, 00FF00
-    Gui, GBoxBottom%id%:Show, x%x% y%yBottom% w%size% h%thickness% NA
-
-    Gui, GBoxLeft%id%:Destroy
-    Gui, GBoxLeft%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxLeft%id%:Color, 00FF00
-    Gui, GBoxLeft%id%:Show, x%x% y%y% w%thickness% h%size% NA
-
-    Gui, GBoxRight%id%:Destroy
-    Gui, GBoxRight%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, GBoxRight%id%:Color, 00FF00
-    Gui, GBoxRight%id%:Show, x%xRight% y%y% w%thickness% h%size% NA
-}
-
-HideGlobalOutline(id) {
-    Gui, GBoxTop%id%:Destroy
-    Gui, GBoxBottom%id%:Destroy
-    Gui, GBoxLeft%id%:Destroy
-    Gui, GBoxRight%id%:Destroy
-}
-
-ShowAllTranscendentOutlines() {
-    ShowTranscendentOutline(1, 1050, 49)
-    ShowTranscendentOutline(2, 950, 240)
-    ShowTranscendentOutline(3, 1300, 240)
-    ShowTranscendentOutline(4, 960, 548)
-    ShowTranscendentOutline(5, 950, 180)
-    ShowTranscendentOutline(6, 1200, 500)
-    ShowTranscendentOutline(7, 10, 900)
-    ShowTranscendentOutline(8, 670, 750)
-}
-
-HideAllTranscendentOutlines() {
-    HideTranscendentOutline(1)
-    HideTranscendentOutline(2)
-    HideTranscendentOutline(3)
-    HideTranscendentOutline(4)
-    HideTranscendentOutline(5)
-    HideTranscendentOutline(6)
-    HideTranscendentOutline(7)
-    HideTranscendentOutline(8)
-}
-
-
-ShowTranscendentOutline(id, centerX, centerY) {
-    size := 40
-    thickness := 2
-    color := "66CCFF"
-
-    x := centerX - size//2
-    y := centerY - size//2
-
-    yBottom := y + size - thickness
-    xRight  := x + size - thickness
-
-    Gui, TBoxTop%id%:Destroy
-    Gui, TBoxTop%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxTop%id%:Color, %color%
-    Gui, TBoxTop%id%:Show, x%x% y%y% w%size% h%thickness% NA
-
-    Gui, TBoxBottom%id%:Destroy
-    Gui, TBoxBottom%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxBottom%id%:Color, %color%
-    Gui, TBoxBottom%id%:Show, x%x% y%yBottom% w%size% h%thickness% NA
-
-    Gui, TBoxLeft%id%:Destroy
-    Gui, TBoxLeft%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxLeft%id%:Color, %color%
-    Gui, TBoxLeft%id%:Show, x%x% y%y% w%thickness% h%size% NA
-
-    Gui, TBoxRight%id%:Destroy
-    Gui, TBoxRight%id%:+AlwaysOnTop -Caption +ToolWindow +E0x20
-    Gui, TBoxRight%id%:Color, %color%
-    Gui, TBoxRight%id%:Show, x%xRight% y%y% w%thickness% h%size% NA
 }
 
 HideTranscendentOutline(id) {
@@ -1725,37 +1428,37 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
             if (auraName = "Equinox" || auraName = "EQUINOX") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                 }
             } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
                 }
             } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
                 }
             } else if (auraName = "Monarch" || auraName = "MONARCH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
                 }
             } else if (auraName = "Luminosity") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
                 }
             } else if (auraName = "Pixelation") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada:                             Aura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
                 }
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(" **████████████ D3T3ct3d..**                                         ███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook2(" **████████████ D3T3ct3d..** \n███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             }
 
@@ -1768,7 +1471,11 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
                 SetTimer, V2Clip, -%triggerDelayTrans%
                 ShowClipTextTrans()
             }
-        }
+
+            if (toggle) && (autoUnequip) && (auraName != "Nothing") {
+                pendingUnequip := true
+                }
+            }
         prevState := state
         webResponse := "false"
     }
@@ -1928,7 +1635,7 @@ OpenNvidiaNotes:
     Gui, NvidiaNotes:New, +AlwaysOnTop +Resize, Nvidia Replay - Tutorial
     Gui, NvidiaNotes:Font, s10, Segoe UI
 
-    Gui, NvidiaNotes:Add, Edit, x10 y10 w550 h540 ReadOnly vNvidiaNotesText -Wrap, 
+    Gui, NvidiaNotes:Add, Edit, x10 y10 w530 h180 ReadOnly vNvidiaNotesText -Wrap, 
     (
 IMPORTANT, PLEASE READ
 
@@ -1936,301 +1643,55 @@ Requirements:
 - Nvidia Overlay (requires an Nvidia GPU)
 - Instant Replay must be enabled, with the keybind set to ALT + F10
 - Replay length should be set between 2-5 minutes
-- Global Replay may be triggered by cutscenes between 99k-999k. 
-To avoid unwanted clips, ensure aura cutscenes are above 1M+.
-- Set Graphics to the lowest to avoid accidental detection via auras.
-
-Warnings:
-- Other global white flashes may trigger a clip
-  (for example, if someone else rolls a global)
-- Some Transcendent cutscenes may not be detected correctly
-- This feature is BETA - false detections may occur
-
-Disclaimer:
-Global Replay will NOT detect any global rolled under 99m.
-(It will clip Breakthrough Gargantua (Rolled at 430m), 
-but will NOT clip at native or with an starfall rune. (Rolled at 86m.))
-
-Status: (+ = true | - = false)
-All Globals: 50/50
-Pixelation: eh
-Luminosity: +
-Leviathan: -
-Breakthrough: + 
-Equinox: +
-Monarch: +
-
-
 
 This Replay System can be used even if you're not using the macro
     )
 
-    Gui, NvidiaNotes:Add, Button, x225 y560 w100 h25 gCloseNvidiaNotes, Close
-    Gui, NvidiaNotes:Show, w550 h600
+    Gui, NvidiaNotes:Add, Button, x225 y190 w100 h25 gCloseNvidiaNotes, Close
+    Gui, NvidiaNotes:Show, w550 h230
 return
 
 CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
 return
 
-CheckPixel:
-    global triggerDelay
-
-    PixelGetColor, position1, 405, 900, RGB
-    PixelGetColor, position2, 1300, 900, RGB
-    if (position1 = 0xFFFFFF && position2 = 0xFFFFFF) {
-        SetTimer, DoClip, -%triggerDelay%
-        ShowClipTextGlobal()
-    }
-return
-
-CheckPixel2:
-    global transcendentPixels, transcendentColors, lastTranscendentColor2, triggerDelay2, transcendentCounters, nvidiaReplay
-    
-
-        for index, pos in transcendentPixels {
-            PixelGetColor, colort, % pos.x, % pos.y, RGB
-
-            for _, c in transcendentColors {
-            if (colort = c) {
-                transcendentCounters[index]++
-                lastTranscendentColor := colort
-                SetTimer, DoClip2, -%triggerDelay2%
-                ShowClipTextTrans()
-            }
-        }
-    }
-
-        PixelGetColor, levicolor, 950, 240, RGB
-        PixelGetColor, levicolor2, 1300, 240, RGB
-        if (levicolor = 0x000201 && levicolor2 = 0x000201) {
-            lastTranscendentColor2 := "Leviathan"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
-
-        PixelGetColor, colorbt, 950, 180, RGB
-        PixelGetColor, colorbt2, 1200, 500, RGB
-        PixelGetColor, colorbt3, 10, 900, RGB
-        PixelGetColor, colorbt4, 670, 750, RGB
-        if (colorbt = 0xFFFFFF && colorbt2 = 0x000000 && colorbt3 = 0xFFFFFF && colorbt4 = 0x000000) {
-            lastTranscendentColor2 := "Breakthrough"
-            SetTimer, DoClip2, -%triggerDelay2%
-            ShowClipTextTrans()
-        }
-
-        PixelGetColor, colormonarch, 960, 548, RGB
-        if (colormonarch = 0x01001 || colormonarch = 0x02002) {
-            SetTimer, DoClip2, -%triggerDelay2%
-            lastTranscendentColor2 := "Monarch"
-            ShowClipTextTrans()
-        }
-return
-
-DoClip2:
-global lastTranscendentColor, transcendentColorNames, lastTranscendentColor2
-Send, !{F10}
-    if (clipWebhook) {
-
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
-
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: Yes", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x000201                                              Clipped: Yes", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected:  0x02002 or 0x02002                                              Clipped: Yes", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-            }
-        } else if (nvidiacolor != 0x76B900) {
-        colorHex := Format("0x{:06X}", lastTranscendentColor)
-        colorName := transcendentColorNames.HasKey(lastTranscendentColor)
-            ? transcendentColorNames[lastTranscendentColor]
-            : "Unknown Color"
-
-            if (colorName = "Equinox1" || colorName = "Equinox2") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Equniox.png")
-
-            } else if (colorName = "Luminosity") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Color detected: " colorName " (" colorHex ")                           Clipped: No", 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Luminosity.png")
-
-            } else if (lastTranscendentColor2 = "Leviathan") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected:  Leviathan/Pixelation                               Clipped: No", 25600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/676767levipixellmao.png")
-
-            } else if (lastTranscendentColor2 = "Breakthrough") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Breakthrough                                        Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Breakthrough.png")
-            
-            } else if (lastTranscendentColor2 = "Monarch") {
-                SendWebhook2(":tada: **Transcendent Detected!** :tada:                                            Cutscene detected: Monarch                                             Clipped: No", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Monarch.png")
-            }
-    }
-}
-ToolTip
-return
-
-DoClip:
-Send, !{F10}
-    if (clipWebhook) {
-        sleep, 1500
-        PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-        if (nvidiacolor = 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected and Clipped!", 16777215)
-        }
-
-        if (nvidiacolor != 0x76B900) {
-            try SendWebhook2(":warning: A Global has been Detected but not Clipped!", 16777215)
-        }
-    }
-ToolTip
-return
-
-ClipCountdownGlobal() {
-    global webResponse
-
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (10), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (9), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (8), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (7), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (6), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (5), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (4), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (3), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (2), 880, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook and clip (1), 880, 10
-        Sleep, 1000
-    }
-
-    ToolTip
-}
-
-ClipCountdown() {
-    global webResponse
-
-
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (10), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (9), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (8), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (7), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (6), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (5), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (4), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (3), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (2), 900, 10
-        Sleep, 1000
-    }
-    if (webResponse != "true") {
-        ToolTip, F7 to cancel webhook (1), 900, 10
-        Sleep, 1000
-    }
-    
-    ToolTip
-}
-
 ShowClipTextGlobal() {
     global blehblehbleh
 
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (10), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (9), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (8), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (7), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (6), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (5), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (4), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (3), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (2), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
@@ -2244,79 +1705,79 @@ ShowClipTextTrans() {
     global blehblehbleh
 
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (20), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (20), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (19), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (19), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (18), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (18), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (17), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (17), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (16), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (16), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (15), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (15), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (14), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (14), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (13), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (13), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (12), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (12), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (11), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (11), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (10), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (10), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (9), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (9), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (8), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (8), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (7), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (7), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (6), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (6), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (5), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (5), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (4), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (4), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (3), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (3), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol (2), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (2), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
@@ -2324,6 +1785,101 @@ ShowClipTextTrans() {
     }
 
     blehblehbleh := ""
+}
+
+ClipCountdownGlobal() {
+    global webResponse
+
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (10), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (9), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (8), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (7), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (6), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (5), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (4), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (3), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (2), 870, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (1), 870, 10
+        Sleep, 1000
+    }
+
+    ToolTip
+}
+
+ClipCountdown() {
+    global webResponse
+
+
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (10), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (9), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (8), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (7), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (6), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (5), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (4), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (3), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (2), 900, 10
+        Sleep, 1000
+    }
+    if (webResponse != "true") {
+        ToolTip, F6 to cancel webhook (1), 900, 10
+        Sleep, 1000
+    }
+    
+    ToolTip
 }
 
 ManualCraftAlert() {
@@ -2396,6 +1952,55 @@ DoBiomeRandomizer() {
     sleep 300
     Click, Left
     sleep, 600
+}
+
+DoAutoUnequip() {
+    MouseMove, 45, 412, 3
+    sleep 150
+    Click, Left
+    sleep 150
+    MouseMove, 830, 441, 3
+    sleep 150
+    Click, Left
+    sleep 150
+    MouseMove, 634, 638, 3
+    sleep 159
+    Click, Left
+    sleep 1200
+    Click, Left
+    sleep 150
+    MouseMove, 1425, 303, 3
+    sleep 150
+    Click, Left
+    sleep 150
+}
+
+DoUseNothing() {
+    MouseMove, 45, 412, 3
+    sleep 150
+    Click, Left
+    sleep 150
+    MouseMove, 820, 370, 3
+    sleep 250
+    Click, Left
+    Send, Nothing
+    sleep 150
+    MouseMove, 830, 441, 3
+    sleep 500
+    Send, {WheelUp 25}
+    Sleep, 750
+    Click, Left
+    sleep 300
+    MouseMove, 634, 638, 3
+    sleep 150
+    Click, Left
+    sleep 700
+    Click, Left
+    Sleep, 250
+    MouseMove, 1425, 303, 3
+    sleep 150
+    Click, Left
+    sleep 150
 }
 
 SelectItem:
@@ -2992,25 +2597,25 @@ if (onoffWebhook) {
 }
 return
 
-
 F2::
+    ToolTip, Stopping Macro... Please Wait until this Popup disappears, 900, 10
     toggle := false
     firstLoop := true
     SetTimer, DoMouseMove, Off
     SetTimer, UpdateGUI, Off
     ManualGUIUpdate()
+    Send, {Esc}
+    Sleep, 650
+    Send, {Esc}
+    Sleep, 2000
     ToolTip
-Return
-
-F3::
     if (onoffWebhook) {
             try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
-    ExitApp
 return
 
 
-F4::
+F3::
     Gui, Submit, NoHide
 
     if (autocrafting || toggle)
@@ -3044,7 +2649,7 @@ F4::
 return
 
 
-F5:: 
+F4:: 
 if (!autocrafting || toggle)
    return
 
@@ -3066,101 +2671,29 @@ if (!autocrafting || toggle)
    }
 return
 
-F6::
+F5::
+global blehblehbleh
 
     blehblehbleh := "hehe"
-
-    if (nvidiaReplay && detectTranscendents) {
-        SetTimer, DoClip, Off
-        SetTimer, DoClip2, Off
+    if (detectGlobal || detectTrans && auraDetection) {
+        SetTimer, V2Clip, Off
+        SetTimer, AuraDetect, Off
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Clipping Restarting in 5 Seconds..., 900, 10
-        sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 900, 10
-        sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 900, 10
-        sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 900, 10
-        sleep, 1000
-        ToolTip, Clipping Restarting in 1 Second..., 900, 10
-        sleep, 1000
-        ToolTip
-        SetTimer, CheckPixel, 35
-        SetTimer, CheckPixel2, 15
-        if (clipWebhook) {
-            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
-        }
-    }
-
-    if (nvidiaReplay && !detectTranscendents) {
-        SetTimer, DoClip, Off
-        SetTimer, DoClip2, Off
-        if (clipWebhook) {
-            try SendWebhook(":x: Clipping Canceled", 0)
-        }
-        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 1 Second..., 880, 25
-        sleep, 1000
-        ToolTip
-        SetTimer, CheckPixel, 35
-        if (clipWebhook) {
-            try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
-        }
-    }
         
-    if (detectTranscendents && !nvidiaReplay) {
-        SetTimer, DoClip2, Off
-        if (clipWebhook) {
-             try SendWebhook(":x: Clipping Canceled", 0)
-        }
-        ToolTip, Clipping Restarting in 5 Seconds..., 880, 25
+        ToolTip, Detection Restarting in 3 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 4 Seconds..., 880, 25
+        ToolTip, Detection Restarting in 2 Seconds..., 880, 25
         sleep, 1000
-        ToolTip, Clipping Restarting in 3 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 2 Seconds..., 880, 25
-        sleep, 1000
-        ToolTip, Clipping Restarting in 1 Seconds..., 880, 25
+        ToolTip, Detection Restarting in 1 Seconds..., 880, 25
         sleep, 1000
         ToolTip
-        SetTimer, CheckPixel2, 15
-        if (clipWebhook) {
-                try SendWebhook(":white_check_mark: Clipping Re-Enabled", 0)
-            }
-        }
-
-        if (detectGlobal || detectTrans && auraDetection) {
-            SetTimer, V2Clip, Off
-            SetTimer, AuraDetect, Off
-            if (clipWebhook) {
-                try SendWebhook(":x: Clipping Canceled", 0)
-            }
-            ToolTip, Detection Restarting in 5 Seconds..., 880, 25
-            sleep, 1000
-            ToolTip, Detection Restarting in 4 Seconds..., 880, 25
-            sleep, 1000
-            ToolTip, Detection Restarting in 3 Seconds..., 880, 25
-            sleep, 1000
-            ToolTip, Detection Restarting in 2 Seconds..., 880, 25
-            sleep, 1000
-            ToolTip, Detection Restarting in 1 Seconds..., 880, 25
-            sleep, 1000
-            ToolTip
-            SetTimer, AuraDetect, 1000
-        }
+        SetTimer, AuraDetect, 1000
+    }
 return
 
-F7:: 
+F6:: 
     webResponse := "true"
     ToolTip
 return
@@ -3216,6 +2749,15 @@ if (toggle) {
             }
         }
 
+        if (pendingUnequip = true) {
+            if (useNothing) {
+            DoUseNothing()
+            } else if (autoUnequip) {
+                DoAutoUnequip()
+            }
+            pendingUnequip := false
+        }
+
         loopCount++
         if (loopCount > maxLoopCount) {
         Send, {Esc}
@@ -3258,67 +2800,18 @@ if (toggle) {
             }
         }
 
-        if (autoUnequip && useNothing) {
-                MouseMove, 45, 412, 3
-                sleep 150
-                Click, Left
-                sleep 150
-                MouseMove, 820, 370, 3
-                sleep 250
-                Click, Left
-                Send, Nothing
-                sleep 150
-                MouseMove, 830, 441, 3
-                sleep 500
-                Send, {WheelUp 25}
-                Sleep, 750
-                Click, Left
-                sleep 300
-                MouseMove, 634, 638, 3
-                sleep 150
-                Click, Left
-                sleep 700
-                Click, Left
-                Sleep, 250
-                MouseMove, 1425, 303, 3
-                sleep 150
-                Click, Left
-                sleep 150
-            }
-
-        if (autoUnequip && !useNothing) {
-                MouseMove, 45, 412, 3
-                sleep 150
-                Click, Left
-                sleep 150
-                MouseMove, 830, 441, 3
-                sleep 150
-                Click, Left
-                sleep 150
-                MouseMove, 634, 638, 3
-                sleep 159
-                Click, Left
-                sleep 1200
-                Click, Left
-                sleep 150
-                MouseMove, 1425, 303, 3
-                sleep 150
-                Click, Left
-                sleep 150
-            }
-
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        MouseMove, 382, 126, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Click, WheelUp 80
+        sleep 500
+        Click, WheelDown 45
+        sleep 300
             
         if (manualCraft) {
             if (selectedItem2 = "") {
