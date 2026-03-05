@@ -481,7 +481,7 @@ Gui, Font, s8 c0xCCCCCC
 Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
 Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
 Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Clip - F5=Stop Webhook and Clip
+Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook and Clip
 
 Gui, Tab, Misc
 
@@ -2103,6 +2103,120 @@ DoUseNothing() {
     sleep 150
 }
 
+ManualCraftMovement() {
+    Send, {a Down}
+    Sleep, 3000
+    Send, {a Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 5000
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {a Down}
+    Sleep, 1100
+    Send, {a Up}
+    Sleep, 200
+
+    Send, {w Down}
+    Sleep, 100
+    Send, {w Up}
+    Sleep, 50
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {s Down}
+    Sleep, 2250
+    Send, {s Up}
+    Sleep, 50
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {d Down}
+    Sleep, 1800
+    Send, {d Up}
+    Sleep, 250
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {a Down}
+    Sleep, 380
+    Send, {a Up}
+    Sleep, 250
+
+    Send, {s Down}
+    Sleep, 4400
+    Send, {s Up}
+    Sleep, 250
+
+    Send, {a Down}
+    Sleep, 1465
+    Send, {a Up}
+    Sleep, 250
+
+    Send, {s Down}
+    Sleep, 1800
+    Send, {s Up}
+    Sleep, 250
+
+    Send, {a Down}
+    Sleep, 125
+    Send, {a Up}
+    Sleep, 250
+
+    Send, {s Down}
+    Sleep, 2000
+    Send, {s Up}
+    Sleep, 250
+
+    Send, {d Down}
+    Sleep, 50
+    Send, {d Up}
+    Sleep, 250
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {a Down}
+    Sleep, 800
+    Send, {a Up}
+    Sleep, 250
+
+    Send, {Shift}
+    Sleep, 250
+
+    Send, {Space Down}
+    Sleep, 50
+    Send, {Space Up}
+    Sleep, 50
+
+    Send, {a Down}
+    Sleep, 2900
+    Send, {a Up}
+    Sleep, 250
+
+    Send, {s Down}
+    Sleep, 2000
+    Send, {s Up}
+    Sleep, 2000
+
+    Send, {a Down}
+    Sleep, 1500
+    Send, {a Up}
+    Sleep, 250
+}
+
 SelectItem:
     Gui, Submit, NoHide
     selectedItem := AutoCraft
@@ -2772,7 +2886,7 @@ if (!autocrafting || toggle)
 return
 
 F5::
-global blehblehbleh, webReponse
+global blehblehbleh, webReponse, auraName
 
     blehblehbleh := "hehe"
     webResponse := "true"
@@ -2780,12 +2894,12 @@ global blehblehbleh, webReponse
     if (detectGlobal || detectTrans && auraDetection) {
         SetTimer, V2Clip, Off
         SetTimer, AuraDetect, Off
-        if (clipWebhook) {
+        if (clipWebhook && AuraList.HasKey(auraName)) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        ToolTip, Detection Restarting in 2 Seconds..., 880, 25
+        ToolTip, Detection Restarting in 2 Seconds..., 870, 10
         sleep, 1000
-        ToolTip, Detection Restarting in 1 Seconds..., 880, 25
+        ToolTip, Detection Restarting in 1 Seconds..., 870, 10
         sleep, 1000
         ToolTip
         SetTimer, AuraDetect, 1000
@@ -2844,9 +2958,13 @@ if (toggle) {
         }
 
         if (pendingUnequip = true) {
-            if (useNothing) {
+            PixelGetColor, deletebutton, 1106, 919, RGB
+            if (deletebutton = 0xFF5A5D) {
+                return
+            } else {
+            if (useNothing && autoUnequip) {
             DoUseNothing()
-            } else if (autoUnequip) {
+            } else if (autoUnequip && !useNothing) {
                 DoAutoUnequip()
             }
             pendingUnequip := false
@@ -2911,119 +3029,8 @@ if (toggle) {
             if (selectedItem2 = "") {
                 return
             }
-
-            Send, {a Down}
-            Sleep, 3000
-            Send, {a Up}
-            Sleep, 50
-
-            Send, {s Down}
-            Sleep, 5000
-            Send, {s Up}
-            Sleep, 50
-
-            Send, {a Down}
-            Sleep, 1100
-            Send, {a Up}
-            Sleep, 200
-
-            Send, {w Down}
-            Sleep, 100
-            Send, {w Up}
-            Sleep, 50
-
-            Send, {Space Down}
-            Sleep, 50
-            Send, {Space Up}
-            Sleep, 50
-
-            Send, {s Down}
-            Sleep, 2250
-            Send, {s Up}
-            Sleep, 50
-
-            Send, {Shift}
-            Sleep, 250
-
-            Send, {d Down}
-            Sleep, 1800
-            Send, {d Up}
-            Sleep, 250
-
-            Send, {Shift}
-            Sleep, 250
-
-            Send, {a Down}
-            Sleep, 380
-            Send, {a Up}
-            Sleep, 250
-
-            Send, {s Down}
-            Sleep, 4400
-            Send, {s Up}
-            Sleep, 250
-
-            Send, {a Down}
-            Sleep, 1465
-            Send, {a Up}
-            Sleep, 250
-
-            Send, {s Down}
-            Sleep, 1800
-            Send, {s Up}
-            Sleep, 250
-
-            Send, {a Down}
-            Sleep, 125
-            Send, {a Up}
-            Sleep, 250
-
-            Send, {s Down}
-            Sleep, 2000
-            Send, {s Up}
-            Sleep, 250
-
-            Send, {d Down}
-            Sleep, 50
-            Send, {d Up}
-            Sleep, 250
-
-            Send, {Shift}
-            Sleep, 250
-
-            Send, {Space Down}
-            Sleep, 50
-            Send, {Space Up}
-            Sleep, 50
-
-            Send, {a Down}
-            Sleep, 800
-            Send, {a Up}
-            Sleep, 250
-
-            Send, {Shift}
-            Sleep, 250
-
-            Send, {Space Down}
-            Sleep, 50
-            Send, {Space Up}
-            Sleep, 50
-
-            Send, {a Down}
-            Sleep, 2900
-            Send, {a Up}
-            Sleep, 250
-
-            Send, {s Down}
-            Sleep, 2000
-            Send, {s Up}
-            Sleep, 2000
-
-            Send, {a Down}
-            Sleep, 1500
-            Send, {a Up}
-            Sleep, 250
-
+            ManualCraftMovement()
+            Sleep, 500
             Send, f
             Sleep, 1000
             Gosub, CraftSelected2
