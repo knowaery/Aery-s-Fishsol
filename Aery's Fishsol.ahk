@@ -481,22 +481,22 @@ Gui, Font, s8 c0xCCCCCC
 Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
 Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
 Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Clip - F6=Stop Webhook and Clip
+Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Clip - F5=Stop Webhook and Clip
 
 Gui, Tab, Misc
 
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x22 y90 w260 h195 cWhite, Auto-Unequip
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y110 h45 w240 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras every cycle. Prevents lag and possible macro issues.
+Gui, Add, Text, x35 y110 h45 w240 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues. Please turn on Aura Detection for this to work.
 Gui, Add, Text, x35 y210 h45 w240 BackgroundTrans c0xCCCCCC, Equips "Nothing" instead of equipping and unequipping your first aura in your storage.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x32 y190 h45 w240 BackgroundTrans, Use "Nothing" Aura.
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x35 y145 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
+Gui, Add, Button, x35 y160 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
 Gui, Add, Button, x35 y245 w80 h25 gToggleUseNothing vUseNothingBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x130 y148 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
+Gui, Add, Text, x130 y163 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
 Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -553,16 +553,19 @@ Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Button, x208 y600 w180 h40 gOpenNvidiaNotes, Tutorial/Disclaimers
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x157 y125 w270 h121 cWhite, Aura Detection (Beta)
+Gui, Add, GroupBox, x33 y125 w270 h141 cWhite, Aura Detection (Beta)
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x167 y145 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped sends a notification through a discord webhook.
+Gui, Add, Text, x45 y145 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook.
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x170 y202 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
+Gui, Add, Button, x45 y222 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x265 y207 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y227 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
+
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x315 y135 w255 h151 BackgroundTrans c0xCCCCCC, V2 replaces the old CheckPixel based detection system (which relied on detecting server global effect for globals and cutscene color checks for transcendents). With a new devlog reading method that directly reads the logs to determine which aura was equipped, this gaurantees accurate clips for globals and transcendents. (unless auto skipped ofc)
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Text, x130 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
+Gui, Add, Text, x160 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
 
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y300 w534 h100 cWhite, Clip Globals
@@ -572,8 +575,6 @@ Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y359 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y361 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
-
-; Transcendents
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y405 w534 h100 cWhite, Clip Transcendents
@@ -585,9 +586,9 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y468 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F6 to Cancel Clipping
+Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F5 to Cancel Clipping/Webhook
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F6 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
+Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F5 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
 
 
 Gui, Tab, Webhook
@@ -681,7 +682,23 @@ Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x153 y308 w70 h25 vManualCraftStatus BackgroundTrans, OFF
 
-
+Gui, Font, s10 c0xCCCCCC Normal
+if (maxLoopCount < 10 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 20 (Fishing Count is less than 10, the macro will sell more frequently, resulting in fewer fish points per hour.)
+} 
+else if (maxLoopCount < 20 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 16 (Fishing Count is less than 20, the macro will sell more frequently, resulting in fewer fish points per hour.)
+} else if (maxLoopCount < 30 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 14 (Fishing Count is less than 30, the macro will sell more frequently, resulting in fewer fish points per hour.)
+} else if (maxLoopCount < 40 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 10 (Fishing Count is less than 40, the macro will sell more frequently, resulting in fewer fish points per hour.)
+} else if (maxLoopCount < 50 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 8 (Fishing Count is less than 50, the macro will sell more frequently, resulting in fewer fish points per hour.)
+} else if (maxLoopCount < 100 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 3 
+} else if (maxLoopCount > 100 && manualCraft) {
+    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 1 (Fishing Count is 100 or more, the macro will sell less frequently, resulting in more fish points per hour, but less potions.)
+}
 
 Gui, Tab, Failsafes
 
@@ -956,9 +973,11 @@ if (detectTrans) {
 if (autoWarp) {
     GuiControl,, AutoWarpStatus, ON
     GuiControl, +c0x00DD00, AutoWarpStatus
+    SetTimer, CheckCyber, 1000
 } else {
     GuiControl,, AutoWarpStatus, OFF
     GuiControl, +c0xFF4444, AutoWarpStatus
+    SetTimer, CheckCyber, Off
 }
 
 return
@@ -1249,9 +1268,11 @@ ToggleAutoWarp:
     if (autoWarp) {
         GuiControl,, AutoWarpStatus, ON
         GuiControl, +c0x00DD00, AutoWarpStatus
+        SetTimer, CheckCyber, 1000
     } else {
         GuiControl,, AutoWarpStatus, OFF
         GuiControl, +c0xFF4444, AutoWarpStatus
+        SetTimer, CheckCyber, Off
     }
     IniWrite, % (autoWarp ? "true" : "false"), %iniFilePath%, Macro, autoWarp
 return
@@ -1495,6 +1516,85 @@ V2Clip:
         }
     ToolTip
 return
+
+CheckCyber:
+global prevBiome
+    logDir := LocalAppData "\Roblox\logs"
+
+    newestTime := 0
+    newestFile := ""
+    Loop, Files, %logDir%\*.log, F
+    {
+        if (A_LoopFileTimeModified > newestTime) {
+            newestTime := A_LoopFileTimeModified
+            newestFile := A_LoopFileFullPath
+        }
+    }
+
+    if !newestFile
+        return
+
+    file := FileOpen(newestFile, "r")
+    if !IsObject(file)
+        return
+
+    size := file.Length
+    chunkSize := 10240
+    if (size > chunkSize)
+        file.Seek(-chunkSize, 2)
+    content := file.Read()
+    file.Close()
+
+    lines := StrSplit(content, "`n")
+    regexLine := """largeImage"":\{""hoverText"":""((?:\\.|[^""])*)"""
+    Loop % lines.MaxIndex()
+    {
+        line := lines[lines.MaxIndex() - A_Index + 1]
+        if InStr(line, "[BloxstrapRPC]")
+        {
+            if RegExMatch(line, regexLine, m) {
+                biome := m1
+                break
+            }
+        }
+    }
+
+    if (biome && biome != "" && biome != prevBiome) {
+        if (biome = "CYBERSPACE") {
+            prevBiome := biome
+            PopWarp()
+            return
+        }
+
+        if (isBiomeEnabled = 1) {
+            prevBiome := biome
+        }
+    }
+return
+
+PopWarp() {
+    MouseMove, 45, 521, 3
+    sleep 300
+    Click, Left
+    MouseMove, 1280, 343, 3
+    sleep 300
+    Click, Left
+    MouseMove, 820, 370, 3
+    sleep 300
+    Click, Left
+    Send, Warp Potion
+    MouseMove, 850, 485, 3
+    sleep 300
+    Click, Left            
+    MouseMove, 690, 585, 3
+    sleep 300
+    Click, Left
+    sleep 600
+    MouseMove, 1414, 300, 3
+    sleep 300
+    Click, Left
+    sleep, 600
+}
 
 GetPingText() {
     global webhookID
@@ -1791,43 +1891,43 @@ ClipCountdownGlobal() {
     global webResponse
 
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (10), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (10), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (9), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (9), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (8), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (8), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (7), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (7), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (6), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (6), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (5), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (5), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (4), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (4), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (3), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (3), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (2), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (2), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook. Clipping Timer will start after... (1), 870, 10
+        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (1), 850, 10
         Sleep, 1000
     }
 
@@ -1839,43 +1939,43 @@ ClipCountdown() {
 
 
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (10), 900, 10
+        ToolTip, F5 to cancel webhook (10), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (9), 900, 10
+        ToolTip, F5 to cancel webhook (9), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (8), 900, 10
+        ToolTip, F5 to cancel webhook (8), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (7), 900, 10
+        ToolTip, F5 to cancel webhook (7), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (6), 900, 10
+        ToolTip, F5 to cancel webhook (6), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (5), 900, 10
+        ToolTip, F5 to cancel webhook (5), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (4), 900, 10
+        ToolTip, F5 to cancel webhook (4), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (3), 900, 10
+        ToolTip, F5 to cancel webhook (3), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (2), 900, 10
+        ToolTip, F5 to cancel webhook (2), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F6 to cancel webhook (1), 900, 10
+        ToolTip, F5 to cancel webhook (1), 900, 10
         Sleep, 1000
     }
     
@@ -2672,18 +2772,17 @@ if (!autocrafting || toggle)
 return
 
 F5::
-global blehblehbleh
+global blehblehbleh, webReponse
 
     blehblehbleh := "hehe"
+    webResponse := "true"
+
     if (detectGlobal || detectTrans && auraDetection) {
         SetTimer, V2Clip, Off
         SetTimer, AuraDetect, Off
         if (clipWebhook) {
             try SendWebhook(":x: Clipping Canceled", 0)
         }
-        
-        ToolTip, Detection Restarting in 3 Seconds..., 880, 25
-        sleep, 1000
         ToolTip, Detection Restarting in 2 Seconds..., 880, 25
         sleep, 1000
         ToolTip, Detection Restarting in 1 Seconds..., 880, 25
@@ -2691,11 +2790,6 @@ global blehblehbleh
         ToolTip
         SetTimer, AuraDetect, 1000
     }
-return
-
-F6:: 
-    webResponse := "true"
-    ToolTip
 return
 
 ;1080p
