@@ -63,6 +63,7 @@ pendingUnequip := false
 autoWarp := false
 detectPotion := false
 pendingCraft := false
+auraFilter := false
 auraFilterReady := false
 
 AuraList := {"Starscourge_Radiant": 1
@@ -288,6 +289,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDetectPotion, %iniFilePath%, Macro, detectPotion
     if (tempDetectPotion != "ERROR")
     detectPotion := (tempDetectPotion = "true" || tempDetectPotion = "1")
+
+    IniRead, tempAuraFilter, %iniFilePath%, Macro, auraFilter
+    if (tempAuraFilter != "ERROR")
+    auraFilter := (tempAuraFilter = "true" || tempAuraFilter = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -522,7 +527,7 @@ Gui, Add, Text, x32 y190 h45 w240 BackgroundTrans, Use "Nothing" Aura.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x35 y160 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
 Gui, Add, Button, x35 y245 w80 h25 gToggleUseNothing vUseNothingBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UIf
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x130 y163 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
 Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 
@@ -581,16 +586,25 @@ Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Tutorial/Disclaimers
 Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y125 w270 h141 cWhite, Aura Detection (Beta)
+Gui, Add, GroupBox, x33 y125 w240 h141 cWhite, Aura Detection (Beta)
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y145 w255 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook.
+Gui, Add, Text, x45 y145 w225 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y222 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y227 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x293 y125 w270 h141 cWhite, Toggle Aura Filter
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x315 y135 w255 h151 BackgroundTrans c0xCCCCCC, V2 replaces the old CheckPixel based detection system (which relied on detecting server global effect for globals and cutscene color checks for transcendents). With a new devlog reading method that directly reads the logs to determine which aura was equipped, this gaurantees accurate clips for globals and transcendents. (unless auto skipped ofc)
+Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the auras that are toggled on in the Aura Filter will be detected by the Aura Detection system. This means no webhook for auras that are not a global/transcendent
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x305 y222 w80 h25 gToggleAuraFilter vAuraFilterBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x403 y227 w60 h25 vAuraFilterStatus BackgroundTrans, OFF
+
+;Gui, Font, s9 c0xCCCCCC Normal
+;Gui, Add, Text, x315 y135 w255 h151 BackgroundTrans c0xCCCCCC, V2 replaces the old CheckPixel based detection system (which relied on detecting server global effect for globals and cutscene color checks for transcendents). With a new devlog reading method that directly reads the logs to determine which aura was equipped, this gaurantees accurate clips for globals and transcendents. (unless auto skipped ofc)
 
 Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
@@ -1000,7 +1014,7 @@ if (autoWarp) {
     GuiControl, +c0xFF4444, AutoWarpStatus
     SetTimer, CheckCyber, Off
 }
-if (detectPotion && toggle) {
+if (detectPotion) {
     GuiControl,, DetectPotionStatus, ON
     GuiControl, +c0x00DD00, DetectPotionStatus
     SetTimer, DetectPotion, 300
@@ -1008,6 +1022,13 @@ if (detectPotion && toggle) {
     GuiControl,, DetectPotionStatus, OFF
     GuiControl, +c0xFF4444, DetectPotionStatus
     SetTimer, DetectPotion, Off
+}
+if (auraFilter) {
+    GuiControl,, AuraFilterStatus, ON
+    GuiControl, +c0x00DD00, AuraFilterStatus
+} else {
+    GuiControl,, AuraFilterStatus, OFF
+    GuiControl, +c0xFF4444, AuraFilterStatus
 }
 
 AuraCheckChange:
@@ -1367,6 +1388,18 @@ ToggleDetectPotion:
     IniWrite, % (detectPotion ? "true" : "false"), %iniFilePath%, Macro, detectPotion
 return
 
+ToggleAuraFilter:
+    auraFilter := !auraFilter
+    if (auraFilter) {
+        GuiControl,, AuraFilterStatus, ON
+        GuiControl, +c0x00DD00, AuraFilterStatus
+    } else {
+        GuiControl,, AuraFilterStatus, OFF
+        GuiControl, +c0xFF4444, AuraFilterStatus
+    }
+    IniWrite, % (auraFilter ? "true" : "false"), %iniFilePath%, Macro, auraFilter
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1571,18 +1604,30 @@ global webhookURL, webhookID, doPing2, prevState
                     SendWebhook2(" **████████████ D3T3ct3d..** \n███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             }
-
-            if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && (detectGlobal) && (webResponse = "false")) {
-                SetTimer, V2Clip, -%triggerDelayGlobal%
-                ShowClipTextGlobal()
+            if (auraFilter) {
+                if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && (detectGlobal) && (webResponse = "false")) {
+                    SetTimer, V2Clip, -%triggerDelayGlobal%
+                    ShowClipTextGlobal()
+                } else {
+                    if (AuraList.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
+                        SetTimer, V2Clip, -%triggerDelayTrans%
+                        ShowClipTextTrans()
+                    }
+                }
             }
-                
-            if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && (detectTrans) && (webResponse = "false")) {
-                SetTimer, V2Clip, -%triggerDelayTrans%
-                ShowClipTextTrans()
+            if (auraFilter) {
+                if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && (detectTrans) && (webResponse = "false")) {
+                    SetTimer, V2Clip, -%triggerDelayTrans%
+                    ShowClipTextTrans()
+                }
+            } else {
+                if (AuraListTrans.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
+                    SetTimer, V2Clip, -%triggerDelayTrans%
+                    ShowClipTextTrans()
+                }
             }
 
-            if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
+            if (toggle) && (autoUnequip) && (auraName != "Nothing") {
                     pendingUnequip := true
                 }
             }
@@ -1686,6 +1731,9 @@ PopWarp() {
 }
 
 DetectPotion:
+    if (!toggle) {
+        return
+    }
     PixelGetColor, potionnotif, 1681, 835, RGB 
     PixelGetColor, potionnotif2, 1622, 720, RGB
     if (potionnotif = 0x6FB5FF || potionnotif2 = 0x6FB5FF) {
