@@ -1289,7 +1289,7 @@ ToggleDetectPotion:
     if (detectPotion) {
         GuiControl,, DetectPotionStatus, ON
         GuiControl, +c0x00DD00, DetectPotionStatus
-        SetTimer, DetectPotion, 1000
+        SetTimer, DetectPotion, 300
     } else {
         GuiControl,, DetectPotionStatus, OFF
         GuiControl, +c0xFF4444, DetectPotionStatus
@@ -3080,6 +3080,26 @@ if (toggle) {
         sleep 500
         Click, WheelDown 45
         sleep 300
+
+        if (manualCraft && !detectPotion) {
+            if (selectedItem2 = "") {
+                return
+            }
+            ManualCraftMovement()
+            Sleep, 500
+            Send, f
+            Sleep, 1000
+            Gosub, CraftSelected2
+            Sleep, 1000
+
+            Send, {Esc}
+            Sleep, 650
+            Send, R
+            Sleep, 650
+            Send, {Enter}
+            sleep 3000
+
+        }
 
 
 
