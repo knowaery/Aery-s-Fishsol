@@ -63,13 +63,15 @@ pendingUnequip := false
 autoWarp := false
 detectPotion := false
 pendingCraft := false
+auraFilterReady := false
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
 , "Spectraflow": 1
+, "Lily": 1
 , "Overture": 1
 , "Symphony": 1
-, "Twilight_Withering Grace": 1
+, "Twilight_Withering_Grace": 1
 , "Felled": 1
 , "Impeached": 1
 , "Lumenpool": 1
@@ -94,22 +96,19 @@ AuraList := {"Starscourge_Radiant": 1
 , "Ruins": 1
 , "Matrix_Overdrive": 1
 , "Sophyra": 1
+, "SAILOR_ADMIRAL": 1
 , "Matrix_Reality": 1
 , "PYTHIOS": 1
 , "Sovereign": 1
 , "Ruins_Withered": 1
 , "Aegis": 1
 , "ASCENDANT": 1
-, "Sailor_Admiral": 1
-, "SAILOR_ADMIRAL": 1
-, "Lily": 1
 , "PROLOGUE": 1
 , "Unknown": 1
 , "UNKNOWN": 1
 , "Elude": 1
 , "Dreamscape": 1
 , "Nyctophobia": 1
-, "NYCTOPHOBIA": 1
 , "Raven_Plauge": 1}
 
 AuraListTrans := {"Pixelation": 1
@@ -124,6 +123,18 @@ AuraListTrans := {"Pixelation": 1
 , "MONARCH": 1
 , "illusionary": 1
 , "ILLUSIONARY": 1}
+
+
+AuraListOrder := [ "Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "NYCTOPHOBIA"]
+
+AuraListTransOrder := ["Pixelation", "Luminosity", "LEVIATHAN", "Breakthrough", "Equinox", "Monarch", "illusionary"]
+
+
+EnabledAuras := {}
+for i, aura in AuraListOrder
+EnabledAuras[aura] := 1
+for i, aura in AuraListTransOrder
+EnabledAuras[aura] := 1
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -283,10 +294,20 @@ if (FileExist(iniFilePath)) {
     {
         advancedFishingThreshold := tempAdvancedThreshold
     }
+    for i, aura in AuraListOrder {
+        IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
+        if (tempEnabled != "ERROR")
+            EnabledAuras[aura] := tempEnabled + 0
+    }
+    for i, aura in AuraListTransOrder {
+        IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
+        if (tempEnabled != "ERROR")
+            EnabledAuras[aura] := tempEnabled + 0
+    }
 }
 
 
-version := "Aery's v1.4"
+version := "Aery's v1.5"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -387,7 +408,7 @@ if (dev3_name = "ivelchampion249") {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.4
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -492,16 +513,16 @@ Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook and Clip
 Gui, Tab, Misc
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x22 y90 w260 h195 cWhite, Auto-Unequip
+Gui, Add, GroupBox, x22 y90 w270 h195 cWhite, Auto-Unequip
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y110 h45 w240 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues. Please turn on Aura Detection for this to work.
-Gui, Add, Text, x35 y210 h45 w240 BackgroundTrans c0xCCCCCC, Equips "Nothing" instead of equipping and unequipping your first aura in your storage.
+Gui, Add, Text, x35 y110 h45 w250 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues. Please turn on Aura Detection for this to work.
+Gui, Add, Text, x35 y210 h45 w250 BackgroundTrans c0xCCCCCC, Equips "Nothing" instead of equipping and unequipping your first aura in your storage.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x32 y190 h45 w240 BackgroundTrans, Use "Nothing" Aura.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x35 y160 w80 h25 gToggleAutoUnequip vAutoUnequipBtn, Toggle
 Gui, Add, Button, x35 y245 w80 h25 gToggleUseNothing vUseNothingBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UIf
 Gui, Add, Text, x130 y163 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
 Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 
@@ -556,7 +577,8 @@ Gui, Add, Text, x415 y413 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
 Gui, Tab, Replay
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Button, x208 y600 w180 h40 gOpenNvidiaNotes, Tutorial/Disclaimers
+Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Tutorial/Disclaimers
+Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x33 y125 w270 h141 cWhite, Aura Detection (Beta)
@@ -595,6 +617,7 @@ Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x180 y520 w520 h145 BackgroundTrans,F5 to Cancel Clipping/Webhook
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F5 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
+
 
 
 Gui, Tab, Webhook
@@ -797,10 +820,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.4 (2026-02-28)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-07)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishsol v1.4
+Gui, Show, w600 h670,  Aery's fishsol v1.5
 
 GuiControl, Choose, Resolution, 1
 
@@ -987,9 +1010,55 @@ if (detectPotion && toggle) {
     SetTimer, DetectPotion, Off
 }
 
+AuraCheckChange:
+    if (!auraFilterReady)
+        return
+    Gui, AuraFilter:Submit, NoHide
+    for i, aura in AuraListOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
+    for i, aura in AuraListTransOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
 return
 
+SaveAuraFilter:
+    Gui, AuraFilter:Submit, NoHide
+    for i, aura in AuraListOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
+    for i, aura in AuraListTransOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
+    Gui, AuraFilter:Destroy
+return
+
+
 GuiClose:
+    for i, aura in AuraListOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
+    for i, aura in AuraListTransOrder {
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        EnabledAuras[aura] := %ctrlName%
+        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
+    }
 ExitApp
 
 toggle := false
@@ -1381,7 +1450,7 @@ HideTranscendentOutline(id) {
 }
 
 AuraDetect:
-global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detectTrans, triggerDelayGlobal, triggerDelayTrans
+global webhookURL, webhookID, doPing2, prevState
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1443,8 +1512,8 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
                 mentionsStr := ""
             }
 
-            if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
-                if AuraList.HasKey(auraName) {
+        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && EnabledAuras[auraName]) {
+            if AuraList.HasKey(auraName) {
                     ClipCountdownGlobal()
                 } else {
                     ClipCountdown()
@@ -1455,7 +1524,7 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
                     . contentStr
                     . """embeds"": [{"
                     . """description"": "" ### Aura Equipped - " auraName ""","
-                    . """footer"": {""text"": ""Aery's fishSol v1.4"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
+                    . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
                     . """timestamp"": """ timestamp """"
                     . "}]}"
 
@@ -1503,12 +1572,12 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
                 }
             }
 
-            if (AuraList.HasKey(auraName) && (detectGlobal) && (webResponse = "false")) {
+            if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && (detectGlobal) && (webResponse = "false")) {
                 SetTimer, V2Clip, -%triggerDelayGlobal%
                 ShowClipTextGlobal()
             }
                 
-            if (AuraListTrans.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
+            if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && (detectTrans) && (webResponse = "false")) {
                 SetTimer, V2Clip, -%triggerDelayTrans%
                 ShowClipTextTrans()
             }
@@ -1667,7 +1736,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.4"","
+    . """text"": ""Aery's fishsol v1.5"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1702,7 +1771,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.4"","
+    . """text"": ""Aery's fishsol v1.5"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1746,7 +1815,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.4"","
+    . """text"": ""Aery's fishsol v1.5"","
     . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1781,6 +1850,64 @@ return
 
 CloseNvidiaNotes:
     Gui, NvidiaNotes:Destroy
+return
+
+OpenAuraFilter:
+    Gui, AuraFilter:Destroy
+    Gui, AuraFilter:New, +AlwaysOnTop, Aura Filter
+    Gui, AuraFilter:Color, 0x1E1E1E
+    Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
+    Gui, AuraFilter:Add, Text, x10 y10 w560 h20 Center BackgroundTrans c0x00D4FF, Toggle which auras a webhook/clip will be sent for. (Requires Aura Detection)
+    Gui, AuraFilter:Font, s9 cWhite Bold
+    Gui, AuraFilter:Add, Text, x10 y35 w100 h20 BackgroundTrans c0xFFAA00, Globals: 
+    Gui, AuraFilter:Font, s9 cWhite Normal
+
+    itemsPerCol := Ceil(AuraListOrder.MaxIndex() / 3)
+    for i, aura in AuraListOrder {
+        col := (i - 1) // itemsPerCol
+        row := Mod(i - 1, itemsPerCol)
+        x := 10 + col * 185
+        y := 55 + row * 22
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        options := "x" x " y" y " w180 h20 BackgroundTrans c0xCCCCCC v" ctrlName " gAuraCheckChange"
+        if (EnabledAuras[aura])
+            options .= " Checked"
+        Gui, AuraFilter:Add, CheckBox, %options%, %aura%
+    }
+
+    nextY := 55 + itemsPerCol * 22 + 10
+    Gui, AuraFilter:Font, s9 cWhite Bold
+    Gui, AuraFilter:Add, Text, x10 y%nextY% w200 h20 BackgroundTrans c0xFFAA00, Transcendents:
+    Gui, AuraFilter:Font, s9 cWhite Normal
+
+    itemsPerColTrans := Ceil(AuraListTransOrder.MaxIndex() / 3)
+    transStartY := nextY + 20
+    for i, aura in AuraListTransOrder {
+        col := (i - 1) // itemsPerColTrans
+        row := Mod(i - 1, itemsPerColTrans)
+        x := 10 + col * 185
+        y := transStartY + row * 22
+        ctrlName := aura . "_chk"
+        StringReplace, ctrlName, ctrlName, -, _, All
+        options := "x" x " y" y " w180 h20 BackgroundTrans c0xCCCCCC v" ctrlName " gAuraCheckChange"
+        if (EnabledAuras[aura])
+            options .= " Checked"
+        Gui, AuraFilter:Add, CheckBox, %options%, %aura%
+    }
+
+    saveBtnY := transStartY + itemsPerColTrans * 22 + 10
+    Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
+    Gui, AuraFilter:Add, Button, x190 y%saveBtnY% w180 h30 gSaveAuraFilter, Save Aura Filter
+
+    winH := saveBtnY + 50
+    Gui, AuraFilter:Show, w580 h%winH%, Aura Filter
+    auraFilterReady := true
+return
+
+AuraFilterClose:
+    auraFilterReady := false
+    Gui, AuraFilter:Destroy
 return
 
 ShowClipTextGlobal() {
@@ -3518,4 +3645,5 @@ return
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
 return
+
 
