@@ -61,6 +61,8 @@ triggerDelayTrans := 20000
 webReponse := "false"
 pendingUnequip := false
 autoWarp := false
+detectPotion := false
+pendingCraft := false
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -271,6 +273,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAutoWarp, %iniFilePath%, Macro, autoWarp
     if (tempAutoWarp != "ERROR")
     autoWarp := (tempAutoWarp = "true" || tempAutoWarp = "1")
+
+    IniRead, tempDetectPotion, %iniFilePath%, Macro, detectPotion
+    if (tempDetectPotion != "ERROR")
+    detectPotion := (tempDetectPotion = "true" || tempDetectPotion = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -586,7 +592,7 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y468 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x220 y520 w520 h145 BackgroundTrans, F5 to Cancel Clipping/Webhook
+Gui, Add, Text, x180 y520 w520 h145 BackgroundTrans,F5 to Cancel Clipping/Webhook
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F5 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
 
@@ -638,33 +644,33 @@ Gui, Tab, Crafting
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x22 y85 w554 h130 cWhite, Auto Craft
-Gui, Add, GroupBox, x22 y225 w554 h130 cWhite, Manual Craft
-Gui, Add, GroupBox, x130 y385 w210 h100 cWhite, Heavenly Potion
-Gui, Add, GroupBox, x347 y385 w130 h100 cWhite, Bound Potion 
+Gui, Add, GroupBox, x22 y225 w554 h200 cWhite, Manual Craft
+Gui, Add, GroupBox, x130 y445 w210 h100 cWhite, Heavenly Potion
+Gui, Add, GroupBox, x347 y445 w130 h100 cWhite, Bound Potion 
 Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F3 = Start | F4 = Stop
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x218 y405 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
-Gui, Add, Button, x218 y445 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
-Gui, Add, Text, x308 y409 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
-Gui, Add, Text, x308 y449 w60 h25 vUseExoticStatus BackgroundTrans, OFF
+Gui, Add, Button, x218 y465 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
+Gui, Add, Button, x218 y505 w80 h25 gToggleUseExotic vUseExoticBtn, Toggle
+Gui, Add, Text, x308 y469 w60 h25 vUseCelestialStatus BackgroundTrans, OFF
+Gui, Add, Text, x308 y509 w60 h25 vUseExoticStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x138 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add 
-Gui, Add, Text, x138 y449 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x138 y469 w600 h100 BackgroundTrans c0xCCCCCC, Add 
+Gui, Add, Text, x138 y509 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c9B8CFF Bold, Trajan Pro
-Gui, Add, Text, x164 y409 w600 h100 BackgroundTrans, Celestial:
+Gui, Add, Text, x164 y469 w600 h100 BackgroundTrans, Celestial:
 Gui, Font, s10 cWhite Normal, Trajan Pro
-Gui, Add, Text, vExoticText x164 y447 w600 h100 BackgroundTrans, Exotic:
+Gui, Add, Text, vExoticText x164 y507 w600 h100 BackgroundTrans, Exotic:
 SetTimer, RainbowText, 50
 
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x358 y445 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
-Gui, Add, Text, x446 y449 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
+Gui, Add, Button, x358 y505 w80 h25 gToggleUseBounded vUseBoundedBtn, Toggle
+Gui, Add, Text, x446 y509 w60 h25 vUseBoundedStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x358 y409 w600 h100 BackgroundTrans c0xCCCCCC, Add
+Gui, Add, Text, x358 y469 w600 h100 BackgroundTrans c0xCCCCCC, Add
 Gui, Font, s9 c1559C9 Bold, Trajan Pro
-Gui, Add, Text, x385 y409 w600 h100 BackgroundTrans, Bounded:
+Gui, Add, Text, x385 y469 w600 h100 BackgroundTrans, Bounded:
 
 
 Gui, Font, s9 cWhite Normal
@@ -677,28 +683,20 @@ Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Goe
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x55 y385 w80 h25 gToggleDetectPotion vDetectPotionBtn, Toggle
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x153 y388 w70 h25 vDetectPotionStatus BackgroundTrans, OFF
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x35 y350 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Detects if your potion is ready to be crafted with ready notification, and if so, stops fishing to craft it. Only Reccomended for Heavenly/Bound Potion.
+
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x153 y308 w70 h25 vManualCraftStatus BackgroundTrans, OFF
-
-Gui, Font, s10 c0xCCCCCC Normal
-if (maxLoopCount < 10 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 20 (Fishing Count is less than 10, the macro will sell more frequently, resulting in fewer fish points per hour.)
-} 
-else if (maxLoopCount < 20 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 16 (Fishing Count is less than 20, the macro will sell more frequently, resulting in fewer fish points per hour.)
-} else if (maxLoopCount < 30 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 14 (Fishing Count is less than 30, the macro will sell more frequently, resulting in fewer fish points per hour.)
-} else if (maxLoopCount < 40 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 10 (Fishing Count is less than 40, the macro will sell more frequently, resulting in fewer fish points per hour.)
-} else if (maxLoopCount < 50 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 8 (Fishing Count is less than 50, the macro will sell more frequently, resulting in fewer fish points per hour.)
-} else if (maxLoopCount < 100 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 3 
-} else if (maxLoopCount > 100 && manualCraft) {
-    Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, (Manual Craft) Estimated Potions Crafted Per Hour: 1 (Fishing Count is 100 or more, the macro will sell less frequently, resulting in more fish points per hour, but less potions.)
-}
 
 Gui, Tab, Failsafes
 
@@ -978,6 +976,15 @@ if (autoWarp) {
     GuiControl,, AutoWarpStatus, OFF
     GuiControl, +c0xFF4444, AutoWarpStatus
     SetTimer, CheckCyber, Off
+}
+if (detectPotion && toggle) {
+    GuiControl,, DetectPotionStatus, ON
+    GuiControl, +c0x00DD00, DetectPotionStatus
+    SetTimer, DetectPotion, 300
+} else {
+    GuiControl,, DetectPotionStatus, OFF
+    GuiControl, +c0xFF4444, DetectPotionStatus
+    SetTimer, DetectPotion, Off
 }
 
 return
@@ -1277,6 +1284,20 @@ ToggleAutoWarp:
     IniWrite, % (autoWarp ? "true" : "false"), %iniFilePath%, Macro, autoWarp
 return
 
+ToggleDetectPotion:
+    detectPotion := !detectPotion
+    if (detectPotion) {
+        GuiControl,, DetectPotionStatus, ON
+        GuiControl, +c0x00DD00, DetectPotionStatus
+        SetTimer, DetectPotion, 1000
+    } else {
+        GuiControl,, DetectPotionStatus, OFF
+        GuiControl, +c0xFF4444, DetectPotionStatus
+        SetTimer, DetectPotion, Off
+    }
+    IniWrite, % (detectPotion ? "true" : "false"), %iniFilePath%, Macro, detectPotion
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1402,8 +1423,7 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
         }
     }
 
-    if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState)
-    {
+    if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState) {
         if (prevState != "None") {
             needle := Chr(92) Chr(34)
             pos1 := InStr(state, needle)
@@ -1493,8 +1513,8 @@ global webhookURL, webhookID, doPing2, prevState, AuraList, AuraListTrans, detec
                 ShowClipTextTrans()
             }
 
-            if (toggle) && (autoUnequip) && (auraName != "Nothing") {
-                pendingUnequip := true
+            if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
+                    pendingUnequip := true
                 }
             }
         prevState := state
@@ -1595,6 +1615,14 @@ PopWarp() {
     Click, Left
     sleep, 600
 }
+
+DetectPotion:
+    PixelGetColor, potionnotif, 1681, 835, RGB 
+    PixelGetColor, potionnotif2, 1622, 720, RGB
+    if (potionnotif = 0x6FB5FF || potionnotif2 = 0x6FB5FF) {
+        pendingCraft := true
+    }
+return
 
 GetPingText() {
     global webhookID
@@ -2856,7 +2884,7 @@ F3::
     Sleep, 1000
     ToolTip
     if (onoffWebhook) {
-        try SendWebhook(":tools: Crafting Started", 7909721)
+        try SendWebhook("Crafting Started on " selectedItem ":tools:", 0)
     }
 
     SetTimer, CraftSelected, 1000
@@ -2881,7 +2909,7 @@ if (!autocrafting || toggle)
     Sleep 1000
     ToolTip
     if (onoffWebhook) {
-        try SendWebhook(":tools: Crafting Stopped", "14495300")
+        try SendWebhook("Crafting Stopped :tools:", 0)
    }
 return
 
@@ -2895,7 +2923,7 @@ global blehblehbleh, webReponse, auraName
         SetTimer, V2Clip, Off
         SetTimer, AuraDetect, Off
         if (clipWebhook && AuraList.HasKey(auraName)) {
-            try SendWebhook(":x: Clipping Canceled", 0)
+            try SendWebhook(auraName " Clip Canceled.",  14495300)
         }
         ToolTip, Detection Restarting in 2 Seconds..., 870, 10
         sleep, 1000
@@ -2925,6 +2953,8 @@ if (toggle) {
     global strangeControllerLastRun
     global biomeRandomizerLastRun
     global manualCraft
+    global pendingCraft
+    global pendingUnequip
     global code
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
@@ -2968,6 +2998,32 @@ if (toggle) {
                 DoAutoUnequip()
             }
             pendingUnequip := false
+        }
+    }
+
+        if (pendingCraft = true) {
+            if (selectedItem2 = "") {
+                    return
+                }
+            ManualCraftMovement()
+            Sleep, 500
+            Send, f
+            Sleep, 1500
+            Gosub, CraftSelected2
+            Sleep, 1000
+            
+            MouseMove, 850, 688, 3
+            Sleep, 500
+            Click, Left
+            Sleep, 500
+
+            Send, {Esc}
+            Sleep, 650
+            Send, R
+            Sleep, 650
+            Send, {Enter}
+            sleep 3000
+            pendingCraft := false
         }
 
         loopCount++
@@ -3024,26 +3080,6 @@ if (toggle) {
         sleep 500
         Click, WheelDown 45
         sleep 300
-            
-        if (manualCraft) {
-            if (selectedItem2 = "") {
-                return
-            }
-            ManualCraftMovement()
-            Sleep, 500
-            Send, f
-            Sleep, 1000
-            Gosub, CraftSelected2
-            Sleep, 1000
-
-            Send, {Esc}
-            Sleep, 650
-            Send, R
-            Sleep, 650
-            Send, {Enter}
-            sleep 3000
-
-        }
 
 
 
