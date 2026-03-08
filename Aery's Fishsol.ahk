@@ -1549,7 +1549,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 } else {
                     ClipCountdown()
                 }
-                if (!auraFilter || EnabledAuras[auraName]) && (webResponse = "false") {
+                if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName])) && (webResponse = "false") {
                     json := "{"
                         . mentionsStr
                         . contentStr
@@ -1563,7 +1563,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                     http.Open("POST", webhookURL, false)
                     http.SetRequestHeader("Content-Type", "application/json")
                     http.Send(json)
-                }
+                } 
             }
 
             if (auraName = "Equinox" || auraName = "EQUINOX") {
