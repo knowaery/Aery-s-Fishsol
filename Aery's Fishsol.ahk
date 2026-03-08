@@ -5,7 +5,7 @@ SetWorkingDir %A_ScriptDir%
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 iniFilePath := A_ScriptDir "\settings.ini"
-iconFilePath := A_ScriptDir "\img\icon2.ico"
+iconFilePath := A_ScriptDir "\img\icon.ico"
 if (FileExist(iconFilePath)) {
     Menu, Tray, Icon, %iconFilePath%
 }
@@ -125,11 +125,8 @@ AuraListTrans := {"Pixelation": 1
 , "illusionary": 1
 , "ILLUSIONARY": 1}
 
-
-AuraListOrder := [ "Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "NYCTOPHOBIA"]
-
-AuraListTransOrder := ["Pixelation", "Luminosity", "LEVIATHAN", "Breakthrough", "Equinox", "Monarch", "illusionary"]
-
+AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "NYCTOPHOBIA"]
+AuraListTransOrder := ["Pixelation", "Luminosity", "LEVIATHAN", "Breakthrough", "Equinox", "Monarch"]
 
 EnabledAuras := {}
 for i, aura in AuraListOrder
@@ -301,13 +298,13 @@ if (FileExist(iniFilePath)) {
     }
     for i, aura in AuraListOrder {
         IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
-        if (tempEnabled != "ERROR")
-            EnabledAuras[aura] := tempEnabled + 0
+        if (tempEnabled = "0")
+            EnabledAuras[aura] := 0
     }
     for i, aura in AuraListTransOrder {
         IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
-        if (tempEnabled != "ERROR")
-            EnabledAuras[aura] := tempEnabled + 0
+        if (tempEnabled = "0")
+            EnabledAuras[aura] := 0
     }
 }
 
@@ -513,7 +510,7 @@ Gui, Font, s8 c0xCCCCCC
 Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
 Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
 Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook and Clip
+Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook and Clip F6=Exit
 
 Gui, Tab, Misc
 
@@ -597,7 +594,7 @@ Gui, Add, Text, x143 y227 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x293 y125 w270 h141 cWhite, Toggle Aura Filter
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the auras that are toggled on in the Aura Filter will be detected by the Aura Detection system. This means no webhook for auras that are not a global/transcendent
+Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the auras that are toggled on in the Aura Filter will be detected by the Aura Detection system. This means no webhook/clip for auras that are not a global/transcendent
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x305 y222 w80 h25 gToggleAuraFilter vAuraFilterBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -1608,13 +1605,13 @@ global webhookURL, webhookID, doPing2, prevState
                 if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && (detectGlobal) && (webResponse = "false")) {
                     SetTimer, V2Clip, -%triggerDelayGlobal%
                     ShowClipTextGlobal()
-                } else {
+                }
+            } else {
                     if (AuraList.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
                         SetTimer, V2Clip, -%triggerDelayTrans%
                         ShowClipTextTrans()
                     }
                 }
-            }
             if (auraFilter) {
                 if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && (detectTrans) && (webResponse = "false")) {
                     SetTimer, V2Clip, -%triggerDelayTrans%
@@ -1627,7 +1624,7 @@ global webhookURL, webhookID, doPing2, prevState
                 }
             }
 
-            if (toggle) && (autoUnequip) && (auraName != "Nothing") {
+            if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
                     pendingUnequip := true
                 }
             }
@@ -3024,10 +3021,9 @@ F2::
     Send, {Esc}
     Sleep, 650
     Send, {Esc}
-    Sleep, 2000
     ToolTip
     if (onoffWebhook) {
-            try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
+        try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
 return
 
@@ -3109,6 +3105,10 @@ global blehblehbleh, webReponse, auraName
     }
 return
 
+F6::
+    ExitApp
+return
+
 ;1080p
 DoMouseMove:
 if (toggle) {
@@ -3180,6 +3180,14 @@ if (toggle) {
             if (selectedItem2 = "") {
                     return
                 }
+
+            Send, {Esc}
+            Sleep, 650
+            Send, R
+            Sleep, 650
+            Send, {Enter}
+            sleep 3000
+
             ManualCraftMovement()
             Sleep, 500
             Send, f
