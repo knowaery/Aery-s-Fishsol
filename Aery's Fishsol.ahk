@@ -1480,7 +1480,8 @@ HideTranscendentOutline(id) {
 }
 
 AuraDetect:
-global webhookURL, webhookID, doPing2, prevState
+global webhookURL, webhookID, doPing2, prevState, blehblehbleh
+    blehblehbleh := ""
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1541,29 +1542,29 @@ global webhookURL, webhookID, doPing2, prevState
                 contentStr := """content"": """","
                 mentionsStr := ""
             }
-
-        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && EnabledAuras[auraName]) {
-            if AuraList.HasKey(auraName) {
+            
+            if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
+                if AuraList.HasKey(auraName) {
                     ClipCountdownGlobal()
                 } else {
                     ClipCountdown()
                 }
-                if (webResponse = "false") {
-                json := "{"
-                    . mentionsStr
-                    . contentStr
-                    . """embeds"": [{"
-                    . """description"": "" ### Aura Equipped - " auraName ""","
-                    . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
-                    . """timestamp"": """ timestamp """"
-                    . "}]}"
+                if (!auraFilter || EnabledAuras[auraName]) && (webResponse = "false") {
+                    json := "{"
+                        . mentionsStr
+                        . contentStr
+                        . """embeds"": [{"
+                        . """description"": "" ### Aura Equipped - " auraName ""","
+                        . """footer"": {""text"": ""Aery's fishSol vYui"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
+                        . """timestamp"": """ timestamp """"
+                        . "}]}"
 
-                http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-                http.Open("POST", webhookURL, false)
-                http.SetRequestHeader("Content-Type", "application/json")
-                http.Send(json)
+                    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                    http.Open("POST", webhookURL, false)
+                    http.SetRequestHeader("Content-Type", "application/json")
+                    http.Send(json)
+                }
             }
-        }
 
             if (auraName = "Equinox" || auraName = "EQUINOX") {
                 ClipCountdownGlobal()
@@ -1607,9 +1608,9 @@ global webhookURL, webhookID, doPing2, prevState
                     ShowClipTextGlobal()
                 }
             } else {
-                    if (AuraList.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
-                        SetTimer, V2Clip, -%triggerDelayTrans%
-                        ShowClipTextTrans()
+                    if (AuraList.HasKey(auraName) && (detectGlobal) && (webResponse = "false")) {
+                        SetTimer, V2Clip, -%triggerDelayGlobal%
+                        ShowClipTextGlobal()
                     }
                 }
             if (auraFilter) {
@@ -3701,5 +3702,4 @@ return
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
 return
-
 
