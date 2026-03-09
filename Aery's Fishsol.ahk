@@ -12,7 +12,7 @@ if (FileExist(iconFilePath)) {
 
 res := "1080p"
 maxLoopCount := 30
-fishingLoopCount := 30
+fishingLoopCount := 10
 sellAllToggle := false
 advancedFishingToggle := false
 pathingMode := "Vip Pathing"
@@ -109,10 +109,10 @@ AuraList := {"Starscourge_Radiant": 1
 , "UNKNOWN": 1
 , "Elude": 1
 , "Dreamscape": 1
-, "Nyctophobia": 1
 , "Raven_Plauge": 1}
 
-AuraListTrans := {"Pixelation": 1
+AuraListTrans := {"NYCTOPHOBIA": 1
+, "Pixelation": 1
 , "Luminosity": 1
 , "LEVIATHAN": 1
 , "Leviathan": 1
@@ -125,14 +125,11 @@ AuraListTrans := {"Pixelation": 1
 , "illusionary": 1
 , "ILLUSIONARY": 1}
 
-AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "NYCTOPHOBIA"]
-AuraListTransOrder := ["Pixelation", "Luminosity", "LEVIATHAN", "Breakthrough", "Equinox", "Monarch"]
-
+AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape"]
 EnabledAuras := {}
 for i, aura in AuraListOrder
 EnabledAuras[aura] := 1
-for i, aura in AuraListTransOrder
-EnabledAuras[aura] := 1
+
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -301,11 +298,6 @@ if (FileExist(iniFilePath)) {
         if (tempEnabled = "0")
             EnabledAuras[aura] := 0
     }
-    for i, aura in AuraListTransOrder {
-        IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
-        if (tempEnabled = "0")
-            EnabledAuras[aura] := 0
-    }
 }
 
 
@@ -459,7 +451,7 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x45 y270 w180 h25 BackgroundTrans, Sell Loop Count:
 Gui, Add, Edit, x220 y268 w60 h25 vFishingLoopInput gUpdateLoopCount Number Background0xD3D3D3 cBlack, %fishingLoopCount%
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x285 y272 w270 h15 BackgroundTrans, (There's is 56 Fish in the game. Default: 30)   
+Gui, Add, Text, x285 y272 w270 h15 BackgroundTrans, (There's is 56 Fish in the game. Default: 10)   
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x45 y301 w120 h25 BackgroundTrans, Pathing Mode:
@@ -1065,18 +1057,6 @@ return
 
 
 GuiClose:
-    for i, aura in AuraListOrder {
-        ctrlName := aura . "_chk"
-        StringReplace, ctrlName, ctrlName, -, _, All
-        EnabledAuras[aura] := %ctrlName%
-        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
-    }
-    for i, aura in AuraListTransOrder {
-        ctrlName := aura . "_chk"
-        StringReplace, ctrlName, ctrlName, -, _, All
-        EnabledAuras[aura] := %ctrlName%
-        IniWrite, % EnabledAuras[aura], %iniFilePath%, EnabledAuras, %aura%
-    }
 ExitApp
 
 toggle := false
@@ -1555,7 +1535,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         . contentStr
                         . """embeds"": [{"
                         . """description"": "" ### Aura Equipped - " auraName ""","
-                        . """footer"": {""text"": ""Aery's fishSol vYui"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
+                        . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                         . """timestamp"": """ timestamp """"
                         . "}]}"
 
@@ -1563,7 +1543,37 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                     http.Open("POST", webhookURL, false)
                     http.SetRequestHeader("Content-Type", "application/json")
                     http.Send(json)
-                } 
+                } else if (auraFilter) {
+                    if (AuraList.HasKey(auraName) && (EnabledAuras[auraName]) && (webResponse = "false")) {
+                        json := "{"
+                            . mentionsStr
+                            . contentStr
+                            . """embeds"": [{"
+                            . """description"": "" ### Aura Equipped - " auraName ""","
+                            . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """timestamp"": """ timestamp """"
+                            . "}]}"
+                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                        http.Open("POST", webhookURL, false)
+                        http.SetRequestHeader("Content-Type", "application/json")
+                        http.Send(json)
+                    }
+                } else if !(auraFilter) {
+                    if (AuraList.HasKey(auraName) && (webResponse = "false")) {
+                        json := "{"
+                            . mentionsStr
+                            . contentStr
+                            . """embeds"": [{"
+                            . """description"": "" ### Aura Equipped - " auraName ""","
+                            . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """timestamp"": """ timestamp """"
+                            . "}]}"
+                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                        http.Open("POST", webhookURL, false)
+                        http.SetRequestHeader("Content-Type", "application/json")
+                        http.Send(json)
+                    }
+                }
             }
 
             if (auraName = "Equinox" || auraName = "EQUINOX") {
@@ -1643,7 +1653,7 @@ V2Clip:
             if (nvidiacolor = 0x76B900) {
                 try SendWebhook(auraName . " has been Clipped!", 0)
             } else {
-                try SendWebhook(auraName . " has not been Clipped!", 0)
+                try SendWebhook(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
             }
         }
     ToolTip
@@ -1694,7 +1704,13 @@ global prevBiome
     if (biome && biome != "" && biome != prevBiome) {
         if (biome = "CYBERSPACE") {
             prevBiome := biome
+            toggle := false
+            SetTimer, DoMouseMove, Off
+            SetTimer, UpdateGUI, Off
             PopWarp()
+            toggle := true
+            SetTimer, UpdateGUI, 1000
+            SetTimer, DoMouseMove, 100
             return
         }
 
@@ -1783,7 +1799,7 @@ SendWebhook3(text, color := 16777215) {
     . """color"": " color ","
     . """footer"": {"
     . """text"": ""Aery's fishsol v1.5"","
-    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
     . "}]"
@@ -1818,7 +1834,7 @@ SendWebhook(text, color := 16777215) {
     . """color"": " color ","
     . """footer"": {"
     . """text"": ""Aery's fishsol v1.5"","
-    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
     . "}]"
@@ -1862,7 +1878,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . imageBlock
     . """footer"": {"
     . """text"": ""Aery's fishsol v1.5"","
-    . """icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png"""
+    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
     . "}]"
@@ -1901,9 +1917,9 @@ return
 OpenAuraFilter:
     Gui, AuraFilter:Destroy
     Gui, AuraFilter:New, +AlwaysOnTop, Aura Filter
-    Gui, AuraFilter:Color, 0x1E1E1E
+    Gui, AuraFilter:Color, 0x1E1E1Es
     Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
-    Gui, AuraFilter:Add, Text, x10 y10 w560 h20 Center BackgroundTrans c0x00D4FF, Toggle which auras a webhook/clip will be sent for. (Requires Aura Detection)
+    Gui, AuraFilter:Add, Text, x-15 y10 w600 h20 Center BackgroundTrans c0x00D4FF,Toggle which aura will have a webhook/clip. (Requires Aura Detection and Aura Filter)
     Gui, AuraFilter:Font, s9 cWhite Bold
     Gui, AuraFilter:Add, Text, x10 y35 w100 h20 BackgroundTrans c0xFFAA00, Globals: 
     Gui, AuraFilter:Font, s9 cWhite Normal
@@ -1923,27 +1939,8 @@ OpenAuraFilter:
     }
 
     nextY := 55 + itemsPerCol * 22 + 10
-    Gui, AuraFilter:Font, s9 cWhite Bold
-    Gui, AuraFilter:Add, Text, x10 y%nextY% w200 h20 BackgroundTrans c0xFFAA00, Transcendents:
-    Gui, AuraFilter:Font, s9 cWhite Normal
-
-    itemsPerColTrans := Ceil(AuraListTransOrder.MaxIndex() / 3)
-    transStartY := nextY + 20
-    for i, aura in AuraListTransOrder {
-        col := (i - 1) // itemsPerColTrans
-        row := Mod(i - 1, itemsPerColTrans)
-        x := 10 + col * 185
-        y := transStartY + row * 22
-        ctrlName := aura . "_chk"
-        StringReplace, ctrlName, ctrlName, -, _, All
-        options := "x" x " y" y " w180 h20 BackgroundTrans c0xCCCCCC v" ctrlName " gAuraCheckChange"
-        if (EnabledAuras[aura])
-            options .= " Checked"
-        Gui, AuraFilter:Add, CheckBox, %options%, %aura%
-    }
-
-    saveBtnY := transStartY + itemsPerColTrans * 22 + 10
     Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
+    saveBtnY := nextY
     Gui, AuraFilter:Add, Button, x190 y%saveBtnY% w180 h30 gSaveAuraFilter, Save Aura Filter
 
     winH := saveBtnY + 50
