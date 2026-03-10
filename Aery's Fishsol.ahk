@@ -1560,7 +1560,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             auraName := StrReplace(auraName, "\", "\\")
             auraName := StrReplace(auraName, """", "\""")
 
-            if AuraList.HasKey(auraName) {
+            if (AuraList.HasKey(auraName) && doPing3) {
                 contentStr := """content"": ""<@" webhookID ">"","
                 mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
             } else {
@@ -1624,37 +1624,37 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             if (auraName = "Equinox" || auraName = "EQUINOX") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                 }
             } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
                 }
             } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
                 }
             } else if (auraName = "Monarch" || auraName = "MONARCH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
                 }
             } else if (auraName = "Luminosity") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
                 }
             } else if (auraName = "Pixelation") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
                 }
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(" **████████████ D3T3ct3d..** \n███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook4(" **████████████ D3T3ct3d..** \n███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             }
             if (auraFilter) {
@@ -1815,7 +1815,6 @@ EdenSnatcher:
 
     if (colorlimbo = 0xFFFFFF && colorlimbo2 = 0x000000 && colorlimbo3 = 0x000000) {
             SetTimer, DoContract, -%edenDelay%
-            return
         }
 return
 
@@ -1835,12 +1834,11 @@ DoContract:
     Click, Left
 
     if (clipWebhook) {
-        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Eden.png")
+        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
     }
     if (detectGlobal) {
         Sleep, 30000
         Send, !{F10}
-        ToolTip 
     }
 return
 
@@ -1949,6 +1947,50 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     allowedMentions := ""
 
     if (doPing2 && webhookID != "") {
+        content := "<@" webhookID ">"
+        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
+    }
+
+    imageBlock := ""
+    if (imageURL != "") {
+        imageBlock := """image"": {""url"": """ imageURL """},"
+    }
+
+    json := "{"
+    . """content"": """ content ""","
+    . allowedMentions
+    . """embeds"": [{"
+    . """title"": """ text ""","
+    . """color"": " color ","
+    . imageBlock
+    . """footer"": {"
+    . """text"": ""Aery's fishsol v1.5"","
+    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
+    . "},"
+    . """timestamp"": """ timestamp """"
+    . "}]"
+    . "}"
+
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("POST", webhookURL, false)
+    http.SetRequestHeader("Content-Type", "application/json")
+    http.Send(json)
+}
+
+SendWebhook4(text, color := 16777215, imageURL := "") {
+    global webhookURL, webhookID, doPing3, auraName
+
+    if (!InStr(webhookURL, "discord"))
+        return
+
+    time := A_NowUTC
+    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
+              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+    content := ""
+    allowedMentions := ""
+
+    if (doPing3 && webhookID != "") {
         content := "<@" webhookID ">"
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
     }
