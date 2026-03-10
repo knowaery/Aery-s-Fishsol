@@ -65,6 +65,7 @@ detectPotion := false
 pendingCraft := false
 auraFilter := false
 auraFilterReady := false
+detectEden := false
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -287,6 +288,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempAuraFilter, %iniFilePath%, Macro, auraFilter
     if (tempAuraFilter != "ERROR")
     auraFilter := (tempAuraFilter = "true" || tempAuraFilter = "1")
+
+    IniRead, tempDetectEden, %iniFilePath%, Macro, detectEden
+    if (tempDetectEden != "ERROR")
+    detectEden := (tempDetectEden = "true" || tempDetectEden = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -567,6 +572,21 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y413 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
+
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y490 w534 h120 cWhite, Detect and Contract Eden (Temporary)
+Gui, Font, s8 c0xCCCCCC Normal
+Gui, Add, Text, x45 y550 w520 h145 BackgroundTrans, Not tested, not much thought into it, sorry if it dont work
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y510 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Uses Check Pixels so it may not be fully accurate, but should work in most cases)
+Gui, Font, s9 cWhite Bold
+Gui, Add, Text, x183 y579 w400 h135 BackgroundTrans, 
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x230 y577 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y575 w80 h25 gToggleDetectEden vDetectEdenBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y578 w60 h25 vDetectEdenStatus BackgroundTrans, OFF
 
 Gui, Tab, Replay
 
@@ -1019,6 +1039,16 @@ if (auraFilter) {
     GuiControl,, AuraFilterStatus, OFF
     GuiControl, +c0xFF4444, AuraFilterStatus
 }
+if (detectEden) {
+    GuiControl,, DetectEdenStatus, ON
+    GuiControl, +c0x00DD00, DetectEdenStatus
+    edenDelay := 20000
+    SetTimer, EdenSnatcher, 50
+} else {
+    GuiControl,, DetectEdenStatus, OFF
+    GuiControl, +c0xFF4444, DetectEdenStatus
+    SetTimer, EdenSnatcher, Off
+}
 
 AuraCheckChange:
     if (!auraFilterReady)
@@ -1377,6 +1407,21 @@ ToggleAuraFilter:
     IniWrite, % (auraFilter ? "true" : "false"), %iniFilePath%, Macro, auraFilter
 return
 
+ToggleDetectEden:
+    detectEden := !detectEden
+    if (detectEden) {
+        GuiControl,, DetectEdenStatus, ON
+        GuiControl, +c0x00DD00, DetectEdenStatus
+        edenDelay := 20000
+        SetTimer, EdenSnatcher, 100
+    } else {
+        GuiControl,, DetectEdenStatus, OFF
+        GuiControl, +c0xFF4444, DetectEdenStatus
+        SetTimer, EdenSnatcher, Off
+    }
+    IniWrite, % (detectEden ? "true" : "false"), %iniFilePath%, Macro, detectEden
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1702,12 +1747,14 @@ global prevBiome
     }
 
     if (biome && biome != "" && biome != prevBiome) {
-        if (biome = "CYBERSPACE") {
+        if (biome = "CYBERSPACE" && toggle && autoWarp) {
             prevBiome := biome
             toggle := false
             SetTimer, DoMouseMove, Off
             SetTimer, UpdateGUI, Off
+            SendWebhook("Popping Warp Potion...", 0)
             PopWarp()
+            SendWebhook("Rearming Fishing...", 0)
             toggle := true
             SetTimer, UpdateGUI, 1000
             SetTimer, DoMouseMove, 100
@@ -1721,6 +1768,7 @@ global prevBiome
 return
 
 PopWarp() {
+    Sleep, 5000
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -1752,6 +1800,47 @@ DetectPotion:
     PixelGetColor, potionnotif2, 1622, 720, RGB
     if (potionnotif = 0x6FB5FF || potionnotif2 = 0x6FB5FF) {
         pendingCraft := true
+    }
+return
+
+EdenSnatcher:
+    global edenDelay
+
+    if (!detectEden)
+        return
+
+    PixelGetColor, colorlimbo, 950, 180, RGB
+    PixelGetColor, colorlimbo2, 1200, 100, RGB
+    PixelGetColor, colorlimbo3, 676, 676, RGB
+
+    if (colorlimbo = 0xFFFFFF && colorlimbo2 = 0x000000 && colorlimbo3 = 0x000000) {
+            SetTimer, DoContract, -%edenDelay%
+            return
+        }
+return
+
+DoContract:
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 100
+    Send, e
+    sleep, 400
+    MouseMove, 800, 800, 3
+    sleep, 300
+    Click, Left
+    sleep, 800
+    MouseMove, 720, 930, 3
+    sleep, 400
+    Click, Left
+
+    if (clipWebhook) {
+        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Eden.png")
+    }
+    if (detectGlobal) {
+        Sleep, 30000
+        Send, !{F10}
+        ToolTip 
     }
 return
 
