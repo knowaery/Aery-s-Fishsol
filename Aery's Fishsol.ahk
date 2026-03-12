@@ -1603,7 +1603,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         http.SetRequestHeader("Content-Type", "application/json")
                         http.Send(json)
                     }
-                } else if !(auraFilter) {
+                } else if (!auraFilter) {
                     if (AuraList.HasKey(auraName) && (webResponse = "false")) {
                         json := "{"
                             . mentionsStr
@@ -1654,27 +1654,32 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(" **████████████ D3T3ct3d..** \n███'█ P3f3cT pUpP3T: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook4(" **<>;'1001101010001101.y=mx+b-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName, 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                }
+            } else if (auraName = "CHILLSEAR") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook4(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
                 }
             }
             if (auraFilter) {
-                if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && (detectGlobal) && (webResponse = "false")) {
+                if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayGlobal%
                     ShowClipTextGlobal()
                 }
             } else {
-                    if (AuraList.HasKey(auraName) && (detectGlobal) && (webResponse = "false")) {
+                    if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         ShowClipTextGlobal()
                     }
                 }
             if (auraFilter) {
-                if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && (detectTrans) && (webResponse = "false")) {
+                if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && detectTrans && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayTrans%
                     ShowClipTextTrans()
                 }
             } else {
-                if (AuraListTrans.HasKey(auraName) && (detectTrans) && (webResponse = "false")) {
+                if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayTrans%
                     ShowClipTextTrans()
                 }
