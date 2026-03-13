@@ -66,6 +66,7 @@ pendingCraft := false
 auraFilter := false
 auraFilterReady := false
 detectEden := false
+brainrot67 := ""
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -606,14 +607,11 @@ Gui, Add, Text, x143 y227 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x293 y125 w270 h141 cWhite, Toggle Aura Filter
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the auras that are toggled on in the Aura Filter will be detected by the Aura Detection system. This means no webhook/clip for auras that are not a global/transcendent
+Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the globals that are toggled in the Aura Filter will be sent a webhook for. Transcendents are not affected by the Aura Filter.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x305 y222 w80 h25 gToggleAuraFilter vAuraFilterBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x403 y227 w60 h25 vAuraFilterStatus BackgroundTrans, OFF
-
-;Gui, Font, s9 c0xCCCCCC Normal
-;Gui, Add, Text, x315 y135 w255 h151 BackgroundTrans c0xCCCCCC, V2 replaces the old CheckPixel based detection system (which relied on detecting server global effect for globals and cutscene color checks for transcendents). With a new devlog reading method that directly reads the logs to determine which aura was equipped, this gaurantees accurate clips for globals and transcendents. (unless auto skipped ofc)
 
 Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
@@ -1568,13 +1566,18 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 mentionsStr := ""
             }
             
-            if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
-                if AuraList.HasKey(auraName) {
+        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
+            if AuraList.HasKey(auraName) {
+                if (auraFilter && EnabledAuras[auraName]) {
                     ClipCountdownGlobal()
-                } else {
+                    brainrot67 := "67"
+                } else if (!auraFilter) {
+                    ClipCountdownGlobal()
+                    brainrot67 := "67"
+                }} else {
                     ClipCountdown()
                 }
-                if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName])) && (webResponse = "false") {
+                if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") {
                     json := "{"
                         . mentionsStr
                         . contentStr
@@ -1589,7 +1592,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                     http.SetRequestHeader("Content-Type", "application/json")
                     http.Send(json)
                 } else if (auraFilter) {
-                    if (AuraList.HasKey(auraName) && (EnabledAuras[auraName]) && (webResponse = "false")) {
+                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && webResponse = "false") {
                         json := "{"
                             . mentionsStr
                             . contentStr
@@ -1604,7 +1607,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         http.Send(json)
                     }
                 } else if (!auraFilter) {
-                    if (AuraList.HasKey(auraName) && (webResponse = "false")) {
+                    if (AuraList.HasKey(auraName) && webResponse = "false") {
                         json := "{"
                             . mentionsStr
                             . contentStr
@@ -1644,7 +1647,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "Luminosity") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
                 }
             } else if (auraName = "Pixelation") {
                 ClipCountdownGlobal()
@@ -1654,7 +1657,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(" **<>;'1001101010001101.y=mx+b-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName, 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook4(" **<>;'1001101010001101.y=mx+b-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             } else if (auraName = "CHILLSEAR") {
                 ClipCountdownGlobal()
@@ -1691,6 +1694,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             }
         prevState := state
         webResponse := "false"
+        brainrot67 := ""
     }
 return
 
@@ -1841,7 +1845,7 @@ DoContract:
     if (clipWebhook) {
         try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
     }
-    if (detectGlobal) {
+    if (detectGlobal || detectTrans) {
         Sleep, 30000
         Send, !{F10}
     }
@@ -3227,7 +3231,7 @@ global blehblehbleh, webReponse, auraName
     if (detectGlobal || detectTrans && auraDetection) {
         SetTimer, V2Clip, Off
         SetTimer, AuraDetect, Off
-        if (clipWebhook && AuraList.HasKey(auraName)) {
+        if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
             try SendWebhook(auraName " Clip Canceled.",  14495300)
         }
         ToolTip, Detection Restarting in 2 Seconds..., 870, 10
