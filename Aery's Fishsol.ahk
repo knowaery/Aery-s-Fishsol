@@ -34,6 +34,7 @@ onoffWebhook := false
 doPing := false
 doPing2 := false
 doPing3 := false
+doPing4 := false
 autocrafting := false
 useCelestial := false
 useExotic := false
@@ -67,6 +68,13 @@ auraFilter := false
 auraFilterReady := false
 detectEden := false
 brainrot67 := ""
+totalCraftedhp := 0
+totalCraftedbp := 0
+totalCraftedrp := 0
+totalCrafteddp := 0
+totalCrafteddip := 0
+totalCraftedzp := 0
+totalCraftedjp := 0
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -246,6 +254,10 @@ if (FileExist(iniFilePath)) {
     if (tempDoPing3 != "ERROR")
     doPing3 := (tempDoPing3 = "true" || tempDoPing3 = "1")
 
+    IniRead, tempDoPing4, %iniFilePath%, Macro, doPing4
+    if (tempDoPing4 != "ERROR")
+    doPing4 := (tempDoPing4 = "true" || tempDoPing4 = "1")
+
     IniRead, tempCelestial, %iniFilePath%, Macro, useCelestial
     if (tempCelestial != "ERROR")
     useCelestial := (tempCelestial = "true" || tempCelestial = "1")
@@ -314,96 +326,22 @@ if RegExMatch(privateServerLink, "code=([^&]+)", m)
     code := m1
 }
 
+devNames    := [["maxstellar","ivelchampion249","cresqnt"],["maxstellar","cresqnt","ivelchampion249"],["cresqnt","ivelchampion249","maxstellar"],["cresqnt","maxstellar","ivelchampion249"],["ivelchampion249","maxstellar","cresqnt"],["ivelchampion249","cresqnt","maxstellar"]]
+devRoles    := {"maxstellar":"Lead Developer","ivelchampion249":"Original Creator","cresqnt":"Frontend Developer"}
+devDiscords := {"maxstellar":"Twitch","ivelchampion249":"Youtube","cresqnt":"Scope Development (other macros)"}
 
+s := (shuffle >= 1 && shuffle <= 6) ? shuffle : 6
+dev1_name := devNames[s][1], dev2_name := devNames[s][2], dev3_name := devNames[s][3]
+dev1_role := devRoles[dev1_name], dev2_role := devRoles[dev2_name], dev3_role := devRoles[dev3_name]
+dev1_discord := devDiscords[dev1_name], dev2_discord := devDiscords[dev2_name], dev3_discord := devDiscords[dev3_name]
 
-if (shuffle = 1) {
-    dev1_name := "maxstellar"
-    dev1_discord := "Twitch"
-    dev1_role := "Lead Developer"
-    dev2_name := "ivelchampion249"
-    dev2_discord := "Youtube"
-    dev2_role := "Original Creator"
-    dev3_name := "cresqnt"
-    dev3_discord := "Scope Development (other macros)"
-    dev3_role := "Frontend Developer"
-} else if (shuffle = 2) {
-    dev1_name := "maxstellar"
-    dev1_discord := "Twitch"
-    dev1_role := "Lead Developer"
-    dev2_name := "cresqnt"
-    dev2_discord := "Scope Development (other macros)"
-    dev2_role := "Frontend Developer"
-    dev3_name := "ivelchampion249"
-    dev3_discord := "Youtube"
-    dev3_role := "Original Creator"
-} else if (shuffle = 3) {
-    dev1_name := "cresqnt"
-    dev1_discord := "Scope Development (other macros)"
-    dev1_role := "Frontend Developer"
-    dev2_name := "ivelchampion249"
-    dev2_discord := "Youtube"
-    dev2_role := "Original Creator"
-    dev3_name := "maxstellar"
-    dev3_discord := "Twitch"
-    dev3_role := "Lead Developer"
-} else if (shuffle = 4) {
-    dev1_name := "cresqnt"
-    dev1_discord := "Scope Development (other macros)"
-    dev1_role := "Frontend Developer"
-    dev2_name := "maxstellar"
-    dev2_discord := "Twitch"
-    dev2_role := "Lead Developer"
-    dev3_name := "ivelchampion249"
-    dev3_discord := "Youtube"
-    dev3_role := "Original Creator"
-} else if (shuffle = 5) {
-    dev1_name := "ivelchampion249"
-    dev1_discord := "Youtube"
-    dev1_role := "Original Creator"
-    dev2_name := "maxstellar"
-    dev2_discord := "Twitch"
-    dev2_role := "Lead Developer"
-    dev3_name := "cresqnt"
-    dev3_discord := "Scope Development (other macros)"
-    dev3_role := "Frontend Developer"
-} else {
-    dev1_name := "ivelchampion249"
-    dev1_discord := "Youtube"
-    dev1_role := "Original Creator"
-    dev2_name := "cresqnt"
-    dev2_discord := "Scope Development (other macros)"
-    dev2_role := "Frontend Developer"
-    dev3_name := "maxstellar"
-    dev3_discord := "Twitch"
-    dev3_role := "Lead Developer"
-}
+dev1_img := GetDevImg(dev1_name)
+dev2_img := GetDevImg(dev2_name)
+dev3_img := GetDevImg(dev3_name)
 
-dev1_img := ""
-dev2_img := ""
-dev3_img := ""
-
-if (dev1_name = "ivelchampion249") {
-    dev1_img := A_ScriptDir . "\img\Ivel.png"
-} else if (dev1_name = "maxstellar") {
-    dev1_img := A_ScriptDir . "\img\maxstellar.png"
-} else if (dev1_name = "cresqnt") {
-    dev1_img := A_ScriptDir . "\img\cresqnt.png"
-}
-
-if (dev2_name = "ivelchampion249") {
-    dev2_img := A_ScriptDir . "\img\Ivel.png"
-} else if (dev2_name = "maxstellar") {
-    dev2_img := A_ScriptDir . "\img\maxstellar.png"
-} else if (dev2_name = "cresqnt") {
-    dev2_img := A_ScriptDir . "\img\cresqnt.png"
-}
-
-if (dev3_name = "ivelchampion249") {
-    dev3_img := A_ScriptDir . "\img\Ivel.png"
-} else if (dev3_name = "maxstellar") {
-    dev3_img := A_ScriptDir . "\img\maxstellar.png"
-} else if (dev3_name = "cresqnt") {
-    dev3_img := A_ScriptDir . "\img\cresqnt.png"
+GetDevImg(name) {
+    static imgs := {"ivelchampion249": "yui3.png", "maxstellar": "yui2.png", "cresqnt": "yui1.png"}
+    return A_ScriptDir . "\img\" . imgs[name]
 }
 
 Gui, Color, 0x1E1E1E
@@ -598,7 +536,7 @@ Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x33 y125 w240 h141 cWhite, Aura Detection (Beta)
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x45 y145 w225 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook.
+Gui, Add, Text, x45 y145 w225 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook. (Also needed for Auto Unequp.)
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y222 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -683,6 +621,14 @@ Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x50 y464 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y464 w60 h25 vDoPing3Status BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message
+Gui, Add, Button, x320 y530 w80 h25 gToggleDoPing4 vDoPing4Btn, Toggle
+Gui, Font, s10 cWhite Normal
+Gui, Add, Text, x50 y534 w300 h25 BackgroundTrans c0xCCCCCC, Message when desired potion is crafted: 
+Gui, Font, s10 c0xCCCCCC Bold
+Gui, Add, Text, x410 y534 w60 h25 vDoPing4Status BackgroundTrans, OFF
 
 Gui, Tab, Crafting
 
@@ -841,7 +787,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-07)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-14)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Show, w600 h670,  Aery's fishsol v1.5
@@ -951,6 +897,13 @@ if (doPing3) {
 } else {
     GuiControl,, DoPing3Status, OFF
     GuiControl, +c0xFF4444, DoPing3Status
+}
+if (doPing4) {
+    GuiControl,, DoPing4Status, ON
+    GuiControl, +c0x00DD00, DoPing4Status
+} else {
+    GuiControl,, DoPing4Status, OFF
+    GuiControl, +c0xFF4444, DoPing4Status
 }
 if (useCelestial) {
     GuiControl,, UseCelestialStatus, ON
@@ -1226,6 +1179,18 @@ ToggleDoPing3:
     IniWrite, % (doPing3 ? "true" : "false"), %iniFilePath%, Macro, doPing3
 return
 
+ToggleDoPing4:
+    doPing4 := !doPing4
+    if (doPing4) {
+        GuiControl,, DoPing4Status, ON
+        GuiControl, +c0x00DD00, DoPing4Status
+    } else {
+        GuiControl,, DoPing4Status, OFF
+        GuiControl, +c0xFF4444, DoPing4Status
+    }
+    IniWrite, % (doPing4 ? "true" : "false"), %iniFilePath%, Macro, doPing4
+return
+
 ToggleOnoffWebhook:
     onoffWebhook := !onoffWebhook
     if (onoffWebhook) {
@@ -1495,13 +1460,6 @@ HSLtoRGB(h, s, l) {
     return Format("{:02X}{:02X}{:02X}", r, g, b)
 }
 
-HideTranscendentOutline(id) {
-    Gui, TBoxTop%id%:Destroy
-    Gui, TBoxBottom%id%:Destroy
-    Gui, TBoxLeft%id%:Destroy
-    Gui, TBoxRight%id%:Destroy
-}
-
 AuraDetect:
 global webhookURL, webhookID, doPing2, prevState, blehblehbleh
     blehblehbleh := ""
@@ -1657,7 +1615,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(" **<>;'1001101010001101.y=mx+b-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook4(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             } else if (auraName = "CHILLSEAR") {
                 ClipCountdownGlobal()
@@ -2656,6 +2614,14 @@ CraftHeavenly:
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
+        sleep, 50
+        if (doPing4) {
+            PixelGetColor, finishcraftcolor, 870, 920, RGB
+            if (finishcraftcolor = 0x040F04) {
+                totalCraftedhp++
+                try SendWebhook("Heavenly Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedhp, 65280)
+            }
+        }
         Sleep, 2500
 
     if (kurwa = "ivaxa") {
@@ -2735,6 +2701,14 @@ CraftBound:
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
+        sleep, 50
+        if (doPing4) {
+            PixelGetColor, finishcraftcolor, 873, 917, RGB
+            if (finishcraftcolor = 0x40FF40) {
+                totalCraftedbp++
+                try SendWebhook("Bounded Potion Crafted :tools: \nTotal Crafted this Session: "  totalCraftedbp, 65280)
+            }
+        }
         Sleep, 2500
 
     if (kurwa = "ivaxa") {
@@ -2791,6 +2765,14 @@ CraftJewerly:
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
+    sleep, 50
+    if (doPing4) {
+        PixelGetColor, finishcraftcolor, 873, 917, RGB
+        if (finishcraftcolor = 0x40FF40) {
+            totalCraftedjp++
+            try SendWebhook("Jewelry Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedjp, 65280)
+        }
+    }
     Sleep, 1000
 
     if (kurwa = "ivaxa") {
@@ -2848,6 +2830,14 @@ CraftZombie:
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
+    sleep, 350
+    if (doPing4) {
+        PixelGetColor, finishcraftcolor, 846, 919, RGB
+        if (finishcraftcolor = 0x092509) {
+            totalCraftedzp++
+            try SendWebhook("Zombie Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedzp, 0)
+        }
+    }
     Sleep, 1000
     
     if (kurwa = "ivaxa") {
@@ -2905,6 +2895,14 @@ CraftRage:
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
+    sleep, 350
+    if (doPing4) {
+        PixelGetColor, finishcraftcolor, 872, 917, RGB
+        if (finishcraftcolor = 0x228822) {
+            totalCraftedrp++
+            try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
+        }
+    }
     Sleep, 1000
 
     if (kurwa = "ivaxa") {
@@ -2977,7 +2975,16 @@ CraftDiver:
     }
     if (kurwa != "ivaxa") {
     Click, Left
+    sleep, 50
+    if (doPing4) {
+        PixelGetColor, finishcraftcolor, 873, 917, RGB
+        if (finishcraftcolor = 0x40FF40) {
+            totalCrafteddip++
+            try SendWebhook("Diver Potion Crafted :tools: \nTotal Crafted this Session: " totalCrafteddip, 65280)
+        }
+    }
     Sleep, 2000
+    
     }
 
     if (kurwa = "ivaxa") {
@@ -3244,7 +3251,31 @@ global blehblehbleh, webReponse, auraName
 return
 
 F6::
+if (toggle || autocrafting) {
+     try SendWebhook("App Closed :tools:", 0)
+}
     ExitApp
+return
+
+F7::
+SetTimer, finishcraft, 1000
+return
+
+F8::
+SetTimer, finishcraft, Off
+return
+
+finishcraft:
+PixelGetColor, finishcraftcolor, 873, 917, RGB
+if (finishcraftcolor = 0x40FF40) {
+    ToolTip, Craft Finished! Closing in: (3), 870, 10
+    Sleep, 1000
+    ToolTip, Craft Finished! Closing in: (2), 870, 10
+    Sleep, 1000
+    ToolTip, Craft Finished! Closing in: (1), 870, 10
+    Sleep, 1000
+    ToolTip
+}
 return
 
 ;1080p
