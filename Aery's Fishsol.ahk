@@ -353,7 +353,7 @@ Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works 
 Gui, Font, s10 cWhite Normal, Segoe UI
 
 tabList := "Main|Misc|Webhook"
-tabList .= "|Replay"
+tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
@@ -446,7 +446,8 @@ Gui, Font, s8 c0xCCCCCC
 Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
 Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
 Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook and Clip F6=Exit
+Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook or Clip
+Gui, Add, Text, x175 y635 w500 h20 BackgroundTrans, F6=Exit
 
 Gui, Tab, Misc
 
@@ -527,10 +528,10 @@ Gui, Add, Button, x45 y575 w80 h25 gToggleDetectEden vDetectEdenBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y578 w60 h25 vDetectEdenStatus BackgroundTrans, OFF
 
-Gui, Tab, Replay
+Gui, Tab, Auras
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Tutorial/Disclaimers
+Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Clipping Tutorial
 Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
 
 Gui, Font, s10 cWhite Bold
@@ -552,7 +553,7 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x403 y227 w60 h25 vAuraFilterStatus BackgroundTrans, OFF
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Text, x160 y93 w400 h75 BackgroundTrans, [ Replay V2 - Improved Detection ]
+Gui, Add, Text, x143 y93 w400 h75 BackgroundTrans, [ Aura Detection + Nvidia Replay ]
 
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y300 w534 h100 cWhite, Clip Globals
@@ -623,7 +624,7 @@ Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y464 w60 h25 vDoPing3Status BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message
+Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message (Beta)
 Gui, Add, Button, x320 y530 w80 h25 gToggleDoPing4 vDoPing4Btn, Toggle
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x50 y534 w300 h25 BackgroundTrans c0xCCCCCC, Message when desired potion is crafted: 
@@ -1585,42 +1586,42 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             if (auraName = "Equinox" || auraName = "EQUINOX") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                 }
             } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
                 }
             } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
                 }
             } else if (auraName = "Monarch" || auraName = "MONARCH") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
                 }
             } else if (auraName = "Luminosity") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
                 }
             } else if (auraName = "Pixelation") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
                 }
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             } else if (auraName = "CHILLSEAR") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook4(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
+                    SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
                 }
             }
             if (auraFilter) {
@@ -1663,9 +1664,9 @@ V2Clip:
             PixelGetColor, nvidiacolor, 1622, 155, RGB
 
             if (nvidiacolor = 0x76B900) {
-                try SendWebhook(auraName . " has been Clipped!", 0)
+                try SendWebhook4(auraName . " has been Clipped!", 0)
             } else {
-                try SendWebhook(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
+                try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
             }
         }
     ToolTip
@@ -1809,6 +1810,17 @@ DoContract:
     }
 return
 
+TactCheck:
+PixelGetColor, tactcolor, 1354, 1063, RGB
+    if (tactcolor != 0xF0F0F0 ) {
+        Send, {Esc}
+        Sleep, 650
+        Send, R
+        Sleep, 650
+        Send, {Enter}
+        sleep 3000
+    } 
+return
 GetPingText() {
     global webhookID
     return webhookID != "" ? "<@" webhookID ">" : ""
@@ -1901,7 +1913,7 @@ SendWebhook(text, color := 16777215) {
 }
 
 SendWebhook2(text, color := 16777215, imageURL := "") {
-    global webhookURL, webhookID, doPing, doPing2, auraName
+    global webhookURL, webhookID, doPing3, auraName
 
     if (!InStr(webhookURL, "discord"))
         return
@@ -1913,7 +1925,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     content := ""
     allowedMentions := ""
 
-    if (doPing2 && webhookID != "") {
+    if (doPing3 && webhookID != "") {
         content := "<@" webhookID ">"
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
     }
@@ -1957,7 +1969,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     content := ""
     allowedMentions := ""
 
-    if (doPing3 && webhookID != "") {
+    if (doPing2 && webhookID != "") {
         content := "<@" webhookID ">"
         allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
     }
@@ -3235,47 +3247,35 @@ global blehblehbleh, webReponse, auraName
     blehblehbleh := "hehe"
     webResponse := "true"
 
-    if (detectGlobal || detectTrans && auraDetection) {
-        SetTimer, V2Clip, Off
-        SetTimer, AuraDetect, Off
+        if (detectGlobal || detectTrans && auraDetection) {
+            SetTimer, V2Clip, Off
+            SetTimer, AuraDetect, Off
         if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
-            try SendWebhook(auraName " Clip Canceled.",  14495300)
+                try SendWebhook(auraName " Clip Canceled.",  14495300)
         }
-        ToolTip, Detection Restarting in 2 Seconds..., 870, 10
-        sleep, 1000
-        ToolTip, Detection Restarting in 1 Seconds..., 870, 10
-        sleep, 1000
-        ToolTip
-        SetTimer, AuraDetect, 1000
+        if (auraDetection) {
+            ToolTip, Detection Restarting in 2 Seconds..., 870, 10
+            sleep, 1000
+            ToolTip, Detection Restarting in 1 Seconds..., 870, 10
+            sleep, 1000
+            ToolTip
+            SetTimer, AuraDetect, 1000
+        }
     }
 return
 
 F6::
-if (toggle || autocrafting) {
-     try SendWebhook("App Closed :tools:", 0)
-}
+    if (toggle || autocrafting) {
+        try SendWebhook("App Closed :tools:", 0)
+    }
     ExitApp
 return
 
 F7::
-SetTimer, finishcraft, 1000
-return
-
-F8::
-SetTimer, finishcraft, Off
-return
-
-finishcraft:
-PixelGetColor, finishcraftcolor, 873, 917, RGB
-if (finishcraftcolor = 0x40FF40) {
-    ToolTip, Craft Finished! Closing in: (3), 870, 10
-    Sleep, 1000
-    ToolTip, Craft Finished! Closing in: (2), 870, 10
-    Sleep, 1000
-    ToolTip, Craft Finished! Closing in: (1), 870, 10
-    Sleep, 1000
-    ToolTip
-}
+SetTimer, TactCheck, 1000
+ToolTip, TactCheck, 870, 10
+sleep, 2000
+ToolTip
 return
 
 ;1080p
