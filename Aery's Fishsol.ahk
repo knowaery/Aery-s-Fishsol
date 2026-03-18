@@ -1810,17 +1810,6 @@ DoContract:
     }
 return
 
-TactCheck:
-PixelGetColor, tactcolor, 1354, 1063, RGB
-    if (tactcolor != 0xF0F0F0 ) {
-        Send, {Esc}
-        Sleep, 650
-        Send, R
-        Sleep, 650
-        Send, {Enter}
-        sleep 3000
-    } 
-return
 GetPingText() {
     global webhookID
     return webhookID != "" ? "<@" webhookID ">" : ""
@@ -3271,12 +3260,6 @@ F6::
     ExitApp
 return
 
-F7::
-SetTimer, TactCheck, 1000
-ToolTip, TactCheck, 870, 10
-sleep, 2000
-ToolTip
-return
 
 ;1080p
 DoMouseMove:
