@@ -2615,7 +2615,7 @@ CraftHeavenly:
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
-        sleep, 50
+        sleep, 350
         if (doPing4) {
             PixelGetColor, finishcraftcolor, 870, 920, RGB
             if (finishcraftcolor = 0x040F04) {
@@ -3254,7 +3254,7 @@ global blehblehbleh, webReponse, auraName
 return
 
 F6::
-    if (toggle || autocrafting) {
+    if ((toggle || autocrafting) && (onoffWebhook)) {
         try SendWebhook("App Closed :tools:", 0)
     }
     ExitApp
@@ -3359,6 +3359,10 @@ if (toggle) {
             Send, {Enter}
             sleep 3000
             pendingCraft := false
+
+            Send, {w Down}
+            Sleep, 7050
+            Send, {w Up}
         }
 
         loopCount++
