@@ -1766,7 +1766,9 @@ DetectPotion:
     }
     PixelGetColor, potionnotif, 1681, 835, RGB 
     PixelGetColor, potionnotif2, 1622, 720, RGB
-    if (potionnotif = 0x6FB5FF || potionnotif2 = 0x6FB5FF) {
+    PixelGetColor, potionnotif3, 1622, 615, RGB
+    PixelGetColor, potionnotif4, 1622, 490, RGB
+    if (potionnotif = 0x6FB5FF || potionnotif2 = 0x6FB5FF || potionnotif3 = 0x6FB5FF || potionnotif4 = 0x6FB5FF) {
         pendingCraft := true
     }
 return
@@ -3332,6 +3334,19 @@ if (toggle) {
             if (selectedItem2 = "") {
                     return
                 }
+                
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
 
             Send, {Esc}
             Sleep, 650
@@ -3420,7 +3435,8 @@ if (toggle) {
         Click, WheelDown 45
         sleep 300
 
-        if (manualCraft && !detectPotion) {
+        ;if (manualCraft && !detectPotion) {
+        if (manualCraft) {
             if (selectedItem2 = "") {
                 return
             }
