@@ -75,6 +75,7 @@ totalCrafteddp := 0
 totalCrafteddip := 0
 totalCraftedzp := 0
 totalCraftedjp := 0
+webhookTimer := false
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -305,6 +306,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDetectEden, %iniFilePath%, Macro, detectEden
     if (tempDetectEden != "ERROR")
     detectEden := (tempDetectEden = "true" || tempDetectEden = "1")
+
+    IniRead, tempWebhookTimer, %iniFilePath%, Macro, webhookTimer
+    if (tempWebhookTimer != "ERROR")
+    webhookTimer := (tempWebhookTimer = "true" || tempWebhookTimer = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -556,27 +561,31 @@ Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Text, x143 y93 w400 h75 BackgroundTrans, [ Aura Detection + Nvidia Replay ]
 
 Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x33 y300 w534 h100 cWhite, Clip Globals
+Gui, Add, GroupBox, x33 y280 w534 h100 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y320 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
+Gui, Add, Text, x45 y300 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y359 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
+Gui, Add, Button, x45 y339 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y361 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y341 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y405 w534 h100 cWhite, Clip Transcendents
+Gui, Add, GroupBox, x33 y385 w534 h100 cWhite, Clip Transcendents
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y425 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's has been equipped. Also gives a special webhook!
+Gui, Add, Text, x45 y405 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's has been equipped. Also gives a special webhook!
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y465 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
+Gui, Add, Button, x45 y445 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y468 w70 h25 vDetectTransStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y448 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x180 y520 w520 h145 BackgroundTrans,F5 to Cancel Clipping/Webhook
+Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Webhook Timer
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y540 w520 h145 BackgroundTrans, You will know when a global/transcendent has been thought to been clip through the timer with the watermark at the top of your screen. Pressing F5 will remove the watermark and also stop the clipping process. This prevents unnecessary and false clips.
+Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Disabling this improves fishing by it not having to disable the macro for 10 seconds
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y545 w80 h25 gToggleWebhookTimer vWebhookTimerBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y548 w70 h25 vWebhookTimerStatus BackgroundTrans, OFF
 
 
 
@@ -1001,6 +1010,13 @@ if (detectEden) {
     GuiControl, +c0xFF4444, DetectEdenStatus
     SetTimer, EdenSnatcher, Off
 }
+if (webhookTimer) {
+    GuiControl,, WebhookTimerStatus, ON
+    GuiControl, +c0x00DD00, WebhookTimerStatus
+} else {
+    GuiControl,, WebhookTimerStatus, OFF
+    GuiControl, +c0xFF4444, WebhookTimerStatus
+}
 
 AuraCheckChange:
     if (!auraFilterReady)
@@ -1386,6 +1402,18 @@ ToggleDetectEden:
     IniWrite, % (detectEden ? "true" : "false"), %iniFilePath%, Macro, detectEden
 return
 
+ToggleWebhookTimer:
+    webhookTimer := !webhookTimer
+    if (webhookTimer) {
+        GuiControl,, WebhookTimerStatus, ON
+        GuiControl, +c0x00DD00, WebhookTimerStatus
+    } else {
+        GuiControl,, WebhookTimerStatus, OFF
+        GuiControl, +c0xFF4444, WebhookTimerStatus
+    }
+    IniWrite, % (webhookTimer ? "true" : "false"), %iniFilePath%, Macro, webhookTimer
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1528,13 +1556,19 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
         if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
             if AuraList.HasKey(auraName) {
                 if (auraFilter && EnabledAuras[auraName]) {
-                    ClipCountdownGlobal()
-                    brainrot67 := "67"
+                    if (webhookTimer) {
+                        ClipCountdownGlobal()
+                        brainrot67 := "67"
+                    }
                 } else if (!auraFilter) {
-                    ClipCountdownGlobal()
-                    brainrot67 := "67"
+                    if (webhookTimer) {
+                        ClipCountdownGlobal()
+                        brainrot67 := "67"
+                    }
                 }} else {
-                    ClipCountdown()
+                    if (webhookTimer) {
+                        ClipCountdown()
+                    }
                 }
                 if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") {
                     json := "{"
@@ -2282,26 +2316,46 @@ ClipCountdown() {
 }
 
 ManualCraftAlert() {
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (10), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (9), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (8), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (7), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (6), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (5), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (4), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (3), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (2), 790, 10
-    sleep, 1000
-    ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (1), 790, 10
-    sleep, 1000
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (10), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (9), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (8), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (7), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (6), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (5), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (4), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (3), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (2), 790, 10
+        sleep, 1000
+    }
+    if (offsides != true) {
+        ToolTip, Manual Craft is enabled with no item selected! Starting fishSol in: (1), 790, 10
+        sleep, 1000
+    }
     ToolTip
 }
 
@@ -2622,7 +2676,7 @@ CraftHeavenly:
             PixelGetColor, finishcraftcolor, 870, 920, RGB
             if (finishcraftcolor = 0x040F04) {
                 totalCraftedhp++
-                try SendWebhook("Heavenly Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedhp, 65280)
+                try SendWebhook("Heavenly Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedhp, 0)
             }
         }
         Sleep, 2500
@@ -2709,7 +2763,7 @@ CraftBound:
             PixelGetColor, finishcraftcolor, 873, 917, RGB
             if (finishcraftcolor = 0x40FF40) {
                 totalCraftedbp++
-                try SendWebhook("Bounded Potion Crafted :tools: \nTotal Crafted this Session: "  totalCraftedbp, 65280)
+                try SendWebhook("Bounded Potion Crafted :tools: \nTotal Crafted this Session: "  totalCraftedbp, 0)
             }
         }
         Sleep, 2500
@@ -2773,7 +2827,7 @@ CraftJewerly:
         PixelGetColor, finishcraftcolor, 873, 917, RGB
         if (finishcraftcolor = 0x40FF40) {
             totalCraftedjp++
-            try SendWebhook("Jewelry Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedjp, 65280)
+            try SendWebhook("Jewelry Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedjp, 0)
         }
     }
     Sleep, 1000
@@ -2983,7 +3037,7 @@ CraftDiver:
         PixelGetColor, finishcraftcolor, 873, 917, RGB
         if (finishcraftcolor = 0x40FF40) {
             totalCrafteddip++
-            try SendWebhook("Diver Potion Crafted :tools: \nTotal Crafted this Session: " totalCrafteddip, 65280)
+            try SendWebhook("Diver Potion Crafted :tools: \nTotal Crafted this Session: " totalCrafteddip, 0)
         }
     }
     Sleep, 2000
@@ -3124,7 +3178,7 @@ if (manualCraft && selectedItem2 = "") {
 if (!res) {
     res := "1080p"
 }
-if (!toggle) {
+if (!toggle && offsides != true) {
     Gui, Submit, nohide
     if (MaxLoopInput > 0) {
         maxLoopCount := MaxLoopInput
@@ -3160,6 +3214,7 @@ if (onoffWebhook) {
 return
 
 F2::
+    offsides := true
     ToolTip, Stopping Macro... Please Wait until this Popup disappears, 900, 10
     toggle := false
     firstLoop := true
@@ -3173,6 +3228,7 @@ F2::
     if (onoffWebhook) {
         try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
+    offsides := false
 return
 
 
