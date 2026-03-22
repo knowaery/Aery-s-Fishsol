@@ -978,11 +978,9 @@ if (detectTrans) {
 if (autoWarp) {
     GuiControl,, AutoWarpStatus, ON
     GuiControl, +c0x00DD00, AutoWarpStatus
-    SetTimer, CheckCyber, 1000
 } else {
     GuiControl,, AutoWarpStatus, OFF
     GuiControl, +c0xFF4444, AutoWarpStatus
-    SetTimer, CheckCyber, Off
 }
 if (detectPotion) {
     GuiControl,, DetectPotionStatus, ON
@@ -1017,6 +1015,8 @@ if (webhookTimer) {
     GuiControl,, WebhookTimerStatus, OFF
     GuiControl, +c0xFF4444, WebhookTimerStatus
 }
+
+SetTimer, CheckBiome, 1000
 
 AuraCheckChange:
     if (!auraFilterReady)
@@ -1352,11 +1352,9 @@ ToggleAutoWarp:
     if (autoWarp) {
         GuiControl,, AutoWarpStatus, ON
         GuiControl, +c0x00DD00, AutoWarpStatus
-        SetTimer, CheckCyber, 1000
     } else {
         GuiControl,, AutoWarpStatus, OFF
         GuiControl, +c0xFF4444, AutoWarpStatus
-        SetTimer, CheckCyber, Off
     }
     IniWrite, % (autoWarp ? "true" : "false"), %iniFilePath%, Macro, autoWarp
 return
@@ -1706,7 +1704,7 @@ V2Clip:
     ToolTip
 return
 
-CheckCyber:
+CheckBiome:
 global prevBiome
     logDir := LocalAppData "\Roblox\logs"
 
@@ -1761,6 +1759,12 @@ global prevBiome
             SetTimer, UpdateGUI, 1000
             SetTimer, DoMouseMove, 100
             return
+        }
+
+        if (biome = "CORRUPTION") {
+            corrupt := true
+        } else {
+            corrupt := false
         }
 
         if (isBiomeEnabled = 1) {
@@ -3228,6 +3232,7 @@ F2::
     if (onoffWebhook) {
         try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
+    sleep, 2000
     offsides := false
 return
 
@@ -3351,40 +3356,58 @@ if (toggle) {
         }
 
         if (strangeController) {
-            elapsed := A_TickCount - startTick
-            if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
-                DoStrangeController()
-                strangeControllerLastRun := elapsed
-            } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
-                DoStrangeController()
-                strangeControllerLastRun := elapsed
-            }
-        }
+                    elapsed := A_TickCount - startTick
+                    if (corrupt = true) {
+                        if (corruptStartTick = 0)
+                            corruptStartTick := A_TickCount
+                        if (A_TickCount - corruptStartTick < 600000)
+                            goto, SkipStrange
+                    } else {
+                        corruptStartTick := 0
+                    }
+                    if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
+                        DoStrangeController()
+                        strangeControllerLastRun := elapsed
+                    } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
+                        DoStrangeController()
+                        strangeControllerLastRun := elapsed
+                    }
+                    SkipStrange:
+                }
 
         if (biomeRandomizer) {
-            elapsed := A_TickCount - startTick
-            if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
-                DoBiomeRandomizer()
-                biomeRandomizerLastRun := elapsed
-            } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
-                DoBiomeRandomizer()
-                biomeRandomizerLastRun := elapsed
-            }
-        }
+                    elapsed := A_TickCount - startTick
+                    if (corrupt = true) {
+                        if (corruptStartTick2 = 0)
+                            corruptStartTick2 := A_TickCount
+                        if (A_TickCount - corruptStartTick2 < 600000)
+                            goto, SkipBiome
+                    } else {
+                        corruptStartTick2 := 0
+                    }
+                    if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
+                        DoBiomeRandomizer()
+                        biomeRandomizerLastRun := elapsed
+                    } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
+                        DoBiomeRandomizer()
+                        biomeRandomizerLastRun := elapsed
+                    }
+                    SkipBiome:
+                }
 
-        if (pendingUnequip = true) {
-            PixelGetColor, deletebutton, 1106, 919, RGB
-            if (deletebutton = 0xFF5A5D) {
-                return
-            } else {
-            if (useNothing && autoUnequip) {
-            DoUseNothing()
-            } else if (autoUnequip && !useNothing) {
-                DoAutoUnequip()
+            if (pendingUnequip = true) {
+                PixelGetColor, deletebutton, 1106, 919, RGB
+                if (deletebutton = 0xFF5A5D) {
+                    try SendWebhook("Max Storage Detected", 0)
+                } else {
+                if (useNothing && autoUnequip) {
+                DoUseNothing()
+                } else if (autoUnequip && !useNothing) {
+                    DoAutoUnequip()
+                }
+                pendingUnequip := false
             }
-            pendingUnequip := false
         }
-    }
 
         if (pendingCraft = true) {
             if (selectedItem2 = "") {
