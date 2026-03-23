@@ -1,9 +1,10 @@
 #NoEnv
 #SingleInstance Force
 EnvGet, LocalAppData, LOCALAPPDATA
-SetWorkingDir %A_ScriptDir%
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
+#Include %A_ScriptDir%\AuraLists.ahk
+SetWorkingDir %A_ScriptDir%
 iniFilePath := A_ScriptDir "\settings.ini"
 iconFilePath := A_ScriptDir "\img\icon.ico"
 if (FileExist(iconFilePath)) {
@@ -77,69 +78,6 @@ totalCraftedzp := 0
 totalCraftedjp := 0
 webhookTimer := false
 
-AuraList := {"Starscourge_Radiant": 1
-, "Chromatic_Genesis": 1
-, "Spectraflow": 1
-, "Lily": 1
-, "Overture": 1
-, "Symphony": 1
-, "Twilight_Withering_Grace": 1
-, "Felled": 1
-, "Impeached": 1
-, "Lumenpool": 1
-, "Hyper-Volt_Ever-Storm": 1
-, "Astral_Legendarium": 1
-, "Prophecy": 1
-, "Exotic_Void": 1
-, "BLOODLUST": 1
-, "Overture_History": 1
-, "Maelstrom": 1
-, "Perpetual": 1
-, "LOTUSFALL": 1
-, "Jazz_Orchestra": 1
-, "Archangel": 1
-, "Atlas": 1
-, "Flora_Evergreen": 1
-, "CHILLSEAR": 1
-, "AbyssalHunter": 1
-, "GARGANTUA": 1
-, "APOSTOLOS": 1
-, "Kyawthuite_Remembrance": 1
-, "Ruins": 1
-, "Matrix_Overdrive": 1
-, "Sophyra": 1
-, "SAILOR_ADMIRAL": 1
-, "Matrix_Reality": 1
-, "PYTHIOS": 1
-, "Sovereign": 1
-, "Ruins_Withered": 1
-, "Aegis": 1
-, "ASCENDANT": 1
-, "PROLOGUE": 1
-, "Unknown": 1
-, "UNKNOWN": 1
-, "Elude": 1
-, "Dreamscape": 1
-, "Raven_Plauge": 1}
-
-AuraListTrans := {"NYCTOPHOBIA": 1
-, "Pixelation": 1
-, "Luminosity": 1
-, "LEVIATHAN": 1
-, "Leviathan": 1
-, "Breakthrough": 1
-, "BREAKTHROUGH": 1
-, "Equinox": 1
-, "EQUINOX": 1
-, "Monarch": 1
-, "MONARCH": 1
-, "illusionary": 1
-, "ILLUSIONARY": 1}
-
-AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape"]
-EnabledAuras := {}
-for i, aura in AuraListOrder
-EnabledAuras[aura] := 1
 
 
 if (FileExist(iniFilePath)) {
@@ -322,6 +260,7 @@ if (FileExist(iniFilePath)) {
             EnabledAuras[aura] := 0
     }
 }
+hasAeryCustom := FileExist(A_ScriptDir "\Customs\Aery.ahk")
 
 
 version := "Aery's v1.5"
@@ -362,6 +301,8 @@ tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
+if (hasAeryCustom)
+    tabList .= "|Aery's"
 
 Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
@@ -581,7 +522,7 @@ Gui, Add, Text, x143 y448 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Webhook Timer
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Disabling this improves fishing by it not having to disable the macro for 10 seconds
+Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Having this disabled improves fishing by it not having to disable the macro for 10 seconds
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y545 w80 h25 gToggleWebhookTimer vWebhookTimerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -797,7 +738,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-14)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-22)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Show, w600 h670,  Aery's fishsol v1.5
@@ -1814,9 +1755,6 @@ return
 EdenSnatcher:
     global edenDelay
 
-    if (!detectEden)
-        return
-
     PixelGetColor, colorlimbo, 950, 180, RGB
     PixelGetColor, colorlimbo2, 1200, 100, RGB
     PixelGetColor, colorlimbo3, 676, 676, RGB
@@ -1842,7 +1780,7 @@ DoContract:
     Click, Left
 
     if (clipWebhook) {
-        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected! (Eden Summoned)", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
+        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected!", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
     }
     if (detectGlobal || detectTrans) {
         Sleep, 30000
@@ -2957,13 +2895,13 @@ CraftRage:
     if (kurwa != "ivaxa")
     Click, Left
     sleep, 350
-    if (doPing4) {
-        PixelGetColor, finishcraftcolor, 872, 917, RGB
-        if (finishcraftcolor = 0x228822) {
-            totalCraftedrp++
-            try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
-        }
-    }
+    ;if (doPing4) {
+        ;PixelGetColor, finishcraftcolor, 872, 917, RGB
+       ; if (finishcraftcolor = 0x228822) {
+         ;   totalCraftedrp++
+            ;try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
+        ;}
+    ;}
     Sleep, 1000
 
     if (kurwa = "ivaxa") {
