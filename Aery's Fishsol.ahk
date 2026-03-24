@@ -2895,13 +2895,13 @@ CraftRage:
     if (kurwa != "ivaxa")
     Click, Left
     sleep, 350
-    ;if (doPing4) {
-        ;PixelGetColor, finishcraftcolor, 872, 917, RGB
-       ; if (finishcraftcolor = 0x228822) {
-         ;   totalCraftedrp++
-            ;try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
-        ;}
-    ;}
+    if (doPing4) {
+        PixelGetColor, finishcraftcolor, 872, 917, RGB
+        if (finishcraftcolor = 0x228822) {
+           totalCraftedrp++
+            try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
+        }
+    }
     Sleep, 1000
 
     if (kurwa = "ivaxa") {
@@ -3170,7 +3170,7 @@ F2::
     if (onoffWebhook) {
         try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
     }
-    sleep, 2000
+    sleep, 10000
     offsides := false
 return
 
@@ -3452,7 +3452,6 @@ if (toggle) {
         Click, WheelDown 45
         sleep 300
 
-        ;if (manualCraft && !detectPotion) {
         if (manualCraft) {
             if (selectedItem2 = "") {
                 return
@@ -3463,6 +3462,13 @@ if (toggle) {
             Sleep, 1000
             Gosub, CraftSelected2
             Sleep, 1000
+
+            if (detectPotion) {
+                MouseMove, 850, 688, 3
+                Sleep, 500
+                Click, Left
+                Sleep, 500
+            }
 
             Send, {Esc}
             Sleep, 650
