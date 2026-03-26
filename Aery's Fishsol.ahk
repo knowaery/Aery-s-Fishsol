@@ -77,6 +77,7 @@ totalCrafteddip := 0
 totalCraftedzp := 0
 totalCraftedjp := 0
 webhookTimer := false
+biomeWebhook := false
 
 
 
@@ -249,6 +250,10 @@ if (FileExist(iniFilePath)) {
     if (tempWebhookTimer != "ERROR")
     webhookTimer := (tempWebhookTimer = "true" || tempWebhookTimer = "1")
 
+    IniRead, tempBiomeWebhook, %iniFilePath%, Macro, biomeWebhook
+    if (tempBiomeWebhook != "ERROR")
+    biomeWebhook := (tempBiomeWebhook = "true" || tempBiomeWebhook = "1")
+
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
@@ -263,7 +268,7 @@ if (FileExist(iniFilePath)) {
 hasAeryCustom := FileExist(A_ScriptDir "\Customs\Aery.ahk")
 
 
-version := "Aery's v1.5"
+version := "Aery's v1.5.1"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -290,7 +295,7 @@ GetDevImg(name) {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.1
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -434,24 +439,30 @@ Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y296 w270 h159 cWhite, Biome/Strange Controller:
+Gui, Add, GroupBox, x22 y291 w270 h195 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x37 y318 w255 h50 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller after their cooldowns. Biome Randomizer is used 5 minutes after macro start.
+Gui, Add, Text, x37 y313 w255 h50 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller after their cooldowns. Biome Randomizer is used 5 minutes after macro start.
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y375 w120 h25 BackgroundTrans, Strange Controller:
-Gui, Add, Button, x157 y375 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
+Gui, Add, Text, x30 y370 w120 h25 BackgroundTrans, Strange Controller:
+Gui, Add, Button, x157 y370 w80 h25 gToggleStrangeController vStrangeControllerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x257 y380 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y375 w60 h25 vStrangeControllerStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y415 w125 h25 BackgroundTrans, Biome Randomizer:
-Gui, Add, Button, x157 y415 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
+Gui, Add, Text, x30 y410 w125 h25 BackgroundTrans, Biome Randomizer:
+Gui, Add, Button, x157 y410 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x257 y418 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
+Gui, Add, Text, x257 y413 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y330 w270 h124 cWhite, Auto-Warp in Cyberspace
+Gui, Add, Text, x30 y450 w125 h25 BackgroundTrans, Webhook:
+Gui, Add, Button, x157 y450 w80 h25 gToggleBiomeWebhook vBiomeWebhookBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x307 y330 w270 h129 cWhite, Auto-Warp in Cyberspace
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Warp Potion. This will not send a webhook through discord about the biome.
 Gui, Font, s10 cWhite Bold
@@ -738,10 +749,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5 (2026-03-22)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5.1 (2026-03-24)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishsol v1.5
+Gui, Show, w600 h670,  Aery's fishsol v1.5.1
 
 GuiControl, Choose, Resolution, 1
 
@@ -956,6 +967,18 @@ if (webhookTimer) {
     GuiControl,, WebhookTimerStatus, OFF
     GuiControl, +c0xFF4444, WebhookTimerStatus
 }
+if (biomeWebhook) {
+    GuiControl,, BiomeWebhookStatus, ON
+    GuiControl, +c0x00DD00, BiomeWebhookStatus
+} else {
+    GuiControl,, BiomeWebhookStatus, OFF
+    GuiControl, +c0xFF4444, BiomeWebhookStatus
+}
+
+IniRead, selectedItem, %iniFilePath%, Macro, selectedItem
+IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
+GuiControl, Choose, AutoCraft, %selectedItem%
+GuiControl, Choose, ManualCraft, %selectedItem2%
 
 SetTimer, CheckBiome, 1000
 
@@ -1353,6 +1376,18 @@ ToggleWebhookTimer:
     IniWrite, % (webhookTimer ? "true" : "false"), %iniFilePath%, Macro, webhookTimer
 return
 
+ToggleBiomeWebhook:
+    biomeWebhook := !biomeWebhook
+    if (biomeWebhook) {
+        GuiControl,, BiomeWebhookStatus, ON
+        GuiControl, +c0x00DD00, BiomeWebhookStatus
+    } else {
+        GuiControl,, BiomeWebhookStatus, OFF
+        GuiControl, +c0xFF4444, BiomeWebhookStatus
+    }
+    IniWrite, % (biomeWebhook ? "true" : "false"), %iniFilePath%, Macro, biomeWebhook
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1515,7 +1550,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         . contentStr
                         . """embeds"": [{"
                         . """description"": "" ### Aura Equipped - " auraName ""","
-                        . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                        . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                         . """timestamp"": """ timestamp """"
                         . "}]}"
 
@@ -1530,7 +1565,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1545,7 +1580,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1831,7 +1866,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5"","
+    . """text"": ""Aery's fishsol v1.5.1"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1866,7 +1901,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5"","
+    . """text"": ""Aery's fishsol v1.5.1"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1910,7 +1945,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5"","
+    . """text"": ""Aery's fishsol v1.5.1"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1954,7 +1989,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5"","
+    . """text"": ""Aery's fishsol v1.5.1"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -3139,6 +3174,7 @@ if (!toggle && offsides != true) {
     }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
+    IniWrite, %selectedItem2%, %iniFilePath%, Macro, selectedItem2
     IniWrite, %res%, %iniFilePath%, Macro, resolution
     IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
     IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
@@ -3188,7 +3224,15 @@ F3::
         return
     }
 
+    IniWrite, %selectedItem%, %iniFilePath%, Macro, selectedItem
     autocrafting := true
+    totalCraftedhp := 0
+    totalCraftedbp := 0
+    totalCraftedrp := 0
+    totalCrafteddp := 0
+    totalCrafteddip := 0
+    totalCraftedzp := 0
+    totalCraftedjp := 0
 
     ToolTip, Crafting will start in 5 seconds..., 900, 10
     Sleep, 1000
@@ -3305,9 +3349,17 @@ if (toggle) {
                     }
                     if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
                         DoStrangeController()
+                        sleep, 1000
+                        if (biomeWebhook) {
+                            try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
+                        }
                         strangeControllerLastRun := elapsed
                     } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
                         DoStrangeController()
+                        sleep, 1000
+                        if (biomeWebhook) {
+                            try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
+                        }
                         strangeControllerLastRun := elapsed
                     }
                     SkipStrange:
@@ -3325,9 +3377,17 @@ if (toggle) {
                     }
                     if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
                         DoBiomeRandomizer()
+                        sleep, 1000
+                        if (biomeWebhook) {
+                            try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
+                        }
                         biomeRandomizerLastRun := elapsed
                     } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
                         DoBiomeRandomizer()
+                        if (biomeWebhook) {
+                            sleep, 1000
+                            try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
+                        }
                         biomeRandomizerLastRun := elapsed
                     }
                     SkipBiome:
