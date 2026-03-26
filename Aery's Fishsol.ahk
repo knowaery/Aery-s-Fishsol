@@ -1635,22 +1635,26 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             if (auraFilter) {
                 if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayGlobal%
+                    brainrot67 := "67"
                     ShowClipTextGlobal()
                 }
             } else {
                     if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
+                        brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
                 }
             if (auraFilter) {
                 if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && detectTrans && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayTrans%
+                    brainrot67 := "67"
                     ShowClipTextTrans()
                 }
             } else {
                 if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayTrans%
+                    brainrot67 := "67"
                     ShowClipTextTrans()
                 }
             }
@@ -2358,6 +2362,10 @@ DoStrangeController() {
     sleep 300
     Click, Left
     sleep, 600
+    if (biomeWebhook) {
+        sleep, 1000
+        try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
+    }
 }
 
 DoBiomeRandomizer() {
@@ -2382,6 +2390,10 @@ DoBiomeRandomizer() {
     sleep 300
     Click, Left
     sleep, 600
+    if (biomeWebhook) {
+        sleep, 1000
+        try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
+    }
 }
 
 DoAutoUnequip() {
@@ -3350,16 +3362,10 @@ if (toggle) {
                     if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
                         DoStrangeController()
                         sleep, 1000
-                        if (biomeWebhook) {
-                            try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
-                        }
                         strangeControllerLastRun := elapsed
                     } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
                         DoStrangeController()
                         sleep, 1000
-                        if (biomeWebhook) {
-                            try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
-                        }
                         strangeControllerLastRun := elapsed
                     }
                     SkipStrange:
@@ -3378,16 +3384,9 @@ if (toggle) {
                     if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
                         DoBiomeRandomizer()
                         sleep, 1000
-                        if (biomeWebhook) {
-                            try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
-                        }
                         biomeRandomizerLastRun := elapsed
                     } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
                         DoBiomeRandomizer()
-                        if (biomeWebhook) {
-                            sleep, 1000
-                            try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
-                        }
                         biomeRandomizerLastRun := elapsed
                     }
                     SkipBiome:
