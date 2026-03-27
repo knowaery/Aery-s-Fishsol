@@ -629,11 +629,15 @@ Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y165 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+GuiControl, Choose, AutoCraft, %selectedItem%
+IniRead, selectedItem, %iniFilePath%, Macro, selectedItem
 
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+GuiControl, Choose, ManualCraft, %selectedItem2%
+IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
@@ -974,11 +978,6 @@ if (biomeWebhook) {
     GuiControl,, BiomeWebhookStatus, OFF
     GuiControl, +c0xFF4444, BiomeWebhookStatus
 }
-
-IniRead, selectedItem, %iniFilePath%, Macro, selectedItem
-IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
-GuiControl, Choose, AutoCraft, %selectedItem%
-GuiControl, Choose, ManualCraft, %selectedItem2%
 
 SetTimer, CheckBiome, 1000
 
@@ -1624,7 +1623,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                 }
             } else if (auraName = "CHILLSEAR") {
                 ClipCountdownGlobal()
@@ -3318,6 +3317,7 @@ F6::
 return
 
 
+
 ;1080p
 DoMouseMove:
 if (toggle) {
@@ -3476,9 +3476,10 @@ if (toggle) {
                 Click, Left
                 MouseMove, 800, 460, 3
                 Sleep, 300
-                Click, WheelDown, 25
-                Sleep, 300
-                MouseMove, 1285, 340, 3
+                Click, WheelUp, 25
+                Sleep, 600
+                Click, WheelDown, 2
+                MouseMove, 1280, 720, 3
                 Sleep, 300
                 Click, Left
                 Sleep, 300
