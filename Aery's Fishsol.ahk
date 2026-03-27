@@ -11,6 +11,7 @@ if (FileExist(iconFilePath)) {
     Menu, Tray, Icon, %iconFilePath%
 }
 
+
 res := "1080p"
 maxLoopCount := 30
 fishingLoopCount := 10
@@ -265,7 +266,8 @@ if (FileExist(iniFilePath)) {
             EnabledAuras[aura] := 0
     }
 }
-hasAeryCustom := FileExist(A_ScriptDir "\Customs\Aery.ahk")
+
+;hasAeryCustom := FileExist(A_ScriptDir "\Customs\Aery.ahk")
 
 
 version := "Aery's v1.5.1"
@@ -509,13 +511,19 @@ Gui, Add, Button, x305 y222 w80 h25 gToggleAuraFilter vAuraFilterBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x403 y227 w60 h25 vAuraFilterStatus BackgroundTrans, OFF
 
-Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Text, x143 y93 w400 h75 BackgroundTrans, [ Aura Detection + Nvidia Replay ]
+Gui, Font, s14 cWhite Bold, Segoe UI
+Gui, Add, Text, x33 y93 w400 h75 BackgroundTrans, [ Aura Detection ]
+Gui, Font, s11 cWhite Bold, Segoe UI
+Gui, Add, Text, x365 y93 w515 h135 BackgroundTrans,Clip Type:
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, DropDownList, x440 y93 w128 vClipVersion gclipType, Nvidia: Alt + F10|Medal: F8
+IniRead, clipType, %iniFilePath%, Macro, clipType
+GuiControl, Choose, ClipVersion, %clipType%
 
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y280 w534 h100 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y300 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
+Gui, Add, Text, x45 y300 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay or Medal when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y339 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -524,7 +532,7 @@ Gui, Add, Text, x143 y341 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y385 w534 h100 cWhite, Clip Transcendents
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y405 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay when detecting a Transcendent's has been equipped. Also gives a special webhook!
+Gui, Add, Text, x45 y405 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay or Medal when detecting a Transcendent's has been equipped. Also gives a special webhook!
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y445 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -591,6 +599,8 @@ Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x50 y534 w300 h25 BackgroundTrans c0xCCCCCC, Message when desired potion is crafted: 
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y534 w60 h25 vDoPing4Status BackgroundTrans, OFF
+Gui, Font, s7 cWhite Normal
+Gui, Add, Text, x465 y516 w80 h100 BackgroundTrans c0xCCCCCC, Does not work with Zombie, Jewlery, or Diver Potions.
 
 Gui, Tab, Crafting
 
@@ -629,15 +639,15 @@ Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y165 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
-GuiControl, Choose, AutoCraft, %selectedItem%
 IniRead, selectedItem, %iniFilePath%, Macro, selectedItem
+GuiControl, Choose, AutoCraft, %selectedItem%
 
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
-GuiControl, Choose, ManualCraft, %selectedItem2%
 IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
+GuiControl, Choose, ManualCraft, %selectedItem2%
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
@@ -981,6 +991,8 @@ if (biomeWebhook) {
 
 SetTimer, CheckBiome, 1000
 
+GoSub, DevTool
+
 AuraCheckChange:
     if (!auraFilterReady)
         return
@@ -1015,6 +1027,8 @@ SaveAuraFilter:
     }
     Gui, AuraFilter:Destroy
 return
+
+
 
 
 GuiClose:
@@ -1669,15 +1683,24 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
 return
 
 V2Clip:
-    Send, !{F10}
+    if (clipType = "Nvidia") {
+        Send, !{F10}
+    }
+
+    if (clipType = "Medal") {
+        Send, {F8}
+    }
     if (clipWebhook) {
             Sleep, 1500
-            PixelGetColor, nvidiacolor, 1622, 155, RGB
-
-            if (nvidiacolor = 0x76B900) {
-                try SendWebhook4(auraName . " has been Clipped!", 0)
+            if (clipType = "Nvidia") {
+                PixelGetColor, nvidiacolor, 1622, 155, RGB
+                if (nvidiacolor = 0x76B900) {
+                    try SendWebhook4(auraName . " has been Clipped!", 0)
+                } else {
+                    try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
+                }
             } else {
-                try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
+                try SendWebhook4(auraName . " has been Clipped!\n Clip Type: Medal", 0)
             }
         }
     ToolTip
@@ -1843,6 +1866,13 @@ UpdateUserID:
     IniWrite, %webhookID%, %iniFilePath%, Macro, webhookID
 return
 
+DevTool:
+global webhookID
+if (webhookID = "912451579918041118") {
+    customsFilePath := A_ScriptDir "\Customs"
+    #Include %A_ScriptDir%\Customs\Debug.ahk
+}
+
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
     global webhookURL, webhookID, doPing, doPing2,
@@ -2006,17 +2036,19 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
 }
 
 OpenNvidiaNotes:
-    Gui, NvidiaNotes:New, +AlwaysOnTop +Resize, Nvidia Replay - Tutorial
+    Gui, NvidiaNotes:New, +AlwaysOnTop +Resize, Clipping Tutorial
     Gui, NvidiaNotes:Font, s10, Segoe UI
 
     Gui, NvidiaNotes:Add, Edit, x10 y10 w530 h180 ReadOnly vNvidiaNotesText -Wrap, 
     (
 IMPORTANT, PLEASE READ
 
-Requirements:
+Requirements for Nvidia:
 - Nvidia Overlay (requires an Nvidia GPU)
 - Instant Replay must be enabled, with the keybind set to ALT + F10
 - Replay length should be set between 2-5 minutes
+
+Requirements for Medal:
 
 This Replay System can be used even if you're not using the macro
     )
@@ -2566,6 +2598,12 @@ return
 SelectItem2:
     Gui, Submit, NoHide
     selectedItem2 := ManualCraft
+return
+
+ClipType:
+    Gui, Submit, NoHide
+    clipType := ClipVersion
+    IniWrite, %clipType%, %iniFilePath%, Macro, clipType
 return
 
 CraftHeavenly:
@@ -3315,6 +3353,7 @@ F6::
     }
     ExitApp
 return
+
 
 
 
