@@ -1683,16 +1683,16 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
 return
 
 V2Clip:
-    if (clipType = "Nvidia") {
+    if (clipType = "Nvidia: Alt + F10") {
         Send, !{F10}
     }
 
-    if (clipType = "Medal") {
+    if (clipType = "Medal: F8") {
         Send, {F8}
     }
     if (clipWebhook) {
             Sleep, 1500
-            if (clipType = "Nvidia") {
+            if (clipType = "Nvidia: Alt + F10") {
                 PixelGetColor, nvidiacolor, 1622, 155, RGB
                 if (nvidiacolor = 0x76B900) {
                     try SendWebhook4(auraName . " has been Clipped!", 0)
@@ -1700,7 +1700,7 @@ V2Clip:
                     try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
                 }
             } else {
-                try SendWebhook4(auraName . " has been Clipped!\n Clip Type: Medal", 0)
+                try SendWebhook4(auraName . " has been Clipped!\nClip Type: Medal", 0)
             }
         }
     ToolTip
@@ -1769,9 +1769,7 @@ global prevBiome
             corrupt := false
         }
 
-        if (isBiomeEnabled = 1) {
-            prevBiome := biome
-        }
+        prevBiome := biome
     }
 return
 
