@@ -1645,17 +1645,17 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
                 }
-            } else if (auraName = "EGGIS" || auraName = "Eggis") {
+            } else if (auraName = "Aegis_EGGIS") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
                 }
-            } else if (auraName = "Y.O.L.K.E.G.G.") {
+            } else if (auraName = "Yolkegg") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Technologically Advanced Egg!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
                 }
-            } else if (auraName = "Sky Festival") {
+            } else if (auraName = "skyfestival") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
