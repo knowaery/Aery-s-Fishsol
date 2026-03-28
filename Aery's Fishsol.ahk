@@ -267,8 +267,6 @@ if (FileExist(iniFilePath)) {
     }
 }
 
-;hasAeryCustom := FileExist(A_ScriptDir "\Customs\Aery.ahk")
-
 
 version := "Aery's v1.5.1"
 code := ""
@@ -308,8 +306,6 @@ tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
-if (hasAeryCustom)
-    tabList .= "|Aery's"
 
 Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
@@ -523,7 +519,7 @@ GuiControl, Choose, ClipVersion, %clipType%
 Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y280 w534 h100 cWhite, Clip Globals
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y300 w515 h135 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay or Medal when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
+Gui, Add, Text, x45 y300 w515 h135 BackgroundTrans, Automatically clips with Nvidia's Instant Replay or Medal when detecting a Global has been equipped. (Works for Biome Native Globals and Limbo Globals)
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y339 w80 h25 gToggleDetectGlobal vDetectGlobalBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -532,7 +528,7 @@ Gui, Add, Text, x143 y341 w70 h25 vDetectGlobalStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y385 w534 h100 cWhite, Clip Transcendents
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y405 w515 h145 BackgroundTrans, (V2) Automatically clips with Nvidia's Instant Replay or Medal when detecting a Transcendent's has been equipped. Also gives a special webhook!
+Gui, Add, Text, x45 y405 w515 h145 BackgroundTrans, Automatically clips with Nvidia's Instant Replay or Medal when detecting a Transcendent's has been equipped. Also gives a special webhook!
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y445 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -1627,7 +1623,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
             } else if (auraName = "Luminosity") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LuminosityCollection.webp")
+                    SendWebhook2( ":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
                 }
             } else if (auraName = "Pixelation") {
                 ClipCountdownGlobal()
@@ -1644,7 +1640,28 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 if (webResponse = "false") {
                     SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
                 }
+            } else if (auraName = "Eostre" || auraName = "EOSTRE") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
+                }
+            } else if (auraName = "EGGIS" || auraName = "Eggis") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                }
+            } else if (auraName = "Y.O.L.K.E.G.G.") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Technologically Advanced Egg!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                }
+            } else if (auraName = "Sky Festival") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                }
             }
+            
             if (auraFilter) {
                 if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
                     SetTimer, V2Clip, -%triggerDelayGlobal%
@@ -1867,7 +1884,6 @@ return
 DevTool:
 global webhookID
 if (webhookID = "912451579918041118") {
-    customsFilePath := A_ScriptDir "\Customs"
     #Include %A_ScriptDir%\Customs\Debug.ahk
 }
 
