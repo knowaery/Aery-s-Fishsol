@@ -1,4 +1,4 @@
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -62,9 +62,9 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "illusionary": 1
 , "ILLUSIONARY": 1
 , "Eostre": 1
-, "EGGIS": 1
-, "Y.O.L.K.E.G.G.": 1
-, "Sky Festival": 1}
+, "Aegis_EGGIS": 1
+, "Yolkegg": 1
+, "skyfestival": 1}
 
 AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore"]
 EnabledAuras := {}
