@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 
 AuraList := {"Starscourge_Radiant": 1
 , "Chromatic_Genesis": 1
@@ -24,6 +24,7 @@ AuraList := {"Starscourge_Radiant": 1
 , "Atlas": 1
 , "Flora_Evergreen": 1
 , "CHILLSEAR": 1
+, "Celestial_Eclipse": 1
 , "AbyssalHunter": 1
 , "GARGANTUA": 1
 , "APOSTOLOS": 1
@@ -42,7 +43,10 @@ AuraList := {"Starscourge_Radiant": 1
 , "Unknown": 1
 , "Elude": 1
 , "Dreamscape": 1
-, "Raven_Plauge": 1}
+, "Raven_Plauge": 1
+, "Eggsistance": 1
+, "Revive": 1
+, "Eggore": 1}
 
 AuraListTrans := {"NYCTOPHOBIA": 1
 , "Pixelation": 1
@@ -56,9 +60,13 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "Monarch": 1
 , "MONARCH": 1
 , "illusionary": 1
-, "ILLUSIONARY": 1}
+, "ILLUSIONARY": 1
+, "Eostre": 1
+, "EGGIS": 1
+, "Y.O.L.K.E.G.G.": 1
+, "Sky Festival": 1}
 
-AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape"]
+AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore"]
 EnabledAuras := {}
 for i, aura in AuraListOrder
 EnabledAuras[aura] := 1
