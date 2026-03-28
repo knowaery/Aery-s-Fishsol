@@ -987,8 +987,6 @@ if (biomeWebhook) {
 
 SetTimer, CheckBiome, 1000
 
-GoSub, DevTool
-
 AuraCheckChange:
     if (!auraFilterReady)
         return
@@ -1748,10 +1746,10 @@ global prevBiome
     chunkSize := 10240
     if (size > chunkSize)
         file.Seek(-chunkSize, 2)
-    content := file.Read()
-    file.Close()
+    content2 := file2.Read()
+    file2.Close()
 
-    lines := StrSplit(content, "`n")
+    lines := StrSplit(content2, "`n")
     regexLine := """largeImage"":\{""hoverText"":""((?:\\.|[^""])*)"""
     Loop % lines.MaxIndex()
     {
@@ -1880,12 +1878,6 @@ UpdateUserID:
     webhookID := UserIDInput
     IniWrite, %webhookID%, %iniFilePath%, Macro, webhookID
 return
-
-DevTool:
-global webhookID
-if (webhookID = "912451579918041118") {
-    #Include %A_ScriptDir%\Customs\Debug.ahk
-}
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
@@ -2409,7 +2401,7 @@ DoStrangeController() {
     sleep, 600
     if (biomeWebhook) {
         sleep, 1000
-        try SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
+        SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
     }
 }
 
@@ -2437,7 +2429,7 @@ DoBiomeRandomizer() {
     sleep, 600
     if (biomeWebhook) {
         sleep, 1000
-        try SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
+        SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
     }
 }
 
@@ -3367,6 +3359,18 @@ F6::
     }
     ExitApp
 return
+
+F7::
+global auraName, biome
+
+if (webhookID != "912451579918041118")
+    return
+
+    try SendWebhook(auraName,  0)
+    sleep, 500
+    try SendWebhook(biome,  0)
+return
+
 
 
 
