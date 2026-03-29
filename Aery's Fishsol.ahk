@@ -81,7 +81,6 @@ webhookTimer := false
 biomeWebhook := false
 
 
-
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
     if (tempRes != "ERROR")
@@ -295,7 +294,7 @@ GetDevImg(name) {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.1
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.3
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -759,10 +758,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishsol v1.5.1 (2026-03-24)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.3 (2026-03-24)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishsol v1.5.1
+Gui, Show, w600 h670,  Aery's fishSol v1.5.3
 
 GuiControl, Choose, Resolution, 1
 
@@ -1557,7 +1556,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         . contentStr
                         . """embeds"": [{"
                         . """description"": "" ### Aura Equipped - " auraName ""","
-                        . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                        . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                         . """timestamp"": """ timestamp """"
                         . "}]}"
 
@@ -1572,7 +1571,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1587,7 +1586,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.1"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1638,7 +1637,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 if (webResponse = "false") {
                     SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
                 }
-            } else if (auraName = "Eostre" || auraName = "EOSTRE") {
+            } else if (auraName = "Eostre") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
@@ -1648,17 +1647,34 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
                 }
-            } else if (auraName = "Yolkegg") {
+            } else if (auraName = "YOLKEGG") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **Technologically Advanced Egg!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                    SendWebhook2(":tada: **Technologically Advanced Yolk!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
                 }
-            } else if (auraName = "skyfestival") {
+            } else if (auraName = "Sky Festival") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
-                    SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                    SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
+                }
+            } else if (auraName = "Eggsistance") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **There once existed an egg throughout the cosmos..** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggistanceCollection.gif")
+                }
+            } else if (auraName = "Revive") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Ding.. Dong.. its Revival O' Clock!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
+                }
+            } else if (auraName = "Eggore") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Eden has turned festive and will devour those who arent in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
                 }
             }
+            
+        
             
             if (auraFilter) {
                 if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
@@ -1710,7 +1726,7 @@ V2Clip:
             if (clipType = "Nvidia: Alt + F10") {
                 PixelGetColor, nvidiacolor, 1622, 155, RGB
                 if (nvidiacolor = 0x76B900) {
-                    try SendWebhook4(auraName . " has been Clipped!", 0)
+                    try SendWebhook4(auraName . " has successfully been Clipped!", 0)
                 } else {
                     try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
                 }
@@ -1862,6 +1878,10 @@ DoContract:
     }
 return
 
+EggVariable:
+    pendingeggcheck:= true
+return
+
 GetPingText() {
     global webhookID
     return webhookID != "" ? "<@" webhookID ">" : ""
@@ -1881,7 +1901,7 @@ return
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
-    global webhookURL, webhookID, doPing, doPing2,
+    global webhookURL, webhookID, doPing, doPing2
 
     if (!InStr(webhookURL, "discord"))
         return
@@ -1905,7 +1925,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5.1"","
+    . """text"": ""Aery's fishSol v1.5.3"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1940,7 +1960,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5.1"","
+    . """text"": ""Aery's fishSol v1.5.3"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1984,7 +2004,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5.1"","
+    . """text"": ""Aery's fishSol v1.5.3"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2028,7 +2048,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishsol v1.5.1"","
+    . """text"": ""Aery's fishSol v1.5.3"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2070,7 +2090,7 @@ return
 OpenAuraFilter:
     Gui, AuraFilter:Destroy
     Gui, AuraFilter:New, +AlwaysOnTop, Aura Filter
-    Gui, AuraFilter:Color, 0x1E1E1Es
+    Gui, AuraFilter:Color, 0x1E1E1E
     Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
     Gui, AuraFilter:Add, Text, x-15 y10 w600 h20 Center BackgroundTrans c0x00D4FF,Toggle which aura will have a webhook/clip. (Requires Aura Detection and Aura Filter)
     Gui, AuraFilter:Font, s9 cWhite Bold
@@ -2466,7 +2486,7 @@ DoUseNothing() {
     sleep 150
     MouseMove, 830, 441, 3
     sleep 500
-    Send, {WheelUp 25}
+    Send, {WheelUp 100}
     Sleep, 750
     Click, Left
     sleep 300
@@ -3370,10 +3390,6 @@ if (webhookID != "912451579918041118")
     sleep, 500
     try SendWebhook(biome,  0)
 return
-
-
-
-
 
 ;1080p
 DoMouseMove:
