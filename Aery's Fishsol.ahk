@@ -4,13 +4,13 @@ EnvGet, LocalAppData, LOCALAPPDATA
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 #Include %A_ScriptDir%\AuraLists.ahk
+#Include %A_ScriptDir%
 SetWorkingDir %A_ScriptDir%
 iniFilePath := A_ScriptDir "\settings.ini"
 iconFilePath := A_ScriptDir "\img\icon.ico"
 if (FileExist(iconFilePath)) {
     Menu, Tray, Icon, %iconFilePath%
 }
-
 
 res := "1080p"
 maxLoopCount := 30
@@ -79,6 +79,7 @@ totalCraftedzp := 0
 totalCraftedjp := 0
 webhookTimer := false
 biomeWebhook := false
+biomemacro := false
 
 
 if (FileExist(iniFilePath)) {
@@ -758,7 +759,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.3 (2026-03-24)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.3 (2026-03-29)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Show, w600 h670,  Aery's fishSol v1.5.3
@@ -1394,6 +1395,21 @@ ToggleBiomeWebhook:
     IniWrite, % (biomeWebhook ? "true" : "false"), %iniFilePath%, Macro, biomeWebhook
 return
 
+OpenBiomeMacro:
+    if (!biomemacro && toggle) {
+        Run, C:\Users\deras\Downloads\maxstellar-Biome-Macro-v2.3\BiomeMacro.exe
+        biomemacro := true
+        WinWait, maxstellar's Biome Macro
+        sleep, 300
+        WinMove, maxstellar's Biome Macro,, 100, 100
+        sleep, 300
+        MouseMove, 153, 384, 3
+        sleep, 300
+        Click, Left
+        sleep, 300
+    }
+return
+
 UpdatePrivateServer:
     Gui, Submit, NoHide
     privateServerLink := PrivateServerInput
@@ -1652,7 +1668,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Technologically Advanced Yolk!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
                 }
-            } else if (auraName = "Sky Festival") {
+            } else if (auraName = "skyfestival") {
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
@@ -1671,6 +1687,11 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 ClipCountdownGlobal()
                 if (webResponse = "false") {
                     SendWebhook2(":tada: **Eden has turned festive and will devour those who arent in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
+                }
+            } else if (auraName = "EQUINOX_youareanidiot") {
+                ClipCountdownGlobal()
+                if (webResponse = "false") {
+                    SendWebhook2(":tada: **Now your getting yourself closer to the ZERO... wait... WHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                 }
             }
             
@@ -1738,7 +1759,7 @@ V2Clip:
 return
 
 CheckBiome:
-global prevBiome
+global prevBiome, biome
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1762,8 +1783,8 @@ global prevBiome
     chunkSize := 10240
     if (size > chunkSize)
         file.Seek(-chunkSize, 2)
-    content2 := file2.Read()
-    file2.Close()
+    content2 := file.Read()
+    file.Close()
 
     lines := StrSplit(content2, "`n")
     regexLine := """largeImage"":\{""hoverText"":""((?:\\.|[^""])*)"""
@@ -1876,10 +1897,6 @@ DoContract:
         Sleep, 30000
         Send, !{F10}
     }
-return
-
-EggVariable:
-    pendingeggcheck:= true
 return
 
 GetPingText() {
@@ -2398,6 +2415,7 @@ ManualCraftAlert() {
 }
 
 DoStrangeController() {
+    global biome
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -2426,6 +2444,7 @@ DoStrangeController() {
 }
 
 DoBiomeRandomizer() {
+    global biome
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -3239,6 +3258,9 @@ if (!toggle && offsides != true) {
         fishingLoopCount := FishingLoopInput
     }
     toggle := true
+    if (!biomemacro && webhookID = "912451579918041118") {
+        GoSub, OpenBiomeMacro
+    }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
     if (startTick = "") {
@@ -3270,9 +3292,13 @@ F2::
     offsides := true
     ToolTip, Stopping Macro... Please Wait until this Popup disappears, 900, 10
     toggle := false
+    if (webhookID = "912451579918041118")
+    Process, Close, BiomeMacro.exe
+    biomemacro := false
     firstLoop := true
     SetTimer, DoMouseMove, Off
     SetTimer, UpdateGUI, Off
+    ;SetTimer, EggDetection, Off
     ManualGUIUpdate()
     Send, {Esc}
     Sleep, 650
@@ -3377,6 +3403,8 @@ F6::
     if ((toggle || autocrafting) && (onoffWebhook)) {
         try SendWebhook("App Closed :tools:", 0)
     }
+    if (webhookID = "912451579918041118")
+    Process, Close, BiomeMacro.exe
     ExitApp
 return
 
@@ -3466,6 +3494,7 @@ if (toggle) {
                 }
 
             if (pendingUnequip = true) {
+                sleep, 1000
                 PixelGetColor, deletebutton, 1106, 919, RGB
                 if (deletebutton = 0xFF5A5D) {
                     try SendWebhook("Max Storage Detected", 0)
@@ -3483,15 +3512,18 @@ if (toggle) {
             if (selectedItem2 = "") {
                     return
                 }
-                
+            
+            sleep, 1000
             MouseMove, 47, 467, 3
             sleep 220
             Click, Left
             sleep 220
-            MouseMove, 382, 126, 3
+            Send, {\}
+            sleep, 300
+            Send, {Enter}
             sleep 220
-            Click, Left
-            sleep 220
+            Send, {\}
+            sleep, 250
             Click, WheelUp 80
             sleep 500
             Click, WheelDown 45
@@ -3525,12 +3557,13 @@ if (toggle) {
             pendingCraft := false
 
             Send, {w Down}
-            Sleep, 7050
+            Sleep, 6950
             Send, {w Up}
         }
 
         loopCount++
         if (loopCount > maxLoopCount) {
+        sleep, 1000
         Send, {Esc}
         Sleep, 650
         Send, R
@@ -3572,23 +3605,27 @@ if (toggle) {
             }
         }
 
+        sleep, 1000
         MouseMove, 47, 467, 3
         sleep 220
         Click, Left
         sleep 220
-        MouseMove, 382, 126, 3
+        Send, {\}
+        sleep, 300
+        Send, {Enter}
         sleep 220
-        Click, Left
-        sleep 220
+        Send, {\}
+        sleep, 250
         Click, WheelUp 80
         sleep 500
         Click, WheelDown 45
         sleep 300
 
-        if (manualCraft) {
+        if (manualCraft = true) {
             if (selectedItem2 = "") {
                 return
             }
+            sleep, 1000
             ManualCraftMovement()
             Sleep, 500
             Send, f
@@ -3609,7 +3646,6 @@ if (toggle) {
             Sleep, 650
             Send, {Enter}
             sleep 3000
-
         }
 
 
