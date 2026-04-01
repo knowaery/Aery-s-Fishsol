@@ -295,7 +295,7 @@ GetDevImg(name) {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.3
+Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.4
 Gui, Font, s12 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -759,10 +759,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.3 (2026-03-29)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-01)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
-Gui, Show, w600 h670,  Aery's fishSol v1.5.3
+Gui, Show, w600 h670,  Aery's fishSol v1.5.4
 
 GuiControl, Choose, Resolution, 1
 
@@ -1403,8 +1403,34 @@ OpenBiomeMacro:
         sleep, 300
         WinMove, maxstellar's Biome Macro,, 100, 100
         sleep, 300
-        MouseMove, 153, 384, 3
+        Clipboard := webhookURL
+        MouseMove, 270, 200, 4
         sleep, 300
+        Click, Left
+        sleep, 300
+        Send, ^a
+        sleep, 100
+        Send, ^v
+        sleep, 300
+        MouseMove, 300, 260, 4
+        Clipboard := "https://www.roblox.com/share?code=6d38531e710e7148830411ab4fd1cbb1&type=Server"
+        sleep, 300
+        Click, Left
+        sleep, 300
+        Send, ^a
+        sleep, 100
+        Send ^v
+        sleep, 300
+        Clipboard := webhookID
+        MouseMove, 276, 320, 3
+        Click, Left
+        sleep, 300
+        Send, ^a
+        sleep, 100
+        Send ^v
+        sleep, 300
+        MouseMove, 154, 388, 3
+        sleep, 300 
         Click, Left
         sleep, 300
     }
@@ -1549,7 +1575,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                 mentionsStr := ""
             }
             
-        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing") {
+        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && auraName != "pukeko") {
             if AuraList.HasKey(auraName) {
                 if (auraFilter && EnabledAuras[auraName]) {
                     if (webhookTimer) {
@@ -1572,7 +1598,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                         . contentStr
                         . """embeds"": [{"
                         . """description"": "" ### Aura Equipped - " auraName ""","
-                        . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                        . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                         . """timestamp"": """ timestamp """"
                         . "}]}"
 
@@ -1587,7 +1613,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1602,7 +1628,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.3"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
                         http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1942,7 +1968,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.3"","
+    . """text"": ""Aery's fishSol v1.5.4"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -1977,7 +2003,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.3"","
+    . """text"": ""Aery's fishSol v1.5.4"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2021,7 +2047,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.3"","
+    . """text"": ""Aery's fishSol v1.5.4"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2065,7 +2091,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.3"","
+    . """text"": ""Aery's fishSol v1.5.4"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2439,7 +2465,7 @@ DoStrangeController() {
     sleep, 600
     if (biomeWebhook) {
         sleep, 1000
-        SendWebhook("Strange Controller activated :video_game:\nBiome: " biome , 0)
+        SendWebhook("Strange Controller activated :video_game: \nBiome: " biome , 0)
     }
 }
 
@@ -2468,7 +2494,7 @@ DoBiomeRandomizer() {
     sleep, 600
     if (biomeWebhook) {
         sleep, 1000
-        SendWebhook("Biome Randomizer activated :video_game:\nBiome: " biome , 0)
+        SendWebhook("Biome Randomizer activated :video_game: \nBiome: " biome , 0)
     }
 }
 
