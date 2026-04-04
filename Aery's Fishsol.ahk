@@ -80,7 +80,11 @@ totalCraftedjp := 0
 webhookTimer := false
 biomeWebhook := false
 biomemacro := false
-
+openmax := false
+easterPathingTime := 1800000
+easterMacro := false
+easterInterval := 30
+easterPathingLastRun := 0
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -255,16 +259,33 @@ if (FileExist(iniFilePath)) {
     if (tempBiomeWebhook != "ERROR")
     biomeWebhook := (tempBiomeWebhook = "true" || tempBiomeWebhook = "1")
 
+    IniRead, tempOpenMax, %iniFilePath%, Macro, openmax
+    if (tempOpenMax != "ERROR")
+    openmax := (tempOpenMax = "true" || tempOpenMax = "1")
+    
+    IniRead, tempEasterMacro, %iniFilePath%, Macro, easterMacro
+    if (tempEasterMacro != "ERROR")
+    easterMacro := (tempEasterMacro = "true" || tempEasterMacro = "1")
+
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
         advancedFishingThreshold := tempAdvancedThreshold
+    }
+    IniRead, tempEasterInterval, %iniFilePath%, Macro, easterInterval, 30
+    if (tempEasterInterval != "ERROR")
+    {
+        easterInterval := tempEasterInterval
     }
     for i, aura in AuraListOrder {
         IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
         if (tempEnabled = "0")
             EnabledAuras[aura] := 0
     }
+}
+
+if (webhookID = "912451579918041118") {
+    #Include AeryBiomeMacro.ahk
 }
 
 
@@ -306,6 +327,9 @@ tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
+if (webhookID = aeryWebhookID) {
+    tabList .= "|Aery"
+}
 
 Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
@@ -762,6 +786,34 @@ Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-01)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
+
+Gui, Tab, Aery
+
+Gui, Font, s11 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x33 y80 w534 h60 cWhite, Open Maxstellar when Macro Start
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y100 w515 h135 BackgroundTrans,
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
+
+Gui, Font, s11 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x33 y150 w534 h160 cWhite, Easter Macro
+
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x60 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
+Gui, Add, Text, x195 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x60 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
+Gui, Font, s10 cWhite Normal Bold
+Gui, Add, Text, x150 y185 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Bold
+Gui, Add, Edit, x60 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x60 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
+
 Gui, Show, w600 h670,  Aery's fishSol v1.5.4
 
 GuiControl, Choose, Resolution, 1
@@ -917,11 +969,9 @@ if (manualCraft) {
 if (auraDetection) {
     GuiControl,, AuraDetectionStatus, ON
     GuiControl, +c0x00DD00, AuraDetectionStatus
-    SetTimer, AuraDetect, 1000
 } else {
     GuiControl,, AuraDetectionStatus, OFF
     GuiControl, +c0xFF4444, AuraDetectionStatus
-    SetTimer, AuraDetect, Off
 }
 if (detectGlobal) {
     GuiControl,, DetectGlobalStatus, ON
@@ -984,8 +1034,23 @@ if (biomeWebhook) {
     GuiControl,, BiomeWebhookStatus, OFF
     GuiControl, +c0xFF4444, BiomeWebhookStatus
 }
+if (openmax) {
+    GuiControl,, OpenMaxStatus, ON
+    GuiControl, +c0x00DD00, OpenMaxStatus
+} else {
+    GuiControl,, OpenMaxStatus, OFF
+    GuiControl, +c0xFF4444, OpenMaxStatus
+}
+if (easterMacro) {
+    GuiControl,, EasterPathingStatus, ON
+    GuiControl, +c0x00DD00, EasterPathingStatus
+} else {
+    GuiControl,, EasterPathingStatus, OFF
+    GuiControl, +c0xFF4444, EasterPathingStatus
+}
 
-SetTimer, CheckBiome, 1000
+GuiControl,, EasterIntervalInput, %easterInterval%
+SetTimer, AuraBiomeDetect, 1000
 
 AuraCheckChange:
     if (!auraFilterReady)
@@ -1283,11 +1348,9 @@ ToggleAuraDetection:
     if (auraDetection) {
         GuiControl,, AuraDetectionStatus, ON
         GuiControl, +c0x00DD00, AuraDetectionStatus
-        SetTimer, AuraDetect, 1000
     } else {
         GuiControl,, AuraDetectionStatus, OFF
         GuiControl, +c0xFF4444, AuraDetectionStatus
-        SetTimer, AuraDetect, Off
     }
     IniWrite, % (auraDetection ? "true" : "false"), %iniFilePath%, Macro, auraDetection
 return
@@ -1395,15 +1458,41 @@ ToggleBiomeWebhook:
     IniWrite, % (biomeWebhook ? "true" : "false"), %iniFilePath%, Macro, biomeWebhook
 return
 
+ToggleOpenMax:
+    openmax := !openmax
+    if (openmax) {
+        GuiControl,, OpenMaxStatus, ON
+        GuiControl, +c0x00DD00, OpenMaxStatus
+    } else {
+        GuiControl,, OpenMaxStatus, OFF
+        GuiControl, +c0xFF4444, OpenMaxStatus
+    }
+    IniWrite, % (openmax ? "true" : "false"), %iniFilePath%, Macro, openmax
+return
+
+ToggleEasterMacro:
+    easterMacro := !easterMacro
+    if (easterMacro) {
+        GuiControl,, EasterPathingStatus, ON
+        GuiControl, +c0x00DD00, EasterPathingStatus
+    } else {
+        GuiControl,, EasterPathingStatus, OFF
+        GuiControl, +c0xFF4444, EasterPathingStatus
+    }
+    IniWrite, % (easterMacro ? "true" : "false"), %iniFilePath%, Macro, easterMacro
+return
+
 OpenBiomeMacro:
-    if (!biomemacro && toggle) {
+    Process, Exist, BiomeMacro.exe
+    BiomeMacroOpen := (ErrorLevel != 0)
+    if (!biomemacro && toggle && !BiomeMacroOpen) {
         Run, C:\Users\deras\Downloads\maxstellar-Biome-Macro-v2.3\BiomeMacro.exe
         biomemacro := true
         WinWait, maxstellar's Biome Macro
         sleep, 300
         WinMove, maxstellar's Biome Macro,, 100, 100
         sleep, 300
-        Clipboard := webhookURL
+        Clipboard := aeryWebhook
         MouseMove, 270, 200, 4
         sleep, 300
         Click, Left
@@ -1413,7 +1502,7 @@ OpenBiomeMacro:
         Send, ^v
         sleep, 300
         MouseMove, 300, 260, 4
-        Clipboard := "https://www.roblox.com/share?code=6d38531e710e7148830411ab4fd1cbb1&type=Server"
+        Clipboard := aeryServer
         sleep, 300
         Click, Left
         sleep, 300
@@ -1421,7 +1510,7 @@ OpenBiomeMacro:
         sleep, 100
         Send ^v
         sleep, 300
-        Clipboard := webhookID
+        Clipboard := aeryWebhookID
         MouseMove, 276, 320, 3
         Click, Left
         sleep, 300
@@ -1432,7 +1521,7 @@ OpenBiomeMacro:
         MouseMove, 154, 388, 3
         sleep, 300 
         Click, Left
-        sleep, 300
+        sleep, 600
     }
 return
 
@@ -1474,6 +1563,15 @@ UpdateAdvancedThreshold:
     }
 return
 
+UpdateEasterInterval:
+    Gui, Submit, NoHide
+    easterInterval := EasterIntervalInput
+    easterPathingInterval := easterInterval * 60000
+    easterPathingTime := easterInterval * 60000
+    IniWrite, %easterInterval%, %iniFilePath%, Macro, easterInterval
+    GuiControl,, EasterIntervalText, %easterInterval% minutes
+return
+
 RainbowText:
     hue += 3
     if (hue > 360)
@@ -1511,8 +1609,8 @@ HSLtoRGB(h, s, l) {
     return Format("{:02X}{:02X}{:02X}", r, g, b)
 }
 
-AuraDetect:
-global webhookURL, webhookID, doPing2, prevState, blehblehbleh
+AuraBiomeDetect:
+global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
     blehblehbleh := ""
     logDir := LocalAppData "\Roblox\logs"
 
@@ -1555,59 +1653,45 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
         }
     }
 
-    if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState) {
-        if (prevState != "None") {
-            needle := Chr(92) Chr(34)
-            pos1 := InStr(state, needle)
-            auraName := (pos1 ? (pos2 := InStr(state, needle, false, pos1 + StrLen(needle))) && pos2>pos1 ? SubStr(state, pos1 + StrLen(needle), pos2 - (pos1 + StrLen(needle))) : state : state)
+    if (auraDetection) {
+        if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState) {
+            if (prevState != "None") {
+                needle := Chr(92) Chr(34)
+                pos1 := InStr(state, needle)
+                auraName := (pos1 ? (pos2 := InStr(state, needle, false, pos1 + StrLen(needle))) && pos2>pos1 ? SubStr(state, pos1 + StrLen(needle), pos2 - (pos1 + StrLen(needle))) : state : state)
 
-            time := A_NowUTC
-            timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+                time := A_NowUTC
+                timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-            auraName := StrReplace(auraName, "\", "\\")
-            auraName := StrReplace(auraName, """", "\""")
+                auraName := StrReplace(auraName, "\", "\\")
+                auraName := StrReplace(auraName, """", "\""")
 
-            if (AuraList.HasKey(auraName) && doPing3) {
-                contentStr := """content"": ""<@" webhookID ">"","
-                mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
-            } else {
-                contentStr := """content"": """","
-                mentionsStr := ""
-            }
-            
-        if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && auraName != "pukeko") {
-            if AuraList.HasKey(auraName) {
-                if (auraFilter && EnabledAuras[auraName]) {
-                    if (webhookTimer) {
-                        ClipCountdownGlobal()
-                        brainrot67 := "67"
-                    }
-                } else if (!auraFilter) {
-                    if (webhookTimer) {
-                        ClipCountdownGlobal()
-                        brainrot67 := "67"
-                    }
-                }} else {
-                    if (webhookTimer) {
-                        ClipCountdown()
-                    }
+                if (AuraList.HasKey(auraName) && doPing3) {
+                    contentStr := """content"": ""<@" webhookID ">"","
+                    mentionsStr := """allowed_mentions"": {""users"": [""" webhookID """]},"
+                } else {
+                    contentStr := """content"": """","
+                    mentionsStr := ""
                 }
-                if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") {
-                    json := "{"
-                        . mentionsStr
-                        . contentStr
-                        . """embeds"": [{"
-                        . """description"": "" ### Aura Equipped - " auraName ""","
-                        . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
-                        . """timestamp"": """ timestamp """"
-                        . "}]}"
-
-                    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-                    http.Open("POST", webhookURL, false)
-                    http.SetRequestHeader("Content-Type", "application/json")
-                    http.Send(json)
-                } else if (auraFilter) {
-                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && webResponse = "false") {
+                
+            if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && auraName != "pukeko") {
+                if AuraList.HasKey(auraName) {
+                    if (auraFilter && EnabledAuras[auraName]) {
+                        if (webhookTimer) {
+                            ClipCountdownGlobal()
+                            brainrot67 := "67"
+                        }
+                    } else if (!auraFilter) {
+                        if (webhookTimer) {
+                            ClipCountdownGlobal()
+                            brainrot67 := "67"
+                        }
+                    }} else {
+                        if (webhookTimer) {
+                            ClipCountdown()
+                        }
+                    }
+                    if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") {
                         json := "{"
                             . mentionsStr
                             . contentStr
@@ -1616,147 +1700,191 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh
                             . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
-                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-                        http.Open("POST", webhookURL, false)
-                        http.SetRequestHeader("Content-Type", "application/json")
-                        http.Send(json)
-                    }
-                } else if (!auraFilter) {
-                    if (AuraList.HasKey(auraName) && webResponse = "false") {
-                        json := "{"
-                            . mentionsStr
-                            . contentStr
-                            . """embeds"": [{"
-                            . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
-                            . """timestamp"": """ timestamp """"
-                            . "}]}"
-                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-                        http.Open("POST", webhookURL, false)
-                        http.SetRequestHeader("Content-Type", "application/json")
-                        http.Send(json)
-                    }
-                }
-            }
 
-            if (auraName = "Equinox" || auraName = "EQUINOX") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                        http.Open("POST", webhookURL, false)
+                        http.SetRequestHeader("Content-Type", "application/json")
+                        http.Send(json)
+                    } else if (auraFilter) {
+                        if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && webResponse = "false") {
+                            json := "{"
+                                . mentionsStr
+                                . contentStr
+                                . """embeds"": [{"
+                                . """description"": "" ### Aura Equipped - " auraName ""","
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """timestamp"": """ timestamp """"
+                                . "}]}"
+                            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                            http.Open("POST", webhookURL, false)
+                            http.SetRequestHeader("Content-Type", "application/json")
+                            http.Send(json)
+                        }
+                    } else if (!auraFilter) {
+                        if (AuraList.HasKey(auraName) && webResponse = "false") {
+                            json := "{"
+                                . mentionsStr
+                                . contentStr
+                                . """embeds"": [{"
+                                . """description"": "" ### Aura Equipped - " auraName ""","
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """timestamp"": """ timestamp """"
+                                . "}]}"
+                            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                            http.Open("POST", webhookURL, false)
+                            http.SetRequestHeader("Content-Type", "application/json")
+                            http.Send(json)
+                        }
+                    }
                 }
-            } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+
+                if (auraName = "Equinox" || auraName = "EQUINOX") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                    }
+                } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                    }
+                } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                    }
+                } else if (auraName = "Monarch" || auraName = "MONARCH") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                    }
+                } else if (auraName = "Luminosity") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2( ":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
+                    }
+                } else if (auraName = "Pixelation") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                    }
+                } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                    }
+                } else if (auraName = "CHILLSEAR") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
+                    }
+                } else if (auraName = "Eostre") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
+                    }
+                } else if (auraName = "Aegis_EGGIS") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                    }
+                } else if (auraName = "YOLKEGG") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Technologically Advanced Yolk!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
+                    }
+                } else if (auraName = "skyfestival") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
+                    }
+                } else if (auraName = "Eggsistance") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **There once existed an egg throughout the cosmos..** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggistanceCollection.gif")
+                    }
+                } else if (auraName = "Revive") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Ding.. Dong.. its Revival O' Clock!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
+                    }
+                } else if (auraName = "Eggore") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Eden has turned festive and will devour those who arent in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
+                    }
+                } else if (auraName = "EQUINOX_youareanidiot") {
+                    ClipCountdownGlobal()
+                    if (webResponse = "false") {
+                        SendWebhook2(":tada: **Now your getting yourself closer to the ZERO... wait... WHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                    }
                 }
-            } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
-                }
-            } else if (auraName = "Monarch" || auraName = "MONARCH") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
-                }
-            } else if (auraName = "Luminosity") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2( ":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
-                }
-            } else if (auraName = "Pixelation") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
-                }
-            } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
-                }
-            } else if (auraName = "CHILLSEAR") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
-                }
-            } else if (auraName = "Eostre") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
-                }
-            } else if (auraName = "Aegis_EGGIS") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
-                }
-            } else if (auraName = "YOLKEGG") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Technologically Advanced Yolk!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
-                }
-            } else if (auraName = "skyfestival") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
-                }
-            } else if (auraName = "Eggsistance") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **There once existed an egg throughout the cosmos..** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggistanceCollection.gif")
-                }
-            } else if (auraName = "Revive") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Ding.. Dong.. its Revival O' Clock!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
-                }
-            } else if (auraName = "Eggore") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Eden has turned festive and will devour those who arent in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
-                }
-            } else if (auraName = "EQUINOX_youareanidiot") {
-                ClipCountdownGlobal()
-                if (webResponse = "false") {
-                    SendWebhook2(":tada: **Now your getting yourself closer to the ZERO... wait... WHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
-                }
-            }
+                
             
-        
-            
-            if (auraFilter) {
-                if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
-                    SetTimer, V2Clip, -%triggerDelayGlobal%
-                    brainrot67 := "67"
-                    ShowClipTextGlobal()
-                }
-            } else {
-                    if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
+                
+                if (auraFilter) {
+                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
+                } else {
+                        if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
+                            SetTimer, V2Clip, -%triggerDelayGlobal%
+                            brainrot67 := "67"
+                            ShowClipTextGlobal()
+                        }
+                    }
+                if (auraFilter) {
+                    if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && detectTrans && webResponse = "false") {
+                        SetTimer, V2Clip, -%triggerDelayTrans%
+                        brainrot67 := "67"
+                        ShowClipTextTrans()
+                    }
+                } else {
+                    if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
+                        SetTimer, V2Clip, -%triggerDelayTrans%
+                        brainrot67 := "67"
+                        ShowClipTextTrans()
+                    }
                 }
-            if (auraFilter) {
-                if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && detectTrans && webResponse = "false") {
-                    SetTimer, V2Clip, -%triggerDelayTrans%
-                    brainrot67 := "67"
-                    ShowClipTextTrans()
+
+                if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
+                        pendingUnequip := true
+                    }
                 }
-            } else {
-                if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
-                    SetTimer, V2Clip, -%triggerDelayTrans%
-                    brainrot67 := "67"
-                    ShowClipTextTrans()
-                }
+            prevState := state
+            webResponse := "false"
+            brainrot67 := ""
+        }
+    }
+    
+
+    if (strangeController || biomeRandomizer || autoWarp) {
+            if (biome && biome != "" && biome != prevBiome) {
+                
+                if (biome = "CYBERSPACE" && toggle && autoWarp) {
+                prevBiome := biome
+                toggle := false
+                SetTimer, DoMouseMove, Off
+                SetTimer, UpdateGUI, Off
+                SendWebhook("Popping Warp Potion...", 0)
+                PopWarp()
+                SendWebhook("Rearming Fishing...", 0)
+                toggle := true
+                SetTimer, UpdateGUI, 1000
+                SetTimer, DoMouseMove, 100
+                return
             }
 
-            if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
-                    pendingUnequip := true
-                }
+            if (biome = "CORRUPTION") {
+                corrupt := true
+            } else {
+                corrupt := false
             }
-        prevState := state
-        webResponse := "false"
-        brainrot67 := ""
+
+            prevBiome := biome
+        }
     }
 return
 
@@ -1782,73 +1910,6 @@ V2Clip:
             }
         }
     ToolTip
-return
-
-CheckBiome:
-global prevBiome, biome
-    logDir := LocalAppData "\Roblox\logs"
-
-    newestTime := 0
-    newestFile := ""
-    Loop, Files, %logDir%\*.log, F
-    {
-        if (A_LoopFileTimeModified > newestTime) {
-            newestTime := A_LoopFileTimeModified
-            newestFile := A_LoopFileFullPath
-        }
-    }
-
-    if !newestFile
-        return
-
-    file := FileOpen(newestFile, "r")
-    if !IsObject(file)
-        return
-
-    size := file.Length
-    chunkSize := 10240
-    if (size > chunkSize)
-        file.Seek(-chunkSize, 2)
-    content2 := file.Read()
-    file.Close()
-
-    lines := StrSplit(content2, "`n")
-    regexLine := """largeImage"":\{""hoverText"":""((?:\\.|[^""])*)"""
-    Loop % lines.MaxIndex()
-    {
-        line := lines[lines.MaxIndex() - A_Index + 1]
-        if InStr(line, "[BloxstrapRPC]")
-        {
-            if RegExMatch(line, regexLine, m) {
-                biome := m1
-                break
-            }
-        }
-    }
-
-    if (biome && biome != "" && biome != prevBiome) {
-        if (biome = "CYBERSPACE" && toggle && autoWarp) {
-            prevBiome := biome
-            toggle := false
-            SetTimer, DoMouseMove, Off
-            SetTimer, UpdateGUI, Off
-            SendWebhook("Popping Warp Potion...", 0)
-            PopWarp()
-            SendWebhook("Rearming Fishing...", 0)
-            toggle := true
-            SetTimer, UpdateGUI, 1000
-            SetTimer, DoMouseMove, 100
-            return
-        }
-
-        if (biome = "CORRUPTION") {
-            corrupt := true
-        } else {
-            corrupt := false
-        }
-
-        prevBiome := biome
-    }
 return
 
 PopWarp() {
@@ -1941,6 +2002,555 @@ UpdateUserID:
     webhookID := UserIDInput
     IniWrite, %webhookID%, %iniFilePath%, Macro, webhookID
 return
+
+RunEasterPathing() {
+
+    sleep, 1000
+    MouseMove, 47, 467, 3
+    sleep 220
+    Click, Left
+    sleep 220
+    Send, {\}
+    sleep, 300
+    Send, {Enter}
+    sleep 220
+    Send, {\}
+    sleep, 250
+    Click, WheelUp 80
+    sleep 500
+    Click, WheelDown 45
+    sleep 300
+
+    SetTimer, PressE, 500
+    SetTimer, MerchantClick2, 5000
+
+    Send, {w Down}
+    sleep 2000
+    Send, {a Down}
+    sleep 2000
+    Send, {w Up}
+    sleep 2000
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1500
+    Send, {w Up}
+    sleep 100
+    Send, {s Down}
+    sleep 175
+    Send, {s Up}
+    sleep 100
+
+    SetTimer, PressE, Off
+    SetTimer, MerchantClick2, Off
+
+    Send, {space Down}
+    sleep 50
+    Send, {w Down}
+    sleep 50
+    Send, {space Up}
+    sleep 100
+    Send, {space Down}
+    sleep 700
+    Send, {space Up}
+    sleep 400
+    Send, {w Up}
+    sleep 300
+    Send, {a Down}
+    sleep 200
+
+    SetTimer, PressE, 500
+    SetTimer, MerchantClick2, 5000
+
+    sleep 800
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1600
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 2600
+    Send, {s Down}
+    sleep 750
+    Send, {a Up}
+    sleep 2600
+    Send, {s Up}
+    sleep 100
+    Send, {a Down}
+    sleep 1500
+    Send, {a Up}
+    sleep 100
+    Send, {s Down}
+    sleep 200
+    Send, {space Down}
+    sleep 100
+    Send, {space Up}
+    sleep 5000
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 700
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 2700
+    Send, {d Down}
+    sleep 800
+    Send, {d Up}
+    sleep 1000
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 400
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 1000
+    Send, {d Down}
+    sleep 900
+    Send, {d Up}
+    Send, {a Down}
+    sleep 1400
+    Send, {a Up}
+    sleep 1500
+    Send, {a Down}
+    sleep 600
+    Send, {a Up}
+    sleep 3800
+    Send, {s Up}
+    sleep 100
+    Send, {a Down}
+    sleep 500
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1000
+    Send, {a Down}
+    sleep 400
+    Send, {a Up}
+    sleep 1700
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 1200
+    Send, {a Up}
+    sleep 100
+    Send, {s Down}
+    sleep 3300
+    Send, {s Up}
+
+    SetTimer, PressE, Off
+    SetTimer, MerchantClick2, Off
+
+    Send, {esc}
+    sleep 650
+    Send, {r}
+    sleep 650
+    Send, {enter}
+    sleep 2600
+
+    SetTimer, PressE, 500
+    SetTimer, MerchantClick2, 5000
+
+    Send, {w Down}
+    sleep 2000
+    Send, {a Down}
+    sleep 2000
+    Send, {w Up}
+    sleep 2000
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1500
+    Send, {w Up}
+    sleep 100
+    Send, {s Down}
+    Send, {d Down}
+    sleep 300
+    Send, {s Up}
+    Send, {d Up}
+    sleep 100
+    Send, {d Down}
+    sleep 800
+    Send, {w Down}
+    sleep 800
+    Send, {w Up}
+    sleep 1300
+
+    SetTimer, PressE, Off
+
+    Send, {s Down}
+    sleep 1200
+    Send, {s Up}
+    sleep 1000
+
+    SetTimer, PressE, 500
+
+    sleep 2500
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 2000
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 2200
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 700
+    Send, {s Up}
+    sleep 100
+    Send, {a Down}
+    sleep 8000
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 500
+    Send, {w Up}
+    sleep 200
+
+    SetTimer, PressE, Off
+    SetTimer, MerchantClick2, Off
+
+    Send, {esc}
+    sleep 650
+    Send, {r}
+    sleep 650
+    Send, {enter}
+
+    SetTimer, PressE, 500
+    SetTimer, MerchantClick2, 5000
+
+    sleep 2600
+    Send, {w Down}
+    sleep 650
+    Send, {w Up}
+    sleep 100
+    Send, {s Down}
+    sleep 650
+    Send, {s Up}
+    sleep 100
+    Send, {a Down}
+    sleep 650
+    Send, {a Up}
+    sleep 100
+    Send, {d Down}
+    sleep 650
+    Send, {d Up}
+    sleep 100
+    Send, {d Down}
+    sleep 650
+    Send, {d Up}
+    sleep 100
+    Send, {a Down}
+    sleep 650
+    Send, {a Up}
+    sleep 100
+    Send, {a Down}
+    Send, {s Down}
+    sleep 2700
+    Send, {a Up}
+    sleep 3000
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 1000
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    Send, {a Down}
+    sleep 150
+    Send, {w Up}
+    Send, {a Up}
+    sleep 100
+    Send, {space Down}
+    sleep 50
+    Send, {d Down}
+    sleep 50
+    Send, {space Up}
+    sleep 250
+    Send, {d Up}
+    sleep 100
+    Send, {a Down}
+    sleep 300
+    Send, {w Down}
+    sleep 1000
+    Send, {w Up}
+    Send, {a Up}
+    sleep 100
+    Send, {a Down}
+    sleep 1000
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1000
+    Send, {a Down}
+    sleep 1300
+    Send, {a Up}
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 8500
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 800
+    Send, {s Up}
+    sleep 100
+    Send, {a Down}
+    sleep 7500
+    Send, {a Up}
+    sleep 100
+    Send, {s Down}
+    sleep 750
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 800
+    Send, {s Down}
+    sleep 1000
+    Send, {s Up}
+    sleep 100
+    Send, {space Down}
+    sleep 100
+    Send, {space Up}
+    sleep 100
+    Send, {s Down}
+    sleep 400
+    Send, {s Up}
+    sleep 3400
+    Send, {s Down}
+    sleep 1700
+    Send, {s Up}
+    Send, {d Up}
+    Send, {w Down}
+    Send, {a Down}
+    sleep 175
+    Send, {w Up}
+    Send, {a Up}
+    sleep 100
+    Send, {space Down}
+    sleep 50
+    Send, {d Down}
+    sleep 50
+    Send, {space Up}
+    sleep 300
+    Send, {d Up}
+    sleep 100
+    Send, {space Down}
+    sleep 50
+    Send, {s Down}
+    sleep 50
+    Send, {space Up}
+    sleep 600
+    Send, {a Down}
+    sleep 1900
+    Send, {a Up}
+    sleep 1800
+    Send, {d Down}
+    sleep 1400
+    Send, {d Up}
+    sleep 1500
+    Send, {s Up}
+    sleep 100
+    Send, {w Down}
+    sleep 100
+    Send, {w Up}
+    sleep 100
+    Send, {space Down}
+    sleep 100
+    Send, {space Up}
+    Send, {s Down}
+    sleep 175
+    Send, {s Up}
+    sleep 100
+    Send, {space Down}
+    sleep 50
+    Send, {s Down}
+    sleep 50
+    Send, {space Up}
+    sleep 50
+    Send, {a Down}
+    sleep 500
+    Send, {a Up}
+    sleep 500
+    Send, {space Down}
+    sleep 100
+    Send, {space Up}
+    sleep 5500
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 900
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1000
+    Send, {d Down}
+    sleep 400
+    Send, {d Up}
+    sleep 2900
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 2800
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1500
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 800
+    Send, {space Down}
+    sleep 100
+    Send, {space Up}
+    sleep 800
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 4200
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 3200
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1800
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {s Down}
+    sleep 2500
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 2900
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 2000
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 750
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 2000
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 750
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 1300
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1400
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 4600
+    Send, {a Up}
+    sleep 100
+    Send, {s Down}
+    sleep 1400
+    Send, {s Up}
+    sleep 100
+    Send, {d Down}
+    sleep 750
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    Send, {a Down}
+    sleep 175
+    Send, {w Up}
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1000
+    Send, {d Down}
+    sleep 800
+    Send, {d Up}
+    sleep 2100
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 1700
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 750
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 2400
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 750
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 2800
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 1500
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 2800
+    Send, {d Up}
+    sleep 100
+    Send, {w Down}
+    sleep 750
+    Send, {w Up}
+    sleep 100
+    Send, {a Down}
+    sleep 2800
+    Send, {a Up}
+    sleep 100
+    Send, {w Down}
+    sleep 500
+    Send, {w Up}
+    sleep 100
+    Send, {d Down}
+    sleep 2800
+    Send, {d Up}
+
+    SetTimer, PressE, Off
+    SetTimer, MerchantClick2, Off
+}
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
@@ -2441,7 +3051,8 @@ ManualCraftAlert() {
 }
 
 DoStrangeController() {
-    global biome
+    global biome, biomeWebhook
+
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -2464,13 +3075,12 @@ DoStrangeController() {
     Click, Left
     sleep, 600
     if (biomeWebhook) {
-        sleep, 1000
-        SendWebhook("Strange Controller activated :video_game: \nBiome: " biome , 0)
+        try SendWebhook("Strange Controller activated :video_game: \nBiome: " biome , 0)
     }
 }
 
 DoBiomeRandomizer() {
-    global biome
+    global biome, biomeWebhook
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -2494,7 +3104,7 @@ DoBiomeRandomizer() {
     sleep, 600
     if (biomeWebhook) {
         sleep, 1000
-        SendWebhook("Biome Randomizer activated :video_game: \nBiome: " biome , 0)
+        try SendWebhook("Biome Randomizer activated :video_game: \nBiome: " biome , 0)
     }
 }
 
@@ -3284,8 +3894,9 @@ if (!toggle && offsides != true) {
         fishingLoopCount := FishingLoopInput
     }
     toggle := true
-    if (!biomemacro && webhookID = "912451579918041118") {
+    if (webhookID = aeryWebhookID && openmax) {
         GoSub, OpenBiomeMacro
+        sleep, 300
     }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
@@ -3318,7 +3929,7 @@ F2::
     offsides := true
     ToolTip, Stopping Macro... Please Wait until this Popup disappears, 900, 10
     toggle := false
-    if (webhookID = "912451579918041118")
+    if (webhookID = aeryWebhookID)
     Process, Close, BiomeMacro.exe
     biomemacro := false
     firstLoop := true
@@ -3410,7 +4021,7 @@ global blehblehbleh, webReponse, auraName
 
         if (detectGlobal || detectTrans && auraDetection) {
             SetTimer, V2Clip, Off
-            SetTimer, AuraDetect, Off
+            SetTimer, AuraBiomeDetect, Off
         if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
                 try SendWebhook(auraName " Clip Canceled.",  14495300)
         }
@@ -3420,7 +4031,7 @@ global blehblehbleh, webReponse, auraName
             ToolTip, Detection Restarting in 1 Seconds..., 870, 10
             sleep, 1000
             ToolTip
-            SetTimer, AuraDetect, 1000
+            SetTimer, AuraBiomeDetect, 1000
         }
     }
 return
@@ -3429,7 +4040,7 @@ F6::
     if ((toggle || autocrafting) && (onoffWebhook)) {
         try SendWebhook("App Closed :tools:", 0)
     }
-    if (webhookID = "912451579918041118")
+    if (webhookID = aeryWebhookID)
     Process, Close, BiomeMacro.exe
     ExitApp
 return
@@ -3437,12 +4048,16 @@ return
 F7::
 global auraName, biome
 
-if (webhookID != "912451579918041118")
+if (webhookID != aeryWebhookID)
     return
 
     try SendWebhook(auraName,  0)
     sleep, 500
     try SendWebhook(biome,  0)
+return
+
+F8::
+try SendWebhook("Strange Controller activated :video_game: \nBiome: " prevbiome , 0)
 return
 
 ;1080p
@@ -3467,6 +4082,8 @@ if (toggle) {
     global pendingCraft
     global pendingUnequip
     global code
+    global biome
+    global biomeWebhook
     loopCount := 0
     keyW := azertyPathing ? "z" : "w"
     keyA := azertyPathing ? "q" : "a"
@@ -3475,6 +4092,23 @@ if (toggle) {
         if (!toggle) {
             break
         }
+
+        if (easterInterval = 0 and easterMacro) {
+            elapsed := A_TickCount - startTick
+            if ((easterPathingLastRun = 0 && elapsed >= easterPathingTime) || (easterPathingLastRun > 0 && (elapsed - easterPathingLastRun) >= easterPathingInterval)) {
+
+                    Send, {Esc}
+                    Sleep, 650
+                    Send, R
+                    Sleep, 650
+                    Send, {Enter}
+                    sleep 2600
+
+                    RunEasterPathing()
+                    easterPathingLastRun := elapsed
+                    continue
+                }
+            }
 
         if (strangeController) {
                     elapsed := A_TickCount - startTick
@@ -4087,6 +4721,16 @@ if (dev3_name = "maxstellar") {
     Run, https://www.youtube.com/@ivelchampion
 }
 return
+
+PressE:
+    Send, {e Down}
+    sleep 100
+    Send, {e Up}
+Return
+
+MerchantClick2:
+    Click, 1265, 943, 3
+Return
 
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
