@@ -4,7 +4,6 @@ EnvGet, LocalAppData, LOCALAPPDATA
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 #Include %A_ScriptDir%\AuraLists.ahk
-#Include %A_ScriptDir%
 SetWorkingDir %A_ScriptDir%
 iniFilePath := A_ScriptDir "\settings.ini"
 iconFilePath := A_ScriptDir "\img\icon.ico"
@@ -85,6 +84,10 @@ easterPathingTime := 1800000
 easterMacro := false
 easterInterval := 30
 easterPathingLastRun := 0
+checkGhostServer := false
+checkingicon := false
+checkGhostServerlastRun := 0
+checkGhostServerInterval := 600000
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -267,6 +270,10 @@ if (FileExist(iniFilePath)) {
     if (tempEasterMacro != "ERROR")
     easterMacro := (tempEasterMacro = "true" || tempEasterMacro = "1")
 
+    IniRead, tempCheckGhostServer, %iniFilePath%, Macro, checkGhostServer
+    if (tempCheckGhostServer != "ERROR")
+    checkGhostServer := (tempCheckGhostServer = "true" || tempCheckGhostServer = "1")
+
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
     {
@@ -285,7 +292,7 @@ if (FileExist(iniFilePath)) {
 }
 
 if (webhookID = "912451579918041118") {
-    #Include AeryBiomeMacro.ahk
+    #Include %A_ScriptDir%\AeryBiomeMacro.ahk
 }
 
 
@@ -414,13 +421,13 @@ Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x175 y550 w500 h20 BackgroundTrans, Roblox MUST be in fullscreen mode
+Gui, Add, Text, x40 y550 w300 h100 BackgroundTrans, Roblox MUST be in fullscreen mode && UI Navigation tool setting on. (Roblox (ingame) > Settings > Views and Controls > UI Navigation > On)
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x175 y575 w5000 h15 BackgroundTrans, Hotkeys:
-Gui, Add, Text, x175 y590 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
-Gui, Add, Text, x175 y605 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x175 y620 w500 h20 BackgroundTrans, F5=Stop Webhook or Clip
-Gui, Add, Text, x175 y635 w500 h20 BackgroundTrans, F6=Exit
+Gui, Add, Text, x400 y550 w5000 h15 BackgroundTrans, Hotkeys:
+Gui, Add, Text, x400 y565 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
+Gui, Add, Text, x400 y580 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
+Gui, Add, Text, x400 y595 w500 h20 BackgroundTrans, F5=Stop Webhook or Clip
+Gui, Add, Text, x400 y610 w500 h20 BackgroundTrans, F6=Exit
 
 Gui, Tab, Misc
 
@@ -484,9 +491,9 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y330 w270 h129 cWhite, Auto-Warp in Cyberspace
+Gui, Add, GroupBox, x307 y330 w270 h129 cWhite, Auto Transcendent Pop in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Warp Potion. This will not send a webhook through discord about the biome.
+Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion. This will not send a webhook through discord about the biome.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -724,6 +731,15 @@ Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x320 y413 w150 h35 BackgroundTrans, Seconds:
 Gui, Add, Edit, x400 y411 w150 h25 vPathingFailsafeInput gUpdatePathingFailsafe Number Background0xD3D3D3 cBlack, %pathingFailsafeTime%
 
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Check For Ghost Server
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Checks for Ghost Server at the start of script, then hourly by seeing if you have access to Command Panel. If detected joins the server in private server link.
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y545 w80 h25 gToggleCheckGhostServer vCheckGhostServerBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y548 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
+
 
 Gui, Tab, About
 
@@ -783,7 +799,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-01)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-07)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 
@@ -802,17 +818,17 @@ Gui, Font, s11 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x33 y150 w534 h160 cWhite, Easter Macro
 
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x60 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
-Gui, Add, Text, x195 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
+Gui, Add, Text, x45 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
+Gui, Add, Text, x180 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
 
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x60 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
+Gui, Add, Button, x45 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
 Gui, Font, s10 cWhite Normal Bold
 Gui, Add, Text, x150 y185 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
-Gui, Add, Edit, x60 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
+Gui, Add, Edit, x45 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x60 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
+Gui, Add, Text, x45 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 
 Gui, Show, w600 h670,  Aery's fishSol v1.5.4
 
@@ -1047,6 +1063,13 @@ if (easterMacro) {
 } else {
     GuiControl,, EasterPathingStatus, OFF
     GuiControl, +c0xFF4444, EasterPathingStatus
+}
+if (checkGhostServer) {
+    GuiControl,, CheckGhostServerStatus, ON
+    GuiControl, +c0x00DD00, CheckGhostServerStatus
+} else {
+    GuiControl,, CheckGhostServerStatus, OFF
+    GuiControl, +c0xFF4444, CheckGhostServerStatus
 }
 
 GuiControl,, EasterIntervalInput, %easterInterval%
@@ -1482,6 +1505,17 @@ ToggleEasterMacro:
     IniWrite, % (easterMacro ? "true" : "false"), %iniFilePath%, Macro, easterMacro
 return
 
+ToggleCheckGhostServer:
+    checkGhostServer := !checkGhostServer
+    if (checkGhostServer) {
+        GuiControl,, CheckGhostServerStatus, ON
+        GuiControl, +c0x00DD00, CheckGhostServerStatus
+    } else {
+        GuiControl,, CheckGhostServerStatus, OFF
+        GuiControl, +c0xFF4444, CheckGhostServerStatus
+    }
+    IniWrite, % (checkGhostServer ? "true" : "false"), %iniFilePath%, Macro, checkGhostServer
+
 OpenBiomeMacro:
     Process, Exist, BiomeMacro.exe
     BiomeMacroOpen := (ErrorLevel != 0)
@@ -1493,34 +1527,27 @@ OpenBiomeMacro:
         WinMove, maxstellar's Biome Macro,, 100, 100
         sleep, 300
         Clipboard := aeryWebhook
-        MouseMove, 270, 200, 4
-        sleep, 300
-        Click, Left
+        Click, 270, 200, 4
         sleep, 300
         Send, ^a
         sleep, 100
         Send, ^v
         sleep, 300
-        MouseMove, 300, 260, 4
         Clipboard := aeryServer
-        sleep, 300
-        Click, Left
+        Click, 300, 260, 4
         sleep, 300
         Send, ^a
         sleep, 100
         Send ^v
         sleep, 300
         Clipboard := aeryWebhookID
-        MouseMove, 276, 320, 3
-        Click, Left
+        Click, 276, 320, 3
         sleep, 300
         Send, ^a
         sleep, 100
         Send ^v
         sleep, 300
-        MouseMove, 154, 388, 3
-        sleep, 300 
-        Click, Left
+        Click, 154, 388, 3
         sleep, 600
     }
 return
@@ -1806,12 +1833,12 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                 } else if (auraName = "Revive") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Ding.. Dong.. its Revival O' Clock!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
+                        SendWebhook2(":tada: **Ding.. Dong.. its Festive time!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
                     }
                 } else if (auraName = "Eggore") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Eden has turned festive and will devour those who arent in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
+                        SendWebhook2(":tada: **Eden has turned festive and will devour those who aren't in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
                     }
                 } else if (auraName = "EQUINOX_youareanidiot") {
                     ClipCountdownGlobal()
@@ -1864,20 +1891,28 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
             if (biome && biome != "" && biome != prevBiome) {
                 
                 if (biome = "CYBERSPACE" && toggle && autoWarp) {
-                prevBiome := biome
-                toggle := false
-                SetTimer, DoMouseMove, Off
-                SetTimer, UpdateGUI, Off
-                SendWebhook("Popping Warp Potion...", 0)
-                PopWarp()
-                SendWebhook("Rearming Fishing...", 0)
-                toggle := true
-                SetTimer, UpdateGUI, 1000
-                SetTimer, DoMouseMove, 100
-                return
-            }
+                    prevBiome := biome
+                    toggle := false
+                    SetTimer, DoMouseMove, Off
+                    SetTimer, UpdateGUI, Off
+                    SendWebhook("Popping Warp Potion...", 0)
+                    PopWarp()
+                    SendWebhook("Rearming Fishing...", 0)
+                    toggle := true
+                    SetTimer, UpdateGUI, 1000
+                    SetTimer, DoMouseMove, 100
+                }
 
-            if (biome = "CORRUPTION") {
+                if (clipType = "Nvidia: Alt + F10" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
+                    Send, !{F10}
+                }
+
+                if (clipType = "Medal: F8" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
+                    Send, {F8}
+                }
+            
+
+            if (biome = "CORRUPTION" ) {
                 corrupt := true
             } else {
                 corrupt := false
@@ -1904,6 +1939,8 @@ V2Clip:
                     try SendWebhook4(auraName . " has successfully been Clipped!", 0)
                 } else {
                     try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
+                    try SendWebhook4("Turning on Nvidia Replay...", 3000)
+                    TurnOnNvidiaReplay()
                 }
             } else {
                 try SendWebhook4(auraName . " has been Clipped!\nClip Type: Medal", 0)
@@ -1912,28 +1949,38 @@ V2Clip:
     ToolTip
 return
 
+TurnOnNvidiaReplay() {
+    Send, !z
+    sleep, 300
+    MouseMove, 224, 335, 3
+    Click, Left
+    sleep, 500
+    PixelGetColor, nvidiaonbutton, 480, 93, RGB
+    if (nvidiaonbutton != 0x76B900) {
+        MouseMove, 480, 93, 3
+        sleep, 300
+        Click, Left
+        MouseMove, 960, 540, 3
+        sleep, 300
+        Click, Left
+    }
+}
+   
+
 PopWarp() {
     Sleep, 5000
-    MouseMove, 45, 521, 3
+    Click, 45, 521
     sleep 300
-    Click, Left
-    MouseMove, 1280, 343, 3
+    Click, 1280, 343
     sleep 300
-    Click, Left
-    MouseMove, 820, 370, 3
+    Click, 820, 370
     sleep 300
-    Click, Left
-    Send, Warp Potion
-    MouseMove, 850, 485, 3
+    Send, Transcendent Potion
+    Click, 850, 485
     sleep 300
-    Click, Left            
-    MouseMove, 690, 585, 3
+    Click, 690, 585
     sleep 300
-    Click, Left
-    sleep 600
-    MouseMove, 1414, 300, 3
-    sleep 300
-    Click, Left
+    Click, 1414, 300
     sleep, 600
 }
 
@@ -1969,13 +2016,11 @@ DoContract:
     sleep, 100
     Send, e
     sleep, 400
-    MouseMove, 800, 800, 3
+    Click, 800, 800
     sleep, 300
-    Click, Left
     sleep, 800
-    MouseMove, 720, 930, 3
+    Click, 720, 930
     sleep, 400
-    Click, Left
 
     if (clipWebhook) {
         try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected!", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
@@ -2005,11 +2050,6 @@ return
 
 RunEasterPathing() {
 
-    sleep, 1000
-    MouseMove, 47, 467, 3
-    sleep 220
-    Click, Left
-    sleep 220
     Send, {\}
     sleep, 300
     Send, {Enter}
@@ -2024,17 +2064,17 @@ RunEasterPathing() {
     SetTimer, PressE, 500
     SetTimer, MerchantClick2, 5000
 
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 2000
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2000
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 2000
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {s Down}
     sleep 175
@@ -2046,7 +2086,7 @@ RunEasterPathing() {
 
     Send, {space Down}
     sleep 50
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 50
     Send, {space Up}
     sleep 100
@@ -2054,32 +2094,32 @@ RunEasterPathing() {
     sleep 700
     Send, {space Up}
     sleep 400
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 300
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 200
 
     SetTimer, PressE, 500
     SetTimer, MerchantClick2, 5000
 
     sleep 800
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1600
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2600
     Send, {s Down}
     sleep 750
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 2600
     Send, {s Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1500
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {s Down}
     sleep 200
@@ -2093,13 +2133,13 @@ RunEasterPathing() {
     sleep 700
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 2700
     Send, {d Down}
     sleep 800
     Send, {d Up}
     sleep 1000
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 400
@@ -2110,37 +2150,45 @@ RunEasterPathing() {
     Send, {d Down}
     sleep 900
     Send, {d Up}
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1400
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 1500
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 600
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 3800
     Send, {s Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 500
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1000
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 400
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 1700
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1200
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {s Down}
     sleep 3300
     Send, {s Up}
 
     SetTimer, PressE, Off
+
+    MouseMove, 35, 405, 3
+    sleep 250
+    MouseClick, Left
+    sleep 250
+    MouseClick, Left
+    sleep 250
+
     SetTimer, MerchantClick2, Off
 
     Send, {esc}
@@ -2153,17 +2201,17 @@ RunEasterPathing() {
     SetTimer, PressE, 500
     SetTimer, MerchantClick2, 5000
 
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 2000
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2000
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 2000
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {s Down}
     Send, {d Down}
@@ -2173,9 +2221,9 @@ RunEasterPathing() {
     sleep 100
     Send, {d Down}
     sleep 800
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 800
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 1300
 
     SetTimer, PressE, Off
@@ -2202,16 +2250,24 @@ RunEasterPathing() {
     sleep 700
     Send, {s Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 8000
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 200
 
     SetTimer, PressE, Off
+
+    MouseMove, 35, 405, 3
+    sleep 250
+    MouseClick, Left
+    sleep 250
+    MouseClick, Left
+    sleep 250
+
     SetTimer, MerchantClick2, Off
 
     Send, {esc}
@@ -2224,17 +2280,17 @@ RunEasterPathing() {
     SetTimer, MerchantClick2, 5000
 
     sleep 2600
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 650
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {s Down}
     sleep 650
     Send, {s Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 650
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {d Down}
     sleep 650
@@ -2244,14 +2300,14 @@ RunEasterPathing() {
     sleep 650
     Send, {d Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 650
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     Send, {s Down}
     sleep 2700
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 3000
     Send, {s Up}
     sleep 100
@@ -2259,11 +2315,11 @@ RunEasterPathing() {
     sleep 1000
     Send, {d Up}
     sleep 100
-    Send, {w Down}
-    Send, {a Down}
+    Send, {%keyW% Down}
+    Send, {%keyA% Down}
     sleep 150
-    Send, {w Up}
-    Send, {a Up}
+    Send, {%keyW% Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {space Down}
     sleep 50
@@ -2273,23 +2329,23 @@ RunEasterPathing() {
     sleep 250
     Send, {d Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 300
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1000
-    Send, {w Up}
-    Send, {a Up}
+    Send, {%keyW% Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1000
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1000
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1300
-    Send, {a Up}
-    Send, {w Up}
+    Send, {%keyA% Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 8500
@@ -2299,9 +2355,9 @@ RunEasterPathing() {
     sleep 800
     Send, {s Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 7500
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {s Down}
     sleep 750
@@ -2325,11 +2381,11 @@ RunEasterPathing() {
     sleep 1700
     Send, {s Up}
     Send, {d Up}
-    Send, {w Down}
-    Send, {a Down}
+    Send, {%keyW% Down}
+    Send, {%keyA% Down}
     sleep 175
-    Send, {w Up}
-    Send, {a Up}
+    Send, {%keyW% Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {space Down}
     sleep 50
@@ -2345,9 +2401,9 @@ RunEasterPathing() {
     sleep 50
     Send, {space Up}
     sleep 600
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1900
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 1800
     Send, {d Down}
     sleep 1400
@@ -2355,9 +2411,9 @@ RunEasterPathing() {
     sleep 1500
     Send, {s Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 100
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {space Down}
     sleep 100
@@ -2372,9 +2428,9 @@ RunEasterPathing() {
     sleep 50
     Send, {space Up}
     sleep 50
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 500
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 500
     Send, {space Down}
     sleep 100
@@ -2386,13 +2442,13 @@ RunEasterPathing() {
     sleep 900
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1000
     Send, {d Down}
     sleep 400
     Send, {d Up}
     sleep 2900
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 750
@@ -2406,9 +2462,9 @@ RunEasterPathing() {
     sleep 750
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 800
@@ -2418,9 +2474,9 @@ RunEasterPathing() {
     sleep 800
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 4200
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 750
@@ -2434,9 +2490,9 @@ RunEasterPathing() {
     sleep 750
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1800
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 750
@@ -2450,37 +2506,37 @@ RunEasterPathing() {
     sleep 750
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 2900
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 2000
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 750
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2000
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 750
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 1300
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1400
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 4600
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
     Send, {s Down}
     sleep 1400
@@ -2490,63 +2546,71 @@ RunEasterPathing() {
     sleep 750
     Send, {d Up}
     sleep 100
-    Send, {w Down}
-    Send, {a Down}
+    Send, {%keyW% Down}
+    Send, {%keyA% Down}
     sleep 175
-    Send, {w Up}
-    Send, {a Up}
+    Send, {%keyW% Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1000
     Send, {d Down}
     sleep 800
     Send, {d Up}
     sleep 2100
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 1700
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 750
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 2400
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 750
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2800
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 1500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 2800
     Send, {d Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 750
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
-    Send, {a Down}
+    Send, {%keyA% Down}
     sleep 2800
-    Send, {a Up}
+    Send, {%keyA% Up}
     sleep 100
-    Send, {w Down}
+    Send, {%keyW% Down}
     sleep 500
-    Send, {w Up}
+    Send, {%keyW% Up}
     sleep 100
     Send, {d Down}
     sleep 2800
     Send, {d Up}
+
+    SetTimer, PressE, Off
+
+    MouseMove, 35, 405, 3
+    sleep 250
+    MouseClick, Left
+    sleep 250
+    MouseClick, Left
 
     SetTimer, PressE, Off
     SetTimer, MerchantClick2, Off
@@ -3157,6 +3221,7 @@ DoUseNothing() {
     sleep 150
 }
 
+
 ManualCraftMovement() {
     Send, {a Down}
     Sleep, 3000
@@ -3649,14 +3714,14 @@ CraftRage:
 
     if (kurwa != "ivaxa")
     MouseMove, 850, 688, 3
-    Sleep, 500
+    Sleep, 250
     if (kurwa != "ivaxa") 
     Click, Left
-    Sleep, 2000
+    Sleep, 750
 
     if (kurwa != "ivaxa")
     MouseMove, 1084, 688, 3
-    Sleep, 1000
+    Sleep, 400
     if (kurwa != "ivaxa")
     Click, Left
     sleep, 350
@@ -3667,7 +3732,7 @@ CraftRage:
             try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
         }
     }
-    Sleep, 1000
+    Sleep, 400
 
     if (kurwa = "ivaxa") {
         kurwa := ""
@@ -3772,6 +3837,141 @@ CraftSelected:
         Gosub, CraftDiver
     }
 return
+
+CheckGhostServer() {
+
+    SendWebhook("Checking for ghost server...", 0)
+    ToolTip, Checking for ghost server... , 900, 10
+    Send, {Esc}
+    Sleep, 650
+    Send, R
+    Sleep, 650
+    Send, {Enter}
+    sleep 10000
+    PixelGetColor, coinpos, 20, 1008, RGB
+     if (coinpos = 0xF0EC81) {
+        Send, {F11}
+        sleep, 1000
+    }
+    MouseMove, 34, 678, 3
+    Sleep, 300
+    Click, Left
+    sleep, 2000
+    PixelGetColor, ghostColor, 980, 735, RGB
+    PixelGetColor, ghostColor2, 994, 440, RGB
+    if (ghostColor != 0xFFFFFF && ghostColor2 != 0xFFF49D) {
+        RunRejoin()
+    } else {
+        MouseMove, 34, 678, 3
+        Sleep, 300
+        Click, Left
+        sleep, 500
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Send, {\}
+        sleep, 300
+        Send, {Enter}
+        sleep 220
+        Send, {\}
+        sleep, 250
+        MouseMove, 600, 600, 3
+        Click, Left
+        sleep 500
+        ToolTip, Going to fishing spot.., 900, 10
+        FishingSpot()
+    }
+    ToolTip
+}
+
+RunRejoin() {
+    SendWebhook("Rejoining Server link...", 0)
+    Process, Close, RobloxPlayerBeta.exe
+    sleep 2000
+    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
+    sleep 15000
+    WinActivate, ahk_exe RobloxPlayerBeta.exe
+    sleep 5000
+    EnsureFullScreen()
+    sleep, 5000
+    MouseMove, 251, 997, 3
+    Sleep, 300
+    Click, Left
+    sleep, 5000
+    Click, Left
+    sleep, 500
+    MouseMove, 47, 467, 3
+    sleep 220
+    Click, Left
+    sleep 220
+    Send, {\}
+    sleep, 300
+    Send, {Enter}
+    sleep 220
+    Send, {\}
+    sleep, 250
+    MouseMove, 600, 600, 3
+    Click, Left
+    sleep 500
+    ToolTip, Going to fishing spot.., 900, 10
+    FishingSpot()
+}
+EnsureFullscreen() {
+    PixelGetColor, robloxicon, 42, 33, RGB
+    if (robloxicon != 0xF4F5F8) {
+        Send, {F11}
+        Sleep, 1000
+    }
+}
+FishingSpot() {
+    global keyW, keyA
+    keyW := azertyPathing ? "z" : "w"
+    keyA := azertyPathing ? "q" : "a"
+    Send, {%keyW% Down}
+    Send, {%keyA% Down}
+    sleep 4150
+    Send, {%keyW% Up}
+    sleep 600
+    Send {%keyA% Up}
+    sleep 200
+    Send {%keyW% Down}
+    sleep 400
+    Send {%keyW% Up}
+    sleep 300
+    Send {d Down}
+    sleep 180
+    Send {d Up}
+    sleep 150
+    Send {%keyW% Down}
+    sleep 1100
+    Send {%keyW% Up}
+    sleep 300
+    Send {s Down}
+    sleep 300
+    Send {S Up}
+    sleep 300
+    Send {Space Down}
+    sleep 25
+    Send {%keyW% Down}
+    sleep 1300
+    Send {Space Up}
+    sleep 200
+    Send {%keyW% Up}
+    sleep 300
+    Send, {Shift Down}
+    Sleep, 300
+    Send, {Shift Up}
+    Sleep, 300
+    sleep 200
+    Send, {%keyA% Down}
+    sleep 1400
+    Send, {%keyA% Up}
+    sleep 75
+    Send, {%keyW% Down}
+    sleep 2670
+    Send, {%keyW% Up}
+}
 
 CraftSelected2:
 
@@ -3894,26 +4094,34 @@ if (!toggle && offsides != true) {
         fishingLoopCount := FishingLoopInput
     }
     toggle := true
-    if (webhookID = aeryWebhookID && openmax) {
-        GoSub, OpenBiomeMacro
-        sleep, 300
-    }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
+    checkGhostServerLastRun := 0
+
     if (startTick = "") {
         startTick := A_TickCount
     }
     if (cycleCount = "") {
         cycleCount := 0
     }
+    PixelGetColor, robloxicon, 41, 64, RGB
+    if (robloxicon = 0xF4F5F8) {
+        Send, {F11}
+        Sleep, 1000
+    }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
+    checkGhostServerLastRun := 0
     IniWrite, %selectedItem2%, %iniFilePath%, Macro, selectedItem2
     IniWrite, %res%, %iniFilePath%, Macro, resolution
     IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
     IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
     WinActivate, ahk_exe RobloxPlayerBeta.exe
     ManualGUIUpdate()
+    if (webhookID = aeryWebhookID && openmax) {
+        GoSub, OpenBiomeMacro
+        sleep, 300
+    }
     SetTimer, UpdateGUI, 1000
     if (res = "1080p") {
         SetTimer, DoMouseMove, 100
@@ -3935,7 +4143,6 @@ F2::
     firstLoop := true
     SetTimer, DoMouseMove, Off
     SetTimer, UpdateGUI, Off
-    ;SetTimer, EggDetection, Off
     ManualGUIUpdate()
     Send, {Esc}
     Sleep, 650
@@ -4057,7 +4264,7 @@ if (webhookID != aeryWebhookID)
 return
 
 F8::
-try SendWebhook("Strange Controller activated :video_game: \nBiome: " prevbiome , 0)
+    RunRejoin()
 return
 
 ;1080p
@@ -4093,7 +4300,18 @@ if (toggle) {
             break
         }
 
-        if (easterInterval = 0 and easterMacro) {
+        if (checkGhostServer && privateServerLink != "") {
+            elapsed := A_TickCount - startTick
+            if ((ghostServerLastRun = 0 && elapsed >= strangeControllerTime) || (ghostServerLastRun > 0 && (elapsed - ghostServerLastRun) >= ghostServerInterval)) {
+                CheckGhostServer()
+                sleep, 1000
+                ghostServerLastRun := elapsed
+            }
+        } else if (checkGhostServer && privateServerLink = "") {
+            SendWebhook("NO PRIVATE SERVER LINK", 14495300)
+        }
+
+        if (easterMacro) {
             elapsed := A_TickCount - startTick
             if ((easterPathingLastRun = 0 && elapsed >= easterPathingTime) || (easterPathingLastRun > 0 && (elapsed - easterPathingLastRun) >= easterPathingInterval)) {
 
@@ -4106,9 +4324,19 @@ if (toggle) {
 
                     RunEasterPathing()
                     easterPathingLastRun := elapsed
-                    continue
+
+                    Send, {Esc}
+                    Sleep, 650
+                    Send, R
+                    Sleep, 650
+                    Send, {Enter}
+                    sleep 2600
+                if (easterPathingInterval > 0) {
+                    FishingSpot()
                 }
             }
+        }
+        
 
         if (strangeController) {
                     elapsed := A_TickCount - startTick
@@ -4120,11 +4348,7 @@ if (toggle) {
                     } else {
                         corruptStartTick := 0
                     }
-                    if (strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) {
-                        DoStrangeController()
-                        sleep, 1000
-                        strangeControllerLastRun := elapsed
-                    } else if (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval) {
+                    if ((strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) || (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval)) {
                         DoStrangeController()
                         sleep, 1000
                         strangeControllerLastRun := elapsed
@@ -4142,11 +4366,7 @@ if (toggle) {
                     } else {
                         corruptStartTick2 := 0
                     }
-                    if (biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) {
-                        DoBiomeRandomizer()
-                        sleep, 1000
-                        biomeRandomizerLastRun := elapsed
-                    } else if (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval) {
+                    if ((biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) || (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval)) {
                         DoBiomeRandomizer()
                         biomeRandomizerLastRun := elapsed
                     }
@@ -4156,8 +4376,9 @@ if (toggle) {
             if (pendingUnequip = true) {
                 sleep, 1000
                 PixelGetColor, deletebutton, 1106, 919, RGB
-                if (deletebutton = 0xFF5A5D) {
+                if (deletebutton = 0xFF5A5D && !storagewebhooksent) {
                     try SendWebhook("Max Storage Detected", 0)
+                    storagewebhooksent := true
                 } else {
                 if (useNothing && autoUnequip) {
                 DoUseNothing()
@@ -4195,7 +4416,7 @@ if (toggle) {
             Sleep, 650
             Send, {Enter}
             sleep 3000
-
+            
             ManualCraftMovement()
             Sleep, 500
             Send, f
@@ -4339,7 +4560,7 @@ if (toggle) {
             Send {Space Down}
             sleep 25
             Send {%keyW% Down}
-            sleep 1200
+            sleep 1300
             Send {Space Up}
             sleep 200
             Send {%keyW% Up}
@@ -4723,9 +4944,7 @@ if (dev3_name = "maxstellar") {
 return
 
 PressE:
-    Send, {e Down}
-    sleep 100
-    Send, {e Up}
+    Send, e
 Return
 
 MerchantClick2:
