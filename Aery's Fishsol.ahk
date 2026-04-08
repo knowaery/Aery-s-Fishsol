@@ -296,7 +296,7 @@ if (webhookID = "912451579918041118") {
 }
 
 
-version := "Aery's v1.5.1"
+version := "Aery's v1.5.4"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -802,33 +802,34 @@ Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-07)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
+if (webhookID = aeryWebhookID) {
+    Gui, Tab, Aery
 
-Gui, Tab, Aery
+    Gui, Font, s11 cWhite Bold, Segoe UI
+    Gui, Add, GroupBox, x33 y80 w534 h60 cWhite, Open Maxstellar when Macro Start
+    Gui, Font, s10 c0xCCCCCC Normal
+    Gui, Add, Text, x45 y100 w515 h135 BackgroundTrans,
+    Gui, Font, s10 cWhite Bold, Segoe UI
+    Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
+    Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+    Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
 
-Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x33 y80 w534 h60 cWhite, Open Maxstellar when Macro Start
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y100 w515 h135 BackgroundTrans,
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
+    Gui, Font, s11 cWhite Bold, Segoe UI
+    Gui, Add, GroupBox, x33 y150 w534 h160 cWhite, Easter Macro
 
-Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x33 y150 w534 h160 cWhite, Easter Macro
+    Gui, Font, s10 c0xCCCCCC Normal
+    Gui, Add, Text, x45 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
+    Gui, Add, Text, x180 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
 
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
-Gui, Add, Text, x180 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
-Gui, Font, s10 cWhite Normal Bold
-Gui, Add, Text, x150 y185 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
-Gui, Font, s10 cWhite Bold
-Gui, Add, Edit, x45 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
+    Gui, Font, s10 cWhite Bold
+    Gui, Add, Button, x45 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
+    Gui, Font, s10 cWhite Normal Bold
+    Gui, Add, Text, x150 y185 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
+    Gui, Font, s10 cWhite Bold
+    Gui, Add, Edit, x45 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
+    Gui, Font, s10 c0xCCCCCC Normal
+    Gui, Add, Text, x45 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
+}
 
 Gui, Show, w600 h670,  Aery's fishSol v1.5.4
 
@@ -2049,6 +2050,12 @@ UpdateUserID:
 return
 
 RunEasterPathing() {
+
+    sleep, 1000
+    MouseMove, 47, 467, 3
+    sleep 220
+    Click, Left
+    sleep 220
 
     Send, {\}
     sleep, 300
