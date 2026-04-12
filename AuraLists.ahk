@@ -48,7 +48,10 @@ AuraList := {"Starscourge_Radiant": 1
 , "Revive": 1
 , "Eggore": 1
 , "Doodle_AbyssalHunter": 1
-, "Lumenpool_Ramenpool": 1}
+, "Lumenpool_Ramenpool": 1
+, "Impeached_IMCRINE": 1
+, "Surfer_Symphony": 1
+, "Workshop_System": 1}
 
 AuraListTrans := {"NYCTOPHOBIA": 1
 , "Pixelation": 1
@@ -64,12 +67,14 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "illusionary": 1
 , "ILLUSIONARY": 1
 , "Eostre": 1
+, "Afoolsexperience": 1
+, "PUKEKOGOD": 1
 , "Aegis_EGGIS": 1
 , "YOLKEGG": 1
 , "skyfestival": 1
 , "EQUINOX_youareanidiot": 1}
 
-AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Lumenpool", "Lumenpool_Ramenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "Doodle_AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore"]
+AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Impeached_IMCRINE", "Lumenpool", "Lumenpool_Ramenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "Doodle_AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore"]
 EnabledAuras := {}
 for i, aura in AuraListOrder
 EnabledAuras[aura] := 1
