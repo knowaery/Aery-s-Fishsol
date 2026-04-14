@@ -88,6 +88,7 @@ checkGhostServer := false
 checkingicon := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 600000
+storagewebhooksent := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -420,14 +421,21 @@ Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00
 Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
 Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
 
+Gui, Font, s10 cWhite Bold
+Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, How to Close Collection
+Gui, Add, DropDownList, x45 y500 w80 h125 vChatVersion gchatType, \ Key|Click
+IniRead, chatType, %iniFilePath%, Macro, chatType
+GuiControl, Choose, ChatVersion, %chatType%
+Gui, Font, s9 cWhite Normal
+Gui, Add, Text, x45 y467 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
+
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x40 y550 w300 h100 BackgroundTrans, Roblox MUST be in fullscreen mode && UI Navigation tool setting on. (Roblox (ingame) > Settings > Views and Controls > UI Navigation > On)
+Gui, Add, Text, x40 y550 w300 h100 BackgroundTrans, Roblox MUST be in fullscreen mode
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x400 y550 w5000 h15 BackgroundTrans, Hotkeys:
-Gui, Add, Text, x400 y565 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Stop Macro  
-Gui, Add, Text, x400 y580 w5000 h15 BackgroundTrans, F3=Start AutoCraft - F4=Stop AutoCraft
-Gui, Add, Text, x400 y595 w500 h20 BackgroundTrans, F5=Stop Webhook or Clip
-Gui, Add, Text, x400 y610 w500 h20 BackgroundTrans, F6=Exit
+Gui, Add, Text, x300 y550 w5000 h15 BackgroundTrans, Hotkeys:
+Gui, Add, Text, x300 y565 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
+Gui, Add, Text, x300 y580 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
+Gui, Add, Text, x300 y595 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
 
 Gui, Tab, Misc
 
@@ -636,7 +644,7 @@ Gui, Add, GroupBox, x22 y85 w554 h130 cWhite, Auto Craft
 Gui, Add, GroupBox, x22 y225 w554 h200 cWhite, Manual Craft
 Gui, Add, GroupBox, x130 y445 w210 h100 cWhite, Heavenly Potion
 Gui, Add, GroupBox, x347 y445 w130 h100 cWhite, Bound Potion 
-Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F3 = Start | F4 = Stop
+Gui, Add, Text, x60 y167 w150 h50 BackgroundTrans, F2 = Start | F3 = Stop
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x218 y465 w80 h25 gToggleUseCelestial vUseCelestialBtn, Toggle
@@ -1550,6 +1558,8 @@ OpenBiomeMacro:
         sleep, 300
         Click, 154, 388, 3
         sleep, 600
+        Click, 960, 540, 3
+        sleep, 600
     }
 return
 
@@ -1639,7 +1649,6 @@ HSLtoRGB(h, s, l) {
 
 AuraBiomeDetect:
 global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
-    blehblehbleh := ""
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1769,37 +1778,37 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                 if (auraName = "Equinox" || auraName = "EQUINOX") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                        SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                     }
                 } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                        SendWebhook2(":tada: **Snake** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
                     }
                 } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                        SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
                     }
                 } else if (auraName = "Monarch" || auraName = "MONARCH") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                        SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
                     }
                 } else if (auraName = "Luminosity") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2( ":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
+                        SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
                     }
                 } else if (auraName = "Pixelation") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Transcendent Detected!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                        SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
                     }
                 } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(" **<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                        SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
                     }
                 } else if (auraName = "CHILLSEAR") {
                     ClipCountdownGlobal()
@@ -1826,25 +1835,10 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     if (webResponse = "false") {
                         SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
                     }
-                } else if (auraName = "Eggsistance") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **There once existed an egg throughout the cosmos..** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggistanceCollection.gif")
-                    }
-                } else if (auraName = "Revive") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Ding.. Dong.. its Festive time!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReviveCollection.webp")
-                    }
-                } else if (auraName = "Eggore") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Eden has turned festive and will devour those who aren't in holiday spirit!** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EggoreCollection.webp")
-                    }
                 } else if (auraName = "EQUINOX_youareanidiot") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Now your getting yourself closer to the ZERO... wait... WHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                        SendWebhook2("**Now your getting yourself closer to the ZERO... \nwait... \nApril Fools?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                     }
                 }
                 
@@ -1884,6 +1878,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
             prevState := state
             webResponse := "false"
             brainrot67 := ""
+            blehblehbleh := ""
         }
     }
     
@@ -1896,7 +1891,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     toggle := false
                     SetTimer, DoMouseMove, Off
                     SetTimer, UpdateGUI, Off
-                    SendWebhook("Popping Warp Potion...", 0)
+                    SendWebhook("Popping Transcendent Potion...", 0)
                     PopWarp()
                     SendWebhook("Rearming Fishing...", 0)
                     toggle := true
@@ -1913,7 +1908,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                 }
             
 
-            if (biome = "CORRUPTION" ) {
+            if (biome = "CORRUPTION") {
                 corrupt := true
             } else {
                 corrupt := false
@@ -1940,7 +1935,7 @@ V2Clip:
                     try SendWebhook4(auraName . " has successfully been Clipped!", 0)
                 } else {
                     try SendWebhook4(auraName . " has not been Clipped! Nvidia Replay is turned Off!", 0)
-                    try SendWebhook4("Turning on Nvidia Replay...", 3000)
+                    try SendWebhook4("Turning on Nvidia Replay...", 0)
                     TurnOnNvidiaReplay()
                 }
             } else {
@@ -2048,6 +2043,7 @@ UpdateUserID:
     webhookID := UserIDInput
     IniWrite, %webhookID%, %iniFilePath%, Macro, webhookID
 return
+
 
 RunEasterPathing() {
 
@@ -2854,39 +2850,39 @@ ShowClipTextGlobal() {
     global blehblehbleh
 
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (10), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (10), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (9), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (9), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (8), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (8), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (7), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (7), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (6), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (6), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (5), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (5), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (4), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (4), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (3), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (3), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (2), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (2), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
@@ -2900,79 +2896,79 @@ ShowClipTextTrans() {
     global blehblehbleh
 
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (20), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (20), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (19), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (19), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (18), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (18), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (17), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (17), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (16), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (16), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (15), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (15), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (14), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (14), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (13), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (13), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (12), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (12), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (11), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (11), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (10), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (10), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (9), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (9), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (8), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (8), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (7), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (7), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (6), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (6), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (5), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (5), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (4), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (4), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (3), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (3), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
-        ToolTip, Clipped with Aery's Fishsol. F5 To Cancel (2), 900, 10
+        ToolTip, Clipped with Aery's Fishsol. F4 To Cancel (2), 900, 10
         sleep 1000
     }
     if (blehblehbleh != "hehe") {
@@ -2986,43 +2982,43 @@ ClipCountdownGlobal() {
     global webResponse
 
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (10), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (10), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (9), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (9), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (8), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (8), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (7), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (7), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (6), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (6), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (5), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (5), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (4), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (4), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (3), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (3), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (2), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (2), 850, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook. Clipping Timer will start after... (1), 850, 10
+        ToolTip, F4 To cancel webhook. Clipping Timer will start after... (1), 850, 10
         Sleep, 1000
     }
 
@@ -3034,43 +3030,43 @@ ClipCountdown() {
 
 
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (10), 900, 10
+        ToolTip, F4 To cancel webhook (10), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (9), 900, 10
+        ToolTip, F4 To cancel webhook (9), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (8), 900, 10
+        ToolTip, F4 To cancel webhook (8), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (7), 900, 10
+        ToolTip, F4 To cancel webhook (7), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (6), 900, 10
+        ToolTip, F4 To cancel webhook (6), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (5), 900, 10
+        ToolTip, F4 To cancel webhook (5), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (4), 900, 10
+        ToolTip, F4 To cancel webhook (4), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (3), 900, 10
+        ToolTip, F4 To cancel webhook (3), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (2), 900, 10
+        ToolTip, F4 To cancel webhook (2), 900, 10
         Sleep, 1000
     }
     if (webResponse != "true") {
-        ToolTip, F5 to cancel webhook (1), 900, 10
+        ToolTip, F4 To cancel webhook (1), 900, 10
         Sleep, 1000
     }
     
@@ -3357,6 +3353,12 @@ ClipType:
     Gui, Submit, NoHide
     clipType := ClipVersion
     IniWrite, %clipType%, %iniFilePath%, Macro, clipType
+return
+
+ChatType:
+    Gui, Submit, NoHide
+    chatType := ChatVersion
+    IniWrite, %chatType%, %iniFilePath%, Macro, chatType
 return
 
 CraftHeavenly:
@@ -3873,19 +3875,51 @@ CheckGhostServer() {
         Sleep, 300
         Click, Left
         sleep, 500
-        MouseMove, 47, 467, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        Send, {\}
-        sleep, 300
-        Send, {Enter}
-        sleep 220
-        Send, {\}
-        sleep, 250
-        MouseMove, 600, 600, 3
-        Click, Left
-        sleep 500
+        if (chattype = "\ Key") {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Send, {\}
+            sleep, 300
+            Send, {Enter}
+            sleep 220
+            Send, {\}
+            sleep, 250
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        } else if (chattype = "Click") {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        } else {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        }
         ToolTip, Going to fishing spot.., 900, 10
         FishingSpot()
     }
@@ -3901,23 +3935,58 @@ RunRejoin() {
     WinActivate, ahk_exe RobloxPlayerBeta.exe
     sleep 5000
     EnsureFullScreen()
-    sleep, 5000
+    sleep, 15000
     MouseMove, 251, 997, 3
     Sleep, 300
     Click, Left
     sleep, 5000
     Click, Left
     sleep, 500
-    MouseMove, 47, 467, 3
-    sleep 220
-    Click, Left
-    sleep 220
-    Send, {\}
-    sleep, 300
-    Send, {Enter}
-    sleep 220
-    Send, {\}
-    sleep, 250
+    if (chattype = "\ Key") {
+        sleep, 1000
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Send, {\}
+        sleep, 300
+        Send, {Enter}
+        sleep 220
+        Send, {\}
+        sleep, 250
+        Click, WheelUp 80
+        sleep 500
+        Click, WheelDown 45
+        sleep 300
+    } else if (chattype = "Click") {
+        sleep, 1000
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        MouseMove, 382, 126, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Click, WheelUp 80
+        sleep 500
+        Click, WheelDown 45
+        sleep 300
+    } else {
+        sleep, 1000
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        MouseMove, 382, 126, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Click, WheelUp 80
+        sleep 500
+        Click, WheelDown 45
+        sleep 300
+    }
     MouseMove, 600, 600, 3
     Click, Left
     sleep 500
@@ -4140,30 +4209,8 @@ if (onoffWebhook) {
 }
 return
 
+
 F2::
-    offsides := true
-    ToolTip, Stopping Macro... Please Wait until this Popup disappears, 900, 10
-    toggle := false
-    if (webhookID = aeryWebhookID)
-    Process, Close, BiomeMacro.exe
-    biomemacro := false
-    firstLoop := true
-    SetTimer, DoMouseMove, Off
-    SetTimer, UpdateGUI, Off
-    ManualGUIUpdate()
-    Send, {Esc}
-    Sleep, 650
-    Send, {Esc}
-    ToolTip
-    if (onoffWebhook) {
-        try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
-    }
-    sleep, 10000
-    offsides := false
-return
-
-
-F3::
     Gui, Submit, NoHide
 
     if (autocrafting || toggle)
@@ -4204,30 +4251,20 @@ F3::
     SetTimer, CraftSelected, 1000
 return
 
-
-F4:: 
-if (!autocrafting || toggle)
-   return
-
-    autocrafting := false
-    kurwa := "ivaxa"
-    IfAdded := ""
-    SetTimer, CraftSelected, Off
-
-
-    ToolTip, Crafting has Stopped. (3), 865, 10
-    Sleep 1000
-    ToolTip, Crafting has Stopped. (2), 865, 10
-    Sleep 1000
-    ToolTip, Crafting has Stopped. (1), 865, 10
-    Sleep 1000
-    ToolTip
-    if (onoffWebhook) {
-        try SendWebhook("Crafting Stopped :tools:", 0)
-   }
+F3::
+    if (toggle && onoffWebhook) {
+        try SendWebhook3(":red_circle: Macro Stopped.", "0")
+    } else if (autocrafting && onoffWebhook) {
+        try SendWebhook3(":red_circle: Auto Crafting Stopped.", "0")
+    }
+    if (webhookID = aeryWebhookID) {
+        Process, Close, BiomeMacro.exe
+        Process, Close, maxstellar's Biome Macro
+    }
+    Reload
 return
 
-F5::
+F4::
 global blehblehbleh, webReponse, auraName
 
     blehblehbleh := "hehe"
@@ -4250,15 +4287,6 @@ global blehblehbleh, webReponse, auraName
     }
 return
 
-F6::
-    if ((toggle || autocrafting) && (onoffWebhook)) {
-        try SendWebhook("App Closed :tools:", 0)
-    }
-    if (webhookID = aeryWebhookID)
-    Process, Close, BiomeMacro.exe
-    ExitApp
-return
-
 F7::
 global auraName, biome
 
@@ -4268,10 +4296,6 @@ if (webhookID != aeryWebhookID)
     try SendWebhook(auraName,  0)
     sleep, 500
     try SendWebhook(biome,  0)
-return
-
-F8::
-    RunRejoin()
 return
 
 ;1080p
@@ -4308,15 +4332,15 @@ if (toggle) {
         }
 
         if (checkGhostServer && privateServerLink != "") {
-            elapsed := A_TickCount - startTick
-            if ((ghostServerLastRun = 0 && elapsed >= strangeControllerTime) || (ghostServerLastRun > 0 && (elapsed - ghostServerLastRun) >= ghostServerInterval)) {
-                CheckGhostServer()
-                sleep, 1000
-                ghostServerLastRun := elapsed
+                elapsed := A_TickCount - startTick
+                if ((checkGhostServerlastRun = 0 && elapsed >= strangeControllerTime) || (checkGhostServerlastRun > 0 && (elapsed - checkGhostServerlastRun) >= checkGhostServerInterval)) {
+                    CheckGhostServer()
+                    sleep, 1000
+                    checkGhostServerlastRun := elapsed
+                }
+            } else if (checkGhostServer && privateServerLink = "") {
+                SendWebhook("NO PRIVATE SERVER LINK", 14495300)
             }
-        } else if (checkGhostServer && privateServerLink = "") {
-            SendWebhook("NO PRIVATE SERVER LINK", 14495300)
-        }
 
         if (easterMacro) {
             elapsed := A_TickCount - startTick
@@ -4382,11 +4406,6 @@ if (toggle) {
 
             if (pendingUnequip = true) {
                 sleep, 1000
-                PixelGetColor, deletebutton, 1106, 919, RGB
-                if (deletebutton = 0xFF5A5D && !storagewebhooksent) {
-                    try SendWebhook("Max Storage Detected", 0)
-                    storagewebhooksent := true
-                } else {
                 if (useNothing && autoUnequip) {
                 DoUseNothing()
                 } else if (autoUnequip && !useNothing) {
@@ -4394,28 +4413,57 @@ if (toggle) {
                 }
                 pendingUnequip := false
             }
-        }
+        
 
         if (pendingCraft = true) {
             if (selectedItem2 = "") {
                     return
                 }
-            
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Send, {\}
-            sleep, 300
-            Send, {Enter}
-            sleep 220
-            Send, {\}
-            sleep, 250
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
+            if (chattype = "\ Key") {
+                sleep, 1000
+                MouseMove, 47, 467, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                Send, {\}
+                sleep, 300
+                Send, {Enter}
+                sleep 220
+                Send, {\}
+                sleep, 250
+                Click, WheelUp 80
+                sleep 500
+                Click, WheelDown 45
+                sleep 300
+            } else if (chattype = "Click") {
+                sleep, 1000
+                MouseMove, 47, 467, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                MouseMove, 382, 126, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                Click, WheelUp 80
+                sleep 500
+                Click, WheelDown 45
+                sleep 300
+            } else {
+                sleep, 1000
+                MouseMove, 47, 467, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                MouseMove, 382, 126, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                Click, WheelUp 80
+                sleep 500
+                Click, WheelDown 45
+                sleep 300
+            }
 
             Send, {Esc}
             Sleep, 650
@@ -4457,7 +4505,13 @@ if (toggle) {
         Send, R
         Sleep, 650
         Send, {Enter}
-        sleep 3000  
+        sleep 5000  
+
+        PixelGetColor, deletebutton, 1106, 919, RGB
+        if (deletebutton = 0xFF5A5D && !storagewebhooksent) {
+            try SendWebhook("Max Storage Detected", 0)
+            storagewebhooksent := true
+        }
 
 
         if (autoCloseChat) {
@@ -4493,21 +4547,51 @@ if (toggle) {
             }
         }
 
-        sleep, 1000
-        MouseMove, 47, 467, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        Send, {\}
-        sleep, 300
-        Send, {Enter}
-        sleep 220
-        Send, {\}
-        sleep, 250
-        Click, WheelUp 80
-        sleep 500
-        Click, WheelDown 45
-        sleep 300
+        if (chattype = "\ Key") {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Send, {\}
+            sleep, 300
+            Send, {Enter}
+            sleep 220
+            Send, {\}
+            sleep, 250
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        } else if (chattype = "Click") {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        } else {
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
+        }
 
         if (manualCraft = true) {
             if (selectedItem2 = "") {
