@@ -87,7 +87,7 @@ easterPathingLastRun := 0
 checkGhostServer := false
 checkingicon := false
 checkGhostServerlastRun := 0
-checkGhostServerInterval := 600000
+checkGhostServerInterval := 3600000
 storagewebhooksent := false
 
 if (FileExist(iniFilePath)) {
@@ -576,7 +576,7 @@ Gui, Add, Text, x143 y448 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Webhook Timer
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Having this disabled improves fishing by it not having to disable the macro for 10 seconds
+Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Having this off improves fishing by it not having to disable the macro for 10 seconds
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y545 w80 h25 gToggleWebhookTimer vWebhookTimerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -1692,6 +1692,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
 
     if (auraDetection) {
         if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState) {
+            blehblehbleh := ""
             if (prevState != "None") {
                 needle := Chr(92) Chr(34)
                 pos1 := InStr(state, needle)
@@ -1851,24 +1852,17 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                         ShowClipTextGlobal()
                     }
                 } else {
-                        if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
-                            SetTimer, V2Clip, -%triggerDelayGlobal%
-                            brainrot67 := "67"
-                            ShowClipTextGlobal()
-                        }
-                    }
-                if (auraFilter) {
-                    if (AuraListTrans.HasKey(auraName) && EnabledAuras[auraName] && detectTrans && webResponse = "false") {
-                        SetTimer, V2Clip, -%triggerDelayTrans%
+                    if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
+                        SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
-                        ShowClipTextTrans()
+                        ShowClipTextGlobal()
                     }
-                } else {
-                    if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
-                        SetTimer, V2Clip, -%triggerDelayTrans%
-                        brainrot67 := "67"
-                        ShowClipTextTrans()
-                    }
+                }
+
+                if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
+                    SetTimer, V2Clip, -%triggerDelayTrans%
+                    brainrot67 := "67"
+                    ShowClipTextTrans()
                 }
 
                 if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
@@ -1878,7 +1872,6 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
             prevState := state
             webResponse := "false"
             brainrot67 := ""
-            blehblehbleh := ""
         }
     }
     
