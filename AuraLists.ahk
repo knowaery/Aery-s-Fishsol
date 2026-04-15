@@ -68,7 +68,7 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "ILLUSIONARY": 1
 , "Eostre": 1
 , "Afoolsexperience": 1
-, "PUKEKOGOD": 1
+, "pukeko_god": 1
 , "Aegis_EGGIS": 1
 , "YOLKEGG": 1
 , "skyfestival": 1
