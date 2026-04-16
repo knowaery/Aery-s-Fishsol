@@ -335,6 +335,7 @@ tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Failsafes"
 tabList .= "|About"
+tabList .= "|Extra"
 if (webhookID = aeryWebhookID) {
     tabList .= "|Aery"
 }
@@ -425,6 +426,9 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, How to Close Collection
 Gui, Add, DropDownList, x45 y500 w80 h125 vChatVersion gchatType, \ Key|Click
 IniRead, chatType, %iniFilePath%, Macro, chatType
+if (chatType = "ERROR" || chatType = "") {
+    chatType := "Click"
+}
 GuiControl, Choose, ChatVersion, %chatType%
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x45 y467 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
@@ -807,8 +811,25 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-07)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-15)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
+
+Gui, Tab, Extra
+Gui, Font, s11 cWhite Bold, Segoe UI
+Gui, Add, GroupBox, x33 y100 w534 h160 cWhite, Easter Macro
+
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y165 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
+Gui, Add, Text, x180 y181 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Button, x45 y130 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
+Gui, Font, s10 cWhite Normal Bold
+Gui, Add, Text, x150 y135 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Bold
+Gui, Add, Edit, x45 y205 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y235 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 
 if (webhookID = aeryWebhookID) {
     Gui, Tab, Aery
@@ -821,22 +842,6 @@ if (webhookID = aeryWebhookID) {
     Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
     Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
     Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
-
-    Gui, Font, s11 cWhite Bold, Segoe UI
-    Gui, Add, GroupBox, x33 y150 w534 h160 cWhite, Easter Macro
-
-    Gui, Font, s10 c0xCCCCCC Normal
-    Gui, Add, Text, x45 y215 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
-    Gui, Add, Text, x180 y231 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
-
-    Gui, Font, s10 cWhite Bold
-    Gui, Add, Button, x45 y180 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
-    Gui, Font, s10 cWhite Normal Bold
-    Gui, Add, Text, x150 y185 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
-    Gui, Font, s10 cWhite Bold
-    Gui, Add, Edit, x45 y255 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
-    Gui, Font, s10 c0xCCCCCC Normal
-    Gui, Add, Text, x45 y285 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 }
 
 Gui, Show, w600 h670,  Aery's fishSol v1.5.4
@@ -3898,22 +3903,9 @@ CheckGhostServer() {
             sleep 500
             Click, WheelDown 45
             sleep 300
-        } else {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
         }
         ToolTip, Going to fishing spot.., 900, 10
+        SendWebhook("Going to fishing spot... Not in Ghost Server.", 0)
         FishingSpot()
     }
     ToolTip
@@ -3965,30 +3957,24 @@ RunRejoin() {
         sleep 500
         Click, WheelDown 45
         sleep 300
-    } else {
-        sleep, 1000
-        MouseMove, 47, 467, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        MouseMove, 382, 126, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        Click, WheelUp 80
-        sleep 500
-        Click, WheelDown 45
-        sleep 300
     }
     MouseMove, 600, 600, 3
     Click, Left
     sleep 500
     ToolTip, Going to fishing spot.., 900, 10
+    SendWebhook("Going to fishing spot...", 0)
     FishingSpot()
 }
+RunRejoin2() {
+    SendWebhook("Rejoining Server link...", 0)
+    Process, Close, RobloxPlayerBeta.exe
+    sleep 2000
+    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
+}
 EnsureFullscreen() {
+    sleep, 500
     PixelGetColor, robloxicon, 42, 33, RGB
-    if (robloxicon != 0xF4F5F8) {
+    if (robloxicon != 0xF7F7F8) {
         Send, {F11}
         Sleep, 1000
     }
@@ -4192,6 +4178,8 @@ if (!toggle && offsides != true) {
         sleep, 300
     }
     SetTimer, UpdateGUI, 1000
+    sleep, 2000
+    EnsureFullscreen()
     if (res = "1080p") {
         SetTimer, DoMouseMove, 100
     }
@@ -4287,8 +4275,13 @@ if (webhookID != aeryWebhookID)
     return
 
     try SendWebhook(auraName,  0)
-    sleep, 500
     try SendWebhook(biome,  0)
+
+    RunRejoin2()
+return
+
+F5::
+    RunRejoin2()
 return
 
 ;1080p
@@ -4442,20 +4435,6 @@ if (toggle) {
                 sleep 500
                 Click, WheelDown 45
                 sleep 300
-            } else {
-                sleep, 1000
-                MouseMove, 47, 467, 3
-                sleep 220
-                Click, Left
-                sleep 220
-                MouseMove, 382, 126, 3
-                sleep 220
-                Click, Left
-                sleep 220
-                Click, WheelUp 80
-                sleep 500
-                Click, WheelDown 45
-                sleep 300
             }
 
             Send, {Esc}
@@ -4557,20 +4536,6 @@ if (toggle) {
             Click, WheelDown 45
             sleep 300
         } else if (chattype = "Click") {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
-        } else {
             sleep, 1000
             MouseMove, 47, 467, 3
             sleep 220
