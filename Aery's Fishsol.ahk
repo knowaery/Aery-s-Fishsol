@@ -1734,7 +1734,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                             ClipCountdown()
                         }
                     }
-                    if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") {
+                    if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") { ; normal auras
                         json := "{"
                             . mentionsStr
                             . contentStr
@@ -1748,7 +1748,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                         http.Open("POST", webhookURL, false)
                         http.SetRequestHeader("Content-Type", "application/json")
                         http.Send(json)
-                    } else if (auraFilter) {
+                    } else if (auraFilter) { ; check aura filter and see if the aura is enabled
                         if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && webResponse = "false") {
                             json := "{"
                                 . mentionsStr
@@ -1762,8 +1762,19 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                             http.Open("POST", webhookURL, false)
                             http.SetRequestHeader("Content-Type", "application/json")
                             http.Send(json)
+                        } else if (AuraList.HasKey(auraName) && !EnabledAuras[auraName] && webResponse = "false") { ; if aura is disabled in aura filter, it js sends webhook on the aura without pinging
+                                json := "{"
+                                . """embeds"": [{"
+                                . """description"": "" ### Aura Equipped - " auraName ""","
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """timestamp"": """ timestamp """"
+                                . "}]}"
+                            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                            http.Open("POST", webhookURL, false)
+                            http.SetRequestHeader("Content-Type", "application/json")
+                            http.Send(json)
                         }
-                    } else if (!auraFilter) {
+                    } else if (!auraFilter) { ; no aura filter, check global
                         if (AuraList.HasKey(auraName) && webResponse = "false") {
                             json := "{"
                                 . mentionsStr
@@ -1791,7 +1802,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     if (webResponse = "false") {
                         SendWebhook2(":tada: **Snake** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
                     }
-                } else if (auraName = "Breakthrough" || auraName = "BREAKTHROUGH") {
+                } else if (auraName = "BREAKTHROUGH") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
                         SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
@@ -1844,7 +1855,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                 } else if (auraName = "EQUINOX_youareanidiot") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2("**Now your getting yourself closer to the ZERO... \nwait... \nApril Fools?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                        SendWebhook2("**Now your getting yourself closer to the ZERO... \nwait... \nWHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                     }
                 }
                 
@@ -3845,6 +3856,14 @@ CraftSelected:
     }
 return
 
+EnsureFullscreen() {
+    PixelGetColor, robloxicon, 42, 41, RGB
+    if (robloxicon != 0xF7F7F8) {
+        Send, {F11}
+        Sleep, 1000
+    }
+}
+
 CheckGhostServer() {
 
     SendWebhook("Checking for ghost server...", 0)
@@ -3855,11 +3874,8 @@ CheckGhostServer() {
     Sleep, 650
     Send, {Enter}
     sleep 10000
-    PixelGetColor, coinpos, 20, 1008, RGB
-     if (coinpos = 0xF0EC81) {
-        Send, {F11}
-        sleep, 1000
-    }
+    EnsureFullscreen()
+    sleep, 5000
     MouseMove, 34, 678, 3
     Sleep, 300
     Click, Left
@@ -3968,16 +3984,7 @@ RunRejoin() {
 RunRejoin2() {
     SendWebhook("Rejoining Server link...", 0)
     Process, Close, RobloxPlayerBeta.exe
-    sleep 2000
     Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
-}
-EnsureFullscreen() {
-    sleep, 500
-    PixelGetColor, robloxicon, 42, 33, RGB
-    if (robloxicon != 0xF7F7F8) {
-        Send, {F11}
-        Sleep, 1000
-    }
 }
 FishingSpot() {
     global keyW, keyA
@@ -4159,11 +4166,6 @@ if (!toggle && offsides != true) {
     if (cycleCount = "") {
         cycleCount := 0
     }
-    PixelGetColor, robloxicon, 41, 64, RGB
-    if (robloxicon = 0xF4F5F8) {
-        Send, {F11}
-        Sleep, 1000
-    }
     strangeControllerLastRun := 0
     biomeRandomizerLastRun := 0
     checkGhostServerLastRun := 0
@@ -4276,11 +4278,12 @@ if (webhookID != aeryWebhookID)
 
     try SendWebhook(auraName,  0)
     try SendWebhook(biome,  0)
-
-    RunRejoin2()
 return
 
 F5::
+if (webhookID != aeryWebhookID)
+    return
+
     RunRejoin2()
 return
 
