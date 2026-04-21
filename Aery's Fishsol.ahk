@@ -89,6 +89,7 @@ checkingicon := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
+cyberCity := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -446,7 +447,7 @@ Gui, Tab, Misc
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x22 y90 w270 h195 cWhite, Auto-Unequip
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y110 h45 w250 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues. Please turn on Aura Detection for this to work.
+Gui, Add, Text, x35 y110 h45 w250 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues.
 Gui, Add, Text, x35 y210 h45 w250 BackgroundTrans c0xCCCCCC, Equips "Nothing" instead of equipping and unequipping your first aura in your storage.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x32 y190 h45 w240 BackgroundTrans, Use "Nothing" Aura.
@@ -503,13 +504,18 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
 
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y330 w270 h129 cWhite, Auto Transcendent Pop in Cyberspace
+Gui, Add, GroupBox, x307 y330 w270 h155 cWhite, Auto Use Skips in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion. This will not send a webhook through discord about the biome.
+Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. This will not send a webhook about the biome.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x320 y451 w148 h155 BackGroundTrans, Potion Type:
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y413 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
+Gui, Add, DropDownList, x410 y447 w148 vSkipPotionType gskipType, Warp Potion|Transcendent Potion
+IniRead, skipType, %iniFilePath%, Macro, skipType
+GuiControl, Choose, SkipPotionType, %skipType%
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y490 w534 h120 cWhite, Detect and Contract Eden (Temporary)
@@ -842,6 +848,15 @@ if (webhookID = aeryWebhookID) {
     Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
     Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
     Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
+
+    Gui, Font, s11 cWhite Bold
+    Gui, Add, GroupBox, x33 y140 w534 h100 cWhite, CyberCity
+    Gui, Font, s11 cWhite Bold
+    Gui, Add, Text, x45 y160 w500 h145 BackgroundTrans, 1 3 3 5 19 19 4 5 14 9 5 4 25 15 21 1 18 5 14 15 20 23 15 18 20 8 25
+    Gui, Font, s10 cWhite Bold, Segoe UI
+    Gui, Add, Button, x45 y200 w80 h25 gToggleCyberCity vCyberCityBtn, Toggle
+    Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+    Gui, Add, Text, x143 y203 w70 h25 vCyberCityStatus BackgroundTrans, OFF
 }
 
 Gui, Show, w600 h670,  Aery's fishSol v1.5.4
@@ -885,6 +900,12 @@ if (azertyPathing) {
 if (autoUnequip) {
     GuiControl,, AutoUnequipStatus, ON
     GuiControl, +c0x00DD00, AutoUnequipStatus
+    if (!auraDetection) {
+        TrayTip, Please turn on Aura Detection!, Auras Tab -> Aura Detection
+        GuiControl,, AutoUnequipStatus, OFF
+        GuiControl, +c0xFF4444, AutoUnequipStatus
+        autoUnequip := false
+    }
 } else {
     GuiControl,, AutoUnequipStatus, OFF
     GuiControl, +c0xFF4444, AutoUnequipStatus
@@ -1085,6 +1106,15 @@ if (checkGhostServer) {
     GuiControl,, CheckGhostServerStatus, OFF
     GuiControl, +c0xFF4444, CheckGhostServerStatus
 }
+if (cyberCity) {
+    GuiControl,, CyberCityStatus, ON
+    GuiControl, +c0x00DD00, CyberCityStatus
+    Run, AutoHotkey.exe "%A_ScriptDir%\aery\vrovro.ahk"
+} else {
+    GuiControl,, CyberCityStatus, OFF
+    GuiControl, +c0xFF4444, CyberCityStatus
+    WinClose, %ahkPath% ahk_class AutoHotkey
+}
 
 GuiControl,, EasterIntervalInput, %easterInterval%
 SetTimer, AuraBiomeDetect, 1000
@@ -1178,6 +1208,12 @@ ToggleAutoUnequip:
     if (autoUnequip) {
         GuiControl,, AutoUnequipStatus, ON
         GuiControl, +c0x00DD00, AutoUnequipStatus
+        if (!auraDetection) {
+            TrayTip, Please turn on Aura Detection!, Auras Tab -> Aura Detection
+            GuiControl,, AutoUnequipStatus, OFF
+            GuiControl, +c0xFF4444, AutoUnequipStatus
+            autoUnequip := false
+        }
     } else {
         GuiControl,, AutoUnequipStatus, OFF
         GuiControl, +c0xFF4444, AutoUnequipStatus
@@ -1529,6 +1565,21 @@ ToggleCheckGhostServer:
         GuiControl, +c0xFF4444, CheckGhostServerStatus
     }
     IniWrite, % (checkGhostServer ? "true" : "false"), %iniFilePath%, Macro, checkGhostServer
+return
+
+ToggleCyberCity:
+    cyberCity := !cyberCity
+    if (cyberCity) {
+        GuiControl,, CyberCityStatus, ON
+        GuiControl, +c0x00DD00, CyberCityStatus
+        Run, AutoHotkey.exe "%A_ScriptDir%\aery\vrovro.ahk"
+    } else {
+        GuiControl,, CyberCityStatus, OFF
+        GuiControl, +c0xFF4444, CyberCityStatus
+        WinClose, %ahkPath% ahk_class AutoHotkey
+    }
+    IniWrite, % (cyberCity ? "true" : "false"), %iniFilePath%, Macro, cyberCity
+return
 
 OpenBiomeMacro:
     Process, Exist, BiomeMacro.exe
@@ -1774,7 +1825,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                             http.SetRequestHeader("Content-Type", "application/json")
                             http.Send(json)
                         }
-                    } else if (!auraFilter) { ; no aura filter, check global
+                    } else if (!auraFilter) { ; no aura filter, checks global list
                         if (AuraList.HasKey(auraName) && webResponse = "false") {
                             json := "{"
                                 . mentionsStr
@@ -1896,16 +1947,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
             if (biome && biome != "" && biome != prevBiome) {
                 
                 if (biome = "CYBERSPACE" && toggle && autoWarp) {
-                    prevBiome := biome
-                    toggle := false
-                    SetTimer, DoMouseMove, Off
-                    SetTimer, UpdateGUI, Off
-                    SendWebhook("Popping Transcendent Potion...", 0)
-                    PopWarp()
-                    SendWebhook("Rearming Fishing...", 0)
-                    toggle := true
-                    SetTimer, UpdateGUI, 1000
-                    SetTimer, DoMouseMove, 100
+                    pendingSkips := true
                 }
 
                 if (clipType = "Nvidia: Alt + F10" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
@@ -1972,7 +2014,7 @@ TurnOnNvidiaReplay() {
 }
    
 
-PopWarp() {
+PopSkips() {
     Sleep, 5000
     Click, 45, 521
     sleep 300
@@ -1980,7 +2022,11 @@ PopWarp() {
     sleep 300
     Click, 820, 370
     sleep 300
-    Send, Transcendent Potion
+    if (skipType = "Transcendent Potion") {
+        Send, Transcendent Potion
+    } else {
+        Send, Warp Potion
+    }
     Click, 850, 485
     sleep 300
     Click, 690, 585
@@ -3210,6 +3256,10 @@ DoUseNothing() {
     sleep 150
     Click, Left
     sleep 150
+    MouseMove, 820, 340, 3
+    sleep, 250
+    Click, Left
+    sleep, 250
     MouseMove, 820, 370, 3
     sleep 250
     Click, Left
@@ -3368,6 +3418,12 @@ ChatType:
     Gui, Submit, NoHide
     chatType := ChatVersion
     IniWrite, %chatType%, %iniFilePath%, Macro, chatType
+return
+
+SkipType:
+    Gui, Submit, NoHide
+    skipType := SkipPotionType
+    IniWrite, %skipType%, %iniFilePath%, Macro, skipType
 return
 
 CraftHeavenly:
@@ -3857,6 +3913,8 @@ CraftSelected:
 return
 
 EnsureFullscreen() {
+    WinActivate, ahk_exe RobloxPlayerBeta.exe
+    sleep, 250
     PixelGetColor, robloxicon, 42, 41, RGB
     if (robloxicon != 0xF7F7F8) {
         Send, {F11}
@@ -3983,7 +4041,6 @@ RunRejoin() {
 }
 RunRejoin2() {
     SendWebhook("Rejoining Server link...", 0)
-    Process, Close, RobloxPlayerBeta.exe
     Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
 }
 FishingSpot() {
@@ -4087,7 +4144,7 @@ StopAutoClicker:
 return
 
 AutoClickTick:
-Click
+    Click
 return
 
 UpdateGUI:
@@ -4140,6 +4197,7 @@ ManualGUIUpdate() {
 }
 
 F1::
+DetectHiddenWindows, On
 if (manualCraft && selectedItem2 = "") {
     ManualCraftAlert()
 }
@@ -4175,13 +4233,13 @@ if (!toggle && offsides != true) {
     IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
     WinActivate, ahk_exe RobloxPlayerBeta.exe
     ManualGUIUpdate()
+     EnsureFullscreen()
     if (webhookID = aeryWebhookID && openmax) {
         GoSub, OpenBiomeMacro
         sleep, 300
     }
     SetTimer, UpdateGUI, 1000
-    sleep, 2000
-    EnsureFullscreen()
+    WinClose, %ahkPath% ahk_class AutoHotkey
     if (res = "1080p") {
         SetTimer, DoMouseMove, 100
     }
@@ -4195,6 +4253,7 @@ return
 
 F2::
     Gui, Submit, NoHide
+    DetectHiddenWindows, On
 
     if (autocrafting || toggle)
         return
@@ -4216,6 +4275,7 @@ F2::
     totalCraftedzp := 0
     totalCraftedjp := 0
 
+    EnsureFullscreen()
     ToolTip, Crafting will start in 5 seconds..., 900, 10
     Sleep, 1000
     ToolTip, Crafting will start in 4 seconds..., 900, 10
@@ -4230,6 +4290,9 @@ F2::
     if (onoffWebhook) {
         try SendWebhook("Crafting Started on " selectedItem ":tools:", 0)
     }
+    if (cyberCity && webhookID = aeryWebhookID) {
+        WinClose, %ahkPath% ahk_class AutoHotkey
+    }
 
     SetTimer, CraftSelected, 1000
 return
@@ -4241,9 +4304,10 @@ F3::
         try SendWebhook3(":red_circle: Auto Crafting Stopped.", "0")
     }
     if (webhookID = aeryWebhookID) {
-        Process, Close, BiomeMacro.exe
-        Process, Close, maxstellar's Biome Macro
+        WinClose, BiomeMacro.exe
+        WinClose, maxstellar's Biome Macro
     }
+    WinClose, %ahkPath% ahk_class AutoHotkey
     Reload
 return
 
@@ -4253,7 +4317,7 @@ global blehblehbleh, webReponse, auraName
     blehblehbleh := "hehe"
     webResponse := "true"
 
-        if (detectGlobal || detectTrans && auraDetection) {
+        if (detectG6lobal || detectTrans && auraDetection) {
             SetTimer, V2Clip, Off
             SetTimer, AuraBiomeDetect, Off
         if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
@@ -4275,10 +4339,10 @@ global auraName, biome
 
 if (webhookID != aeryWebhookID)
     return
-
     try SendWebhook(auraName,  0)
     try SendWebhook(biome,  0)
 return
+
 
 F5::
 if (webhookID != aeryWebhookID)
@@ -4318,6 +4382,16 @@ if (toggle) {
         restartPathing := false
         if (!toggle) {
             break
+        }
+
+        if (autoWarp && pendingSkips) {
+            if (skipType = "Warp Potion") {
+                SendWebhook("Popping Warp Potion", 0)
+            } else if (skipType = "Transcendent Potion") {
+                SendWebhook ("Popping Transcendent Potion")
+            }
+            PopSkips()
+            pendingSkips := false
         }
 
         if (checkGhostServer && privateServerLink != "") {
