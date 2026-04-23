@@ -90,6 +90,7 @@ checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
 cyberCity := false
+biomeDetect := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -275,6 +276,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempCheckGhostServer, %iniFilePath%, Macro, checkGhostServer
     if (tempCheckGhostServer != "ERROR")
     checkGhostServer := (tempCheckGhostServer = "true" || tempCheckGhostServer = "1")
+
+    IniRead, tempBiomeDetect, %iniFilePath%, Macro, biomeDetect
+    if (tempBiomeDetect != "ERROR")
+    biomeDetect := (tempBiomeDetect = "true" || tempBiomeDetect = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -837,6 +842,15 @@ Gui, Add, Edit, x45 y205 w60 h25 vEasterIntervalInput gUpdateEasterInterval Numb
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y235 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y280 w534 h100 cWhite, Biome Detection (Temporary)
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y300 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y340 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y343 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
+
 if (webhookID = aeryWebhookID) {
     Gui, Tab, Aery
 
@@ -1114,6 +1128,13 @@ if (cyberCity) {
     GuiControl,, CyberCityStatus, OFF
     GuiControl, +c0xFF4444, CyberCityStatus
     WinClose, %ahkPath% ahk_class AutoHotkey
+}
+if (biomeDetect) {
+    GuiControl,, BiomeDetectStatus, ON
+    GuiControl, +c0x00DD00, BiomeDetectStatus
+} else {
+    GuiControl,, BiomeDetectStatus, OFF
+    GuiControl, +c0xFF4444, BiomeDetectStatus
 }
 
 GuiControl,, EasterIntervalInput, %easterInterval%
@@ -1581,6 +1602,18 @@ ToggleCyberCity:
     IniWrite, % (cyberCity ? "true" : "false"), %iniFilePath%, Macro, cyberCity
 return
 
+ToggleBiomeDetect:
+    biomeDetect := !biomeDetect
+    if (biomeDetect) {
+        GuiControl,, BiomeDetectStatus, ON
+        GuiControl, +c0x00DD00, BiomeDetectStatus
+    } else {
+        GuiControl,, BiomeDetectStatus, OFF
+        GuiControl, +c0xFF4444, BiomeDetectStatus
+    }
+    IniWrite, % (biomeDetect ? "true" : "false"), %iniFilePath%, Macro, biomeDetect
+return
+
 OpenBiomeMacro:
     Process, Exist, BiomeMacro.exe
     BiomeMacroOpen := (ErrorLevel != 0)
@@ -1943,20 +1976,61 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
     }
     
 
-    if (strangeController || biomeRandomizer || autoWarp) {
-            if (biome && biome != "" && biome != prevBiome) {
+    if (strangeController || biomeRandomizer || autoWarp || biomeDetect) {
+                if (biome && biome != "" && biome != prevBiome) {
+                    if (biomeDetect && toggle) {
+                    biomeKey := "Biome" StrReplace(biome, " ", "")
+                    IniRead, isBiomeEnabled, %iniFilePath%, "Biomes", %biomeKey%, 1
+
+                    if (isBiomeEnabled = 1 || biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") {
+                            prevBiome := biome
+                            biome_url := StrReplace(biome, " ", "_")
+                            thumbnail_url := "https://maxstellar.github.io/biome_thumb/" biome_url ".png"
+
+                            color := biomeColors.HasKey(biome) ? biomeColors[biome] : 16777215
+
+                            time := A_NowUTC
+                            timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+                            if (biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") {
+                                RareBiomeWarning()
+                                if (!cancelRareBiomeWebhook) {
+                                    content := "@everyone"
+                                }} else {
+                                    content := ""
+                                }
+
+                            json := "{"
+                            . """embeds"": ["
+                            . "  {"
+                            . "    ""description"": ""> ### Biome Started - " biome "\n> ### [Join Server](" privateServerLink ")"","
+                            . "    ""color"": " color ","
+                            . "    ""thumbnail"": {""url"": """ thumbnail_url """},"
+                            . "    ""footer"": {""text"": ""fishSol v1.9.6"", ""icon_url"": ""https://maxstellar.github.io/fishSol%20icon.png""},"
+                            . "    ""timestamp"": """ timestamp """"
+                            . "  }"
+                            . "],"
+                            . """content"": """ content """"
+                            . "}"
+
+                            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                            http.Open("POST", webhookURL, false)
+                            http.SetRequestHeader("Content-Type", "application/json")
+                            http.Send(json)
+                        }
+                    }
                 
-                if (biome = "CYBERSPACE" && toggle && autoWarp) {
-                    pendingSkips := true
-                }
+            if (biome = "CYBERSPACE" && toggle && autoWarp) {
+                pendingSkips := true
+            }
 
-                if (clipType = "Nvidia: Alt + F10" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
-                    Send, !{F10}
-                }
+            if (clipType = "Nvidia: Alt + F10" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
+                Send, !{F10}
+            }
 
-                if (clipType = "Medal: F8" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
-                    Send, {F8}
-                }
+            if (clipType = "Medal: F8" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
+                Send, {F8}
+            }
             
 
             if (biome = "CORRUPTION") {
@@ -1966,6 +2040,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
             }
 
             prevBiome := biome
+            cancelRareBiomeWebhook := false
         }
     }
 return
@@ -2033,6 +2108,29 @@ PopSkips() {
     sleep 300
     Click, 1414, 300
     sleep, 600
+}
+
+RareBiomeWarning() {
+    if (!cancelRareBiomeWebhook) {
+        TrayTip, Rare Biome has been detected, F5 to cancel webhook (5)
+        sleep, 1000
+    }
+    if (!cancelRareBiomeWebhook) {
+        TrayTip, Rare Biome has been detected, F5 to cancel webhook (4)
+        sleep, 1000|
+    }
+    if (!cancelRareBiomeWebhook) {
+        TrayTip, Rare Biome has been detected, F5 to cancel webhook (3)
+        sleep, 1000
+    }
+    if (!cancelRareBiomeWebhook) {
+        TrayTip, Rare Biome has been detected, F5 to cancel webhook (2)
+        sleep, 1000
+    }
+    if (!cancelRareBiomeWebhook) {
+        TrayTip, Rare Biome has been detected, F5 to cancel webhook (1)
+        sleep, 1000
+    }
 }
 
 DetectPotion:
@@ -4040,6 +4138,7 @@ RunRejoin() {
     FishingSpot()
 }
 RunRejoin2() {
+    Process, Close, RobloxPlayerBeta.exe
     SendWebhook("Rejoining Server link...", 0)
     Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
 }
@@ -4317,7 +4416,7 @@ global blehblehbleh, webReponse, auraName
     blehblehbleh := "hehe"
     webResponse := "true"
 
-        if (detectG6lobal || detectTrans && auraDetection) {
+        if (detectGlobal || detectTrans && auraDetection) {
             SetTimer, V2Clip, Off
             SetTimer, AuraBiomeDetect, Off
         if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
@@ -4343,8 +4442,12 @@ if (webhookID != aeryWebhookID)
     try SendWebhook(biome,  0)
 return
 
-
 F5::
+    cancelRareBiomeWebhook := true
+return
+
+
+F6::
 if (webhookID != aeryWebhookID)
     return
 
