@@ -511,7 +511,7 @@ Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x307 y330 w270 h155 cWhite, Auto Use Skips in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. This will not send a webhook about the biome.
+Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 cWhite Bold
@@ -4875,6 +4875,7 @@ if (toggle) {
         break
         }
 
+        /*
         ; Auto Rejoin Failsafe
         if (A_TickCount - globalFailsafeTimer > (autoRejoinFailsafeTime * 1000) && privateServerLink != "") {
         PixelGetColor, checkColor, 1175, 837, RGB
@@ -4936,6 +4937,7 @@ if (toggle) {
         break
         }
         }
+        */
 
         ; Fishing Failsafe
         if (A_TickCount - startWhitePixelSearch > (fishingFailsafeTime * 1000) && !fishingFailsafeRan) {
