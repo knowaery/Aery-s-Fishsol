@@ -417,39 +417,28 @@ Gui, Add, Text, x270 y470 w285 h30 BackgroundTrans, Advanced Fishing Detection u
 Gui, Font, s9 c0x00D4FF Bold
 Gui, Add, Text, x297 y503 w515 h30 BackgroundTrans c0x00D4FF, [ Recommended For Lower End Devices ]
 
-
-
 Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, Live Statistics
-Gui, Color, 0x1E1E1E
-Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, Text, x50 y375 w100 h30 BackgroundTrans, Runtime:
-Gui, Add, Text, x120 y375 w120 h30 vRuntimeText BackgroundTrans c0x00DD00, 00:00:00
-Gui, Add, Text, x50 y405 w100 h30 BackgroundTrans, Cycles:
-Gui, Add, Text, x102 y405 w120 h30 vCyclesText BackgroundTrans c0x00DD00, 0
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y445 w205 h95 cWhite, How to Close Collection
-Gui, Add, DropDownList, x45 y500 w80 h125 vChatVersion gchatType, \ Key|Click
+Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, How to Close Collection
+Gui, Add, DropDownList, x45 y400 w80 h125 vChatVersion gchatType, \ Key|Click
 IniRead, chatType, %iniFilePath%, Macro, chatType
 if (chatType = "ERROR" || chatType = "") {
     chatType := "Click"
 }
 GuiControl, Choose, ChatVersion, %chatType%
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x45 y467 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
+Gui, Add, Text, x45 y367 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
 
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x40 y550 w300 h100 BackgroundTrans, Roblox MUST be in fullscreen mode
+Gui, Add, Text, x30 y452 w205 h95 BackgroundTrans, Roblox MUST be in fullscreen mode
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x300 y550 w5000 h15 BackgroundTrans, Hotkeys:
-Gui, Add, Text, x300 y565 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
-Gui, Add, Text, x300 y580 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
-Gui, Add, Text, x300 y595 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
+Gui, Add, Text, x30 y500 w5000 h15 BackgroundTrans, Hotkeys:
+Gui, Add, Text, x30 y515 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
+Gui, Add, Text, x30 y530 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
+Gui, Add, Text, x30 y545 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
 
 Gui, Tab, Misc
 
-Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x22 y90 w270 h195 cWhite, Auto-Unequip
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y110 h45 w250 BackgroundTrans c0xCCCCCC, Automatically unequip rolled auras when an aura is equipped. Prevents lag and possible macro issues.
@@ -463,7 +452,7 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x130 y163 w60 h25 vAutoUnequipStatus BackgroundTrans, OFF
 Gui, Add, Text, x130 y248 w60 h25 vUseNothingStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x307 y90 w270 h100 cWhite, Auto-Close Chat
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x317 y110 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if chat is open and if so, closes it to prevent getting stuck in collection.
@@ -472,21 +461,9 @@ Gui, Add, Button, x320 y150 w80 h25 gToggleAutoCloseChat vAutoCloseChatBtn, Togg
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x415 y153 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x307 y190 w270 h135 cWhite, Auto-Clicker
-Gui, Add, Button, x320 y285 w80 h25 gStartAutoClicker vAutoClickStart, Start
-Gui, Add, Button, x410 y285 w80 h25 gStopAutoClicker  vAutoClickStop Disabled, Stop
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x500 y289 w60 h25 vAutoClickerStatus BackgroundTrans, OFF
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x320 y260 w90 h20 BackgroundTrans, Delay (sec):
-Gui, Font, s9 cBlack Bold
-Gui, Add, Edit, x405 y260 w60 h22 vAutoClickDelay, 60
-Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x317 y210 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x22 y291 w270 h195 cWhite, Biome/Strange Controller:
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x22 y291 w270 h155 cWhite, Biome/Strange Controller:
+;Gui, Add, GroupBox, x22 y291 w270 h195 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y313 w255 h50 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller after their cooldowns. Biome Randomizer is used 5 minutes after macro start.
 
@@ -502,40 +479,36 @@ Gui, Add, Button, x157 y410 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, 
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y413 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 
+/*
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x30 y450 w125 h25 BackgroundTrans, Webhook:
 Gui, Add, Button, x157 y450 w80 h25 gToggleBiomeWebhook vBiomeWebhookBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
+*/
 
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y330 w270 h155 cWhite, Auto Use Skips in Cyberspace
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x307 y200 w270 h155 cWhite, Auto Use Skips in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y350 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion.
+Gui, Add, Text, x317 y222 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. Only works when you are macroing.
 Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x320 y410 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
+Gui, Add, Button, x320 y280 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x320 y451 w148 h155 BackGroundTrans, Potion Type:
+Gui, Add, Text, x320 y321 w148 h155 BackGroundTrans, Potion Type:
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x415 y413 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
-Gui, Add, DropDownList, x410 y447 w148 vSkipPotionType gskipType, Warp Potion|Transcendent Potion
+Gui, Add, Text, x415 y283 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
+Gui, Add, DropDownList, x410 y317 w148 vSkipPotionType gskipType, Warp Potion|Transcendent Potion
 IniRead, skipType, %iniFilePath%, Macro, skipType
 GuiControl, Choose, SkipPotionType, %skipType%
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y490 w534 h120 cWhite, Detect and Contract Eden (Temporary)
-Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x45 y550 w520 h145 BackgroundTrans, Not tested, not much thought into it, sorry if it dont work
+Gui, Add, GroupBox, x22 y490 w534 h100 cWhite, Biome Detection
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y510 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Uses Check Pixels so it may not be fully accurate, but should work in most cases)
-Gui, Font, s9 cWhite Bold
-Gui, Add, Text, x183 y579 w400 h135 BackgroundTrans, 
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x230 y577 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
+Gui, Add, Text, x35 y510 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y575 w80 h25 gToggleDetectEden vDetectEdenBtn, Toggle
+Gui, Add, Button, x35 y555 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y578 w60 h25 vDetectEdenStatus BackgroundTrans, OFF
+Gui, Add, Text, x133 y558 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
 
 Gui, Tab, Auras
 
@@ -543,7 +516,7 @@ Gui, Font, s13 cWhite Bold, Segoe UI
 Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Clipping Tutorial
 Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y125 w240 h141 cWhite, Aura Detection (Beta)
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x45 y145 w225 h131 BackgroundTrans c0xCCCCCC, Detects the most recent aura equipped. If a global is equipped, you can get pinged by turning on Ping if Global/Transcendent in Webhook. (Also needed for Auto Unequp.)
@@ -552,10 +525,10 @@ Gui, Add, Button, x45 y222 w80 h25 gToggleAuraDetection vAuraDetectionBtn, Toggl
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y227 w60 h25 vAuraDetectionStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x293 y125 w270 h141 cWhite, Toggle Aura Filter
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the globals that are toggled in the Aura Filter will be sent a webhook for. Transcendents are not affected by the Aura Filter.
+Gui, Add, Text, x305 y145 w255 h131 BackgroundTrans c0xCCCCCC, Enables Aura Filter. With Aura Filter enabled, only the globals that are toggled in the Aura Filter will be sent a webhook/clip for. Transcendents are not affected by the Aura Filter.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x305 y222 w80 h25 gToggleAuraFilter vAuraFilterBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -588,6 +561,7 @@ Gui, Add, Button, x45 y445 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y448 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 
+/*
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Webhook Timer
 Gui, Font, s10 c0xCCCCCC Normal
@@ -596,6 +570,7 @@ Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y545 w80 h25 gToggleWebhookTimer vWebhookTimerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y548 w70 h25 vWebhookTimerStatus BackgroundTrans, OFF
+*/
 
 
 
@@ -613,7 +588,7 @@ Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y260 w500 h15 BackgroundTrans, Paste your Discord USERID here to be pinged of actions happening in real time.
 
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y295 w534 h65 cWhite, Macro De/Activation Message
 Gui, Add, Button, x60 y320 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
 Gui, Add, Text, x150 y324 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
@@ -622,7 +597,7 @@ Gui, Add, Text, x410 y324 w60 h25 vDoPingStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x250 y324 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Clip Message
 Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
 Gui, Add, Button, x320 y390 w80 h25 gToggleDoPing2 vDoPing2Btn, Toggle
@@ -634,15 +609,15 @@ Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
 Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y435 w534 h65 cWhite, Aura Detection Ping
 Gui, Add, Button, x320 y460 w80 h25 gToggleDoPing3 vDoPing3Btn, Toggle
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x50 y464 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y464 w60 h25 vDoPing3Status BackgroundTrans, OFF
-
-Gui, Font, s10 cWhite Bold
+/*
+Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message (Beta)
 Gui, Add, Button, x320 y530 w80 h25 gToggleDoPing4 vDoPing4Btn, Toggle
 Gui, Font, s10 cWhite Normal
@@ -651,6 +626,7 @@ Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y534 w60 h25 vDoPing4Status BackgroundTrans, OFF
 Gui, Font, s7 cWhite Normal
 Gui, Add, Text, x465 y516 w80 h100 BackgroundTrans c0xCCCCCC, Does not work with Zombie, Jewlery, or Diver Potions.
+*/
 
 Gui, Tab, Crafting
 
@@ -699,7 +675,7 @@ Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potio
 IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
 GuiControl, Choose, ManualCraft, %selectedItem2%
 
-Gui, Font, s10 cWhite Bold
+Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -721,7 +697,7 @@ Gui, Add, Progress, x23 y100 w2 h32 Background871C00
 Gui, Add, Progress, x575 y100 w2 h32 Background871C00
 Gui, Add, Progress, x208 y99 w180 h27 Background0x1E1E1E
 Gui, Font, s12 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0xFF2C00,  [ ! Handle With Care ! ]
+Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0xFF2C00,  [ ! Disabled ! ]
 Gui, Add, Progress, x23 y463 w554 h2 Background0x871C00
 Gui, Add, Progress, x23 y430 w2 h35 Background0x871C00
 Gui, Add, Progress, x575 y430 w2 h35 Background871C00
@@ -843,13 +819,30 @@ Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y235 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y280 w534 h100 cWhite, Biome Detection (Temporary)
+Gui, Add, GroupBox, x33 y270 w534 h120 cWhite, Detect and Contract Eden (Temporary)
+Gui, Font, s8 c0xCCCCCC Normal
+Gui, Add, Text, x45 y363 w520 h145 BackgroundTrans, Not tested, not much thought into it, sorry if it dont work
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y300 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
+Gui, Add, Text, x45 y290 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Uses Check Pixels so it may not be fully accurate, but should work in most cases)
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x230 y577 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y340 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
+Gui, Add, Button, x45 y330 w80 h25 gToggleDetectEden vDetectEdenBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y343 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y333 w60 h25 vDetectEdenStatus BackgroundTrans, OFF
+
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y390 w270 h135 cWhite, Auto-Clicker
+Gui, Add, Button, x46 y485 w80 h25 gStartAutoClicker vAutoClickStart, Start
+Gui, Add, Button, x136 y485 w80 h25 gStopAutoClicker  vAutoClickStop Disabled, Stop
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x226 y489 w60 h25 vAutoClickerStatus BackgroundTrans, OFF
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x46 y460 w90 h20 BackgroundTrans, Delay (sec):
+Gui, Font, s9 cBlack Bold
+Gui, Add, Edit, x131 y460 w60 h22 vAutoClickDelay, 60
+Gui, Font, s9 c0xCCCCCC Normal
+Gui, Add, Text, x43 y410 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
 if (webhookID = aeryWebhookID) {
     Gui, Tab, Aery
@@ -4715,7 +4708,7 @@ if (toggle) {
             sleep 500
             Click, WheelDown 45
             sleep 300
-        } else if (chattype = "Click") {
+        } else {
             sleep, 1000
             MouseMove, 47, 467, 3
             sleep 220
@@ -4875,9 +4868,8 @@ if (toggle) {
         break
         }
 
-        /*
         ; Auto Rejoin Failsafe
-        if (A_TickCount - globalFailsafeTimer > (autoRejoinFailsafeTime * 1000) && privateServerLink != "") {
+        if (A_TickCount - globalFailsafeTimer > (autoRejoinFailsafeTime * 1000) && privateServerLink = "a") {
         PixelGetColor, checkColor, 1175, 837, RGB
         if (checkColor != 0xFFFFFF) {
         Process, Close, RobloxPlayerBeta.exe
@@ -4937,8 +4929,7 @@ if (toggle) {
         break
         }
         }
-        */
-
+        
         ; Fishing Failsafe
         if (A_TickCount - startWhitePixelSearch > (fishingFailsafeTime * 1000) && !fishingFailsafeRan) {
         MouseMove, 1268, 941, 3
@@ -4979,6 +4970,7 @@ if (toggle) {
         break
         if (A_TickCount - startTime > 9000)
         break
+        */
 
         ; Advanced detection
         if (advancedFishingDetection) {
