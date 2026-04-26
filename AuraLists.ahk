@@ -8,9 +8,11 @@ AuraList := {"Starscourge_Radiant": 1
 , "Symphony": 1
 , "Twilight_Withering_Grace": 1
 , "Felled": 1
+, "Projection": 1
 , "Impeached": 1
 , "Lumenpool": 1
 , "Hyper-Volt_Ever-Storm": 1
+, "Virtual_Memory": 1
 , "Astral_Legendarium": 1
 , "Prophecy": 1
 , "Exotic_Void": 1
@@ -31,6 +33,7 @@ AuraList := {"Starscourge_Radiant": 1
 , "Kyawthuite_Remembrance": 1
 , "Ruins": 1
 , "Matrix_Overdrive": 1
+, "Gravitational_PointZero": 1
 , "Sophyra": 1
 , "SAILOR_ADMIRAL": 1
 , "Matrix_Reality": 1
@@ -58,6 +61,7 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "Luminosity": 1
 , "LEVIATHAN": 1
 , "Leviathan": 1
+, "ASTRAIOS" :1
 , "Breakthrough": 1
 , "BREAKTHROUGH": 1
 , "Equinox": 1
@@ -74,7 +78,7 @@ AuraListTrans := {"NYCTOPHOBIA": 1
 , "skyfestival": 1
 , "EQUINOX_youareanidiot": 1}
 
-AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Impeached", "Impeached_IMCRINE", "Lumenpool", "Lumenpool_Ramenpool", "Hyper-Volt_Ever-Storm", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "Doodle_AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore", "Surfer_Symphony", "Workshop_System"]
+AuraListOrder := ["Chromatic_Genesis", "Starscourge_Radiant", "Spectraflow", "Lily", "Overture", "Symphony", "Twilight_Withering_Grace", "Felled", "Projection", "Impeached", "Impeached_IMCRINE", "Lumenpool", "Lumenpool_Ramenpool", "Hyper-Volt_Ever-Storm", "Virtual_Memory", "Astral_Legendarium", "Prophecy", "Exotic_Void", "BLOODLUST", "Overture_History", "Maelstrom", "Perpetual", "LOTUSFALL", "Jazz_Orchestra", "Archangel", "Atlas", "Flora_Evergreen", "CHILLSEAR", "Celestial_Eclipse", "AbyssalHunter", "Doodle_AbyssalHunter", "GARGANTUA", "APOSTOLOS", "Kyawthuite_Remembrance", "Ruins", "Matrix_Overdrive", "Gravitational_PointZero", "Sophyra", "SAILOR_ADMIRAL", "Matrix_Reality", "PYTHIOS", "Sovereign", "Ruins_Withered", "Aegis", "ASCENDANT", "Raven_Plauge", "Unknown",  "Elude", "PROLOGUE", "Dreamscape", "Eggsistance", "Revive", "Eggore", "Surfer_Symphony", "Workshop_System"]
 EnabledAuras := {}
 for i, aura in AuraListOrder
 EnabledAuras[aura] := 1
