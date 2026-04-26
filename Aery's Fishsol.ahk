@@ -709,7 +709,7 @@ Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x50 y190 w150 h25 BackgroundTrans, Private Server Link:
 Gui, Add, Edit, x50 y215 w500 h25 vPrivateServerInput gUpdatePrivateServer Background0xD3D3D3 cBlack, %privateServerLink%
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y245 w500 h15 BackgroundTrans, Paste your Roblox private server link here (leave empty to disable)
+Gui, Add, Text, x50 y245 w500 h15 BackgroundTrans, DISABLED NO MATTER WHAT
 Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x79 y306 w450 h40 BackgroundTrans c0xCCCCCC, Customize how long until the Auto-Rejoin Failsafe triggers. (Default : 320)
 Gui, Font, s11 cWhite Bold
@@ -1975,17 +1975,16 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     biomeKey := "Biome" StrReplace(biome, " ", "")
                     IniRead, isBiomeEnabled, %iniFilePath%, "Biomes", %biomeKey%, 1
 
-                    if (isBiomeEnabled = 1 || biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") {
+                    if (isBiomeEnabled = 1 || biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE" || biome = "SINGULARITY") {
                             prevBiome := biome
                             biome_url := StrReplace(biome, " ", "_")
                             thumbnail_url := "https://maxstellar.github.io/biome_thumb/" biome_url ".png"
-
-                            color := biomeColors.HasKey(biome) ? biomeColors[biome] : 16777215
+                            color := 0
 
                             time := A_NowUTC
                             timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-                            if (biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") {
+                            if (biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE" || biome = "SINGULARITY") {
                                 RareBiomeWarning()
                                 if (!cancelRareBiomeWebhook) {
                                     content := "@everyone"
