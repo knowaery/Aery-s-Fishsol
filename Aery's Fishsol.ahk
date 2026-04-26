@@ -303,7 +303,7 @@ if (webhookID = "912451579918041118") {
 }
 
 
-version := "Aery's v1.5.4"
+version := "Aery's v1.5.5"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -329,9 +329,9 @@ GetDevImg(name) {
 }
 
 Gui, Color, 0x1E1E1E
-Gui, Font, s17 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y10 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.4
-Gui, Font, s12 cWhite Bold, Segoe UI
+Gui, Font, s15 cWhite Bold, Segoe UI
+Gui, Add, Text, x0 y8 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.5
+Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
 Gui, Font, s10 cWhite Normal, Segoe UI
@@ -339,14 +339,14 @@ Gui, Font, s10 cWhite Normal, Segoe UI
 tabList := "Main|Misc|Webhook"
 tabList .= "|Auras"
 tabList .= "|Crafting"
-tabList .= "|Failsafes"
+tabList .= "|Private Server"
 tabList .= "|About"
 tabList .= "|Extra"
 if (webhookID = aeryWebhookID) {
     tabList .= "|Aery"
 }
 
-Gui, Add, Tab3, x15 y55 w570 h600 vMainTabs gTabChange c0xFFFFFF, %tabList%
+Gui, Add, Tab3, x15 y55 w570 h500 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
 Gui, Tab, Main
 Gui, Font, s9 cWhite Normal, Segoe UI
@@ -417,6 +417,7 @@ Gui, Add, Text, x270 y470 w285 h30 BackgroundTrans, Advanced Fishing Detection u
 Gui, Font, s9 c0x00D4FF Bold
 Gui, Add, Text, x297 y503 w515 h30 BackgroundTrans c0x00D4FF, [ Recommended For Lower End Devices ]
 
+/*
 Gui, Font, s10 cWhite Bold
 Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, How to Close Collection
 Gui, Add, DropDownList, x45 y400 w80 h125 vChatVersion gchatType, \ Key|Click
@@ -427,14 +428,15 @@ if (chatType = "ERROR" || chatType = "") {
 GuiControl, Choose, ChatVersion, %chatType%
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x45 y367 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
+*/
 
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x30 y452 w205 h95 BackgroundTrans, Roblox MUST be in fullscreen mode
+Gui, Add, Text, x30 y355 w205 h95 BackgroundTrans, Roblox MUST be in fullscreen mode
 Gui, Font, s8 c0xCCCCCC
-Gui, Add, Text, x30 y500 w5000 h15 BackgroundTrans, Hotkeys:
-Gui, Add, Text, x30 y515 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
-Gui, Add, Text, x30 y530 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
-Gui, Add, Text, x30 y545 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
+Gui, Add, Text, x30 y400 w5000 h15 BackgroundTrans, Hotkeys:
+Gui, Add, Text, x30 y415 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
+Gui, Add, Text, x30 y430 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
+Gui, Add, Text, x30 y445 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
 
 Gui, Tab, Misc
 
@@ -500,21 +502,11 @@ Gui, Add, Text, x415 y283 w60 h25 vAutoWarpStatus BackgroundTrans, OFF
 Gui, Add, DropDownList, x410 y317 w148 vSkipPotionType gskipType, Warp Potion|Transcendent Potion
 IniRead, skipType, %iniFilePath%, Macro, skipType
 GuiControl, Choose, SkipPotionType, %skipType%
-
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x22 y490 w534 h100 cWhite, Biome Detection
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x35 y510 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x35 y555 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x133 y558 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
-
 Gui, Tab, Auras
 
 Gui, Font, s13 cWhite Bold, Segoe UI
-Gui, Add, Button, x100 y600 w170 h35 gOpenNvidiaNotes, Clipping Tutorial
-Gui, Add, Button, x310 y600 w150 h35 gOpenAuraFilter, Aura Filter
+Gui, Add, Button, x100 y500 w170 h35 gOpenNvidiaNotes, Clipping Tutorial
+Gui, Add, Button, x310 y500 w150 h35 gOpenAuraFilter, Aura Filter
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y125 w240 h141 cWhite, Aura Detection (Beta)
@@ -675,7 +667,7 @@ Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potio
 IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
 GuiControl, Choose, ManualCraft, %selectedItem2%
 
-Gui, Font, s11 cWhite Bold
+Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -690,54 +682,27 @@ Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x153 y308 w70 h25 vManualCraftStatus BackgroundTrans, OFF
 
-Gui, Tab, Failsafes
-
-Gui, Add, Progress, x23 y99 w554 h2 Background871C00
-Gui, Add, Progress, x23 y100 w2 h32 Background871C00
-Gui, Add, Progress, x575 y100 w2 h32 Background871C00
-Gui, Add, Progress, x208 y99 w180 h27 Background0x1E1E1E
-Gui, Font, s12 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0xFF2C00,  [ ! Disabled ! ]
-Gui, Add, Progress, x23 y463 w554 h2 Background0x871C00
-Gui, Add, Progress, x23 y430 w2 h35 Background0x871C00
-Gui, Add, Progress, x575 y430 w2 h35 Background871C00
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x32 y110 w533 h225 cWhite, Auto-Rejoin Failsafe
-Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x50 y140 w500 h40 BackgroundTrans c0xCCCCCC, If the fishing minigame is not detected for the specified time, the macro will`nautomatically rejoin using the private server link below.
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x50 y190 w150 h25 BackgroundTrans, Private Server Link:
-Gui, Add, Edit, x50 y215 w500 h25 vPrivateServerInput gUpdatePrivateServer Background0xD3D3D3 cBlack, %privateServerLink%
-Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y245 w500 h15 BackgroundTrans, DISABLED NO MATTER WHAT
-Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x79 y306 w450 h40 BackgroundTrans c0xCCCCCC, Customize how long until the Auto-Rejoin Failsafe triggers. (Default : 320)
-Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x145 y275 w150 h25 BackgroundTrans, Seconds:
-Gui, Add, Edit, x218 y272 w150 h25 vAutoRejoinFailsafeInput gUpdateAutoRejoinFailsafe Number Background0xD3D3D3 cBlack, %autoRejoinFailsafeTime%
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x32 y340 w260 h105 cWhite, Fishing Failsafe
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x45 y370 w230 h40 BackgroundTrans c0xCCCCCC, Customize how long until the Fishing Failsafe triggers. (Default : 31)
-Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x45 y413 w150 h35 BackgroundTrans, Seconds:
-Gui, Add, Edit, x125 y411 w150 h25 vFishingFailsafeInput gUpdateFishingFailsafe Number Background0xD3D3D3 cBlack, %fishingFailsafeTime%
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x307 y340 w258 h105 cWhite, Pathing Failsafe
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x320 y370 w230 h45 BackgroundTrans c0xCCCCCC, Customize how long until the Pathing Failsafe triggers. (Default : 61)
-Gui, Font, s11 cWhite Bold
-Gui, Add, Text, x320 y413 w150 h35 BackgroundTrans, Seconds:
-Gui, Add, Edit, x400 y411 w150 h25 vPathingFailsafeInput gUpdatePathingFailsafe Number Background0xD3D3D3 cBlack, %pathingFailsafeTime%
+Gui, Tab, Private Server
+Gui, Add, Text, x35 y90 w150 h25 BackgroundTrans, Private Server Link:
+Gui, Add, Edit, x35 y115 w515 h25 vPrivateServerInput gUpdatePrivateServer Background0xD3D3D3 cBlack, %privateServerLink%
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Check For Ghost Server
+Gui, Add, GroupBox, x33 y185 w534 h100 cWhite, Check For Ghost Server
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Checks for Ghost Server at the start of script, then hourly by seeing if you have access to Command Panel. If detected joins the server in private server link.
+Gui, Add, Text, x45 y205 w500 h145 BackgroundTrans, Checks for Ghost Server at the start of script, then hourly by seeing if you have access to Command Panel. If detected joins the server in private server link.
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y545 w80 h25 gToggleCheckGhostServer vCheckGhostServerBtn, Toggle
+Gui, Add, Button, x45 y245 w80 h25 gToggleCheckGhostServer vCheckGhostServerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y548 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
+Gui, Add, Text, x143 y248 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
+
+Gui, Font, s11 cWhite Bold
+Gui, Add, GroupBox, x33 y290 w534 h100 cWhite, Biome Detection
+Gui, Font, s10 c0xCCCCCC Normal
+Gui, Add, Text, x45 y310 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y355 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y358 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
 
 
 Gui, Tab, About
@@ -798,7 +763,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.4 (2026-04-15)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.5 (2026-04-15)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Tab, Extra
@@ -825,7 +790,7 @@ Gui, Add, Text, x45 y363 w520 h145 BackgroundTrans, Not tested, not much thought
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y290 w520 h145 BackgroundTrans, Automatically detects if Eden has spawned in and contracts with it. (Uses Check Pixels so it may not be fully accurate, but should work in most cases)
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x230 y577 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
+Gui, Add, Text, x230 y330 w400 h135 BackgroundTrans, ! This automatically starts when toggle is ON !
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y330 w80 h25 gToggleDetectEden vDetectEdenBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -866,7 +831,7 @@ if (webhookID = aeryWebhookID) {
     Gui, Add, Text, x143 y203 w70 h25 vCyberCityStatus BackgroundTrans, OFF
 }
 
-Gui, Show, w600 h670,  Aery's fishSol v1.5.4
+Gui, Show, w600 h570,  Aery's fishSol v1.5.5
 
 GuiControl, Choose, Resolution, 1
 
@@ -1109,6 +1074,12 @@ if (easterMacro) {
 if (checkGhostServer) {
     GuiControl,, CheckGhostServerStatus, ON
     GuiControl, +c0x00DD00, CheckGhostServerStatus
+    if (privateServerLink = "") {
+        TrayTip, Please Enter a Private Server Link!, Private Server Tab -> Private Server Link
+        GuiControl,, CheckGhostServerStatus, OFF
+        GuiControl, +c0xFF4444, CheckGhostServerStatus
+        checkGhostServer := false
+    }
 } else {
     GuiControl,, CheckGhostServerStatus, OFF
     GuiControl, +c0xFF4444, CheckGhostServerStatus
@@ -1125,6 +1096,12 @@ if (cyberCity) {
 if (biomeDetect) {
     GuiControl,, BiomeDetectStatus, ON
     GuiControl, +c0x00DD00, BiomeDetectStatus
+        if (privateServerLink = "") {
+        TrayTip, Please Enter a Private Server Link!, Private Server Tab -> Private Server Link
+        GuiControl,, BiomeDetectStatus, OFF
+        GuiControl, +c0xFF4444, BiomeDetectStatus
+        biomeDetect := false
+    }
 } else {
     GuiControl,, BiomeDetectStatus, OFF
     GuiControl, +c0xFF4444, BiomeDetectStatus
@@ -1574,6 +1551,12 @@ ToggleCheckGhostServer:
     if (checkGhostServer) {
         GuiControl,, CheckGhostServerStatus, ON
         GuiControl, +c0x00DD00, CheckGhostServerStatus
+        if (privateServerLink = "") {
+            TrayTip, Please Enter a Private Server Link!, Private Server Tab -> Private Server Link
+            GuiControl,, CheckGhostServerStatus, OFF
+            GuiControl, +c0xFF4444, CheckGhostServerStatus
+            checkGhostServer := false
+        }
     } else {
         GuiControl,, CheckGhostServerStatus, OFF
         GuiControl, +c0xFF4444, CheckGhostServerStatus
@@ -1600,6 +1583,12 @@ ToggleBiomeDetect:
     if (biomeDetect) {
         GuiControl,, BiomeDetectStatus, ON
         GuiControl, +c0x00DD00, BiomeDetectStatus
+            if (privateServerLink = "") {
+            TrayTip, Please Enter a Private Server Link!, Private Server Tab -> Private Server Link
+            GuiControl,, BiomeDetectStatus, OFF
+            GuiControl, +c0xFF4444, BiomeDetectStatus
+            biomeDetect := false
+        }
     } else {
         GuiControl,, BiomeDetectStatus, OFF
         GuiControl, +c0xFF4444, BiomeDetectStatus
@@ -1651,6 +1640,7 @@ UpdatePrivateServer:
     IniWrite, %privateServerLink%, %iniFilePath%, Macro, privateServerLink
 return
 
+/*
 UpdateFishingFailsafe:
     Gui, Submit, NoHide
     if (FishingFailsafeInput > 0) {
@@ -1674,6 +1664,7 @@ UpdateAutoRejoinFailsafe:
         IniWrite, %autoRejoinFailsafeTime%, %iniFilePath%, Macro, autoRejoinFailsafeTime
     }
 return
+*/
 
 UpdateAdvancedThreshold:
     Gui, Submit, nohide
@@ -1817,7 +1808,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
 
@@ -1832,7 +1823,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 . contentStr
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1843,7 +1834,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 json := "{"
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1858,7 +1849,7 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 . contentStr
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.4"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1975,11 +1966,33 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     biomeKey := "Biome" StrReplace(biome, " ", "")
                     IniRead, isBiomeEnabled, %iniFilePath%, "Biomes", %biomeKey%, 1
 
-                    if (isBiomeEnabled = 1 || biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE" || biome = "SINGULARITY") {
+                        if (isBiomeEnabled = 1 || biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE" || biome = "SINGULARITY") {
                             prevBiome := biome
-                            biome_url := StrReplace(biome, " ", "_")
-                            thumbnail_url := "https://maxstellar.github.io/biome_thumb/" biome_url ".png"
-                            color := 0
+                            
+                            if (biomeData = "") {
+                                biomeData := {}
+                                biomeData["NORMAL"]      := {color: 12582656,  thumbnail: "https://maxstellar.github.io/biome_thumb/GLITCHED.png"}
+                                biomeData["EGGLAND"]     := {color: 13958285,  thumbnail: "https://raw.githubusercontent.com/xVapure/Noteab-Macro/refs/heads/main/images/EGGLAND.png"}
+                                biomeData["WINDY"]       := {color: 10150399,  thumbnail: "https://maxstellar.github.io/biome_thumb/WINDY.png"}
+                                biomeData["RAINY"]       := {color: 163773,    thumbnail: "https://maxstellar.github.io/biome_thumb/RAINY.png"}
+                                biomeData["SNOWY"]       := {color: 14479353,  thumbnail: "https://maxstellar.github.io/biome_thumb/SNOWY.png"}
+                                biomeData["SAND STORM"]  := {color: 9401431,   thumbnail: "https://maxstellar.github.io/biome_thumb/SAND%20STORM.png"}
+                                biomeData["HELL"]        := {color: 16730905,  thumbnail: "https://maxstellar.github.io/biome_thumb/HELL.png"}
+                                biomeData["STARFALL"]    := {color: 72375,     thumbnail: "https://maxstellar.github.io/biome_thumb/STARFALL.png"}
+                                biomeData["CORRUPTION"]  := {color: 7155368,   thumbnail: "https://maxstellar.github.io/biome_thumb/CORRUPTION.png"}
+                                biomeData["NULL"]        := {color: 8618883,   thumbnail: "https://maxstellar.github.io/biome_thumb/NULL.png"}
+                                biomeData["GLITCHED"]    := {color: 12582656,  thumbnail: "https://maxstellar.github.io/biome_thumb/GLITCHED.png"}
+                                biomeData["DREAMSPACE"]  := {color: 15376858,  thumbnail: "http://github.com/xVapure/Noteab-Macro/blob/main/images/Screenshot_2026-01-03_021107.png?raw=true"}
+                                biomeData["AURORA"]      := {color: 18347,     thumbnail: "https://raw.githubusercontent.com/vexthecoder/OysterDetector/main/assets/aurora.png"}
+                                biomeData["HEAVEN"]      := {color: 16769184,  thumbnail: "https://maxstellar.github.io/biome_thumb/HEAVEN.png"}
+                                biomeData["CYBERSPACE"]  := {color: 663101,    thumbnail: "https://raw.githubusercontent.com/xVapure/Noteab-Macro/refs/heads/main/images/CYBERSPACE.png"}
+                                biomeData["SINGULARITY"] := {color: 13582371,  thumbnail: "https://raw.githubusercontent.com/xVapure/Noteab-Macro/refs/heads/main/images/SINGULARITY.png"}
+                            }
+
+                            if (biomeData.HasKey(biome)) {
+                                color        := biomeData[biome].color
+                                thumbnail_url := biomeData[biome].thumbnail
+                            }
 
                             time := A_NowUTC
                             timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
@@ -1988,9 +2001,10 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 RareBiomeWarning()
                                 if (!cancelRareBiomeWebhook) {
                                     content := "@everyone"
-                                }} else {
-                                    content := ""
                                 }
+                            } else {
+                                content := ""
+                            }
 
                             json := "{"
                             . """embeds"": ["
@@ -2790,7 +2804,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.4"","
+    . """text"": ""Aery's fishSol v1.5.5"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2825,7 +2839,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.4"","
+    . """text"": ""Aery's fishSol v1.5.5"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2869,7 +2883,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.4"","
+    . """text"": ""Aery's fishSol v1.5.5"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2913,7 +2927,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.4"","
+    . """text"": ""Aery's fishSol v1.5.5"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
