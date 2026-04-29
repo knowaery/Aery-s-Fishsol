@@ -24,10 +24,6 @@ strangeController := false
 biomeRandomizer := false
 autoCloseChat := false
 privateServerLink := ""
-globalFailsafeTimer := 0
-fishingFailsafeTime := 31
-pathingFailsafeTime := 61
-autoRejoinFailsafeTime := 320
 webhookURL := ""
 webhookID := ""
 clipWebhook := false
@@ -80,10 +76,6 @@ webhookTimer := false
 biomeWebhook := false
 biomemacro := false
 openmax := false
-easterPathingTime := 1800000
-easterMacro := false
-easterInterval := 30
-easterPathingLastRun := 0
 checkGhostServer := false
 checkingicon := false
 checkGhostServerlastRun := 0
@@ -133,21 +125,6 @@ if (FileExist(iniFilePath)) {
     if (tempAdvancedFishing != "ERROR")
     {
         advancedFishingToggle := (tempAdvancedFishing = "true" || tempAdvancedFishing = "1")
-    }
-    IniRead, tempFishingFailsafe, %iniFilePath%, Macro, fishingFailsafeTime
-    if (tempFishingFailsafe != "ERROR" && tempFishingFailsafe > 0)
-    {
-        fishingFailsafeTime := tempFishingFailsafe
-    }
-    IniRead, tempPathingFailsafe, %iniFilePath%, Macro, pathingFailsafeTime
-    if (tempPathingFailsafe != "ERROR" && tempPathingFailsafe > 0)
-    {
-        pathingFailsafeTime := tempPathingFailsafe
-    }
-    IniRead, tempAutoRejoinFailsafe, %iniFilePath%, Macro, autoRejoinFailsafeTime
-    if (tempAutoRejoinFailsafe != "ERROR" && tempAutoRejoinFailsafe > 0)
-    {
-        autoRejoinFailsafeTime := tempAutoRejoinFailsafe
     }
     IniRead, tempAutoUnequip, %iniFilePath%, Macro, autoUnequip
     if (tempAutoUnequip != "ERROR")
@@ -268,10 +245,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempOpenMax, %iniFilePath%, Macro, openmax
     if (tempOpenMax != "ERROR")
     openmax := (tempOpenMax = "true" || tempOpenMax = "1")
-    
-    IniRead, tempEasterMacro, %iniFilePath%, Macro, easterMacro
-    if (tempEasterMacro != "ERROR")
-    easterMacro := (tempEasterMacro = "true" || tempEasterMacro = "1")
 
     IniRead, tempCheckGhostServer, %iniFilePath%, Macro, checkGhostServer
     if (tempCheckGhostServer != "ERROR")
@@ -286,11 +259,6 @@ if (FileExist(iniFilePath)) {
     {
         advancedFishingThreshold := tempAdvancedThreshold
     }
-    IniRead, tempEasterInterval, %iniFilePath%, Macro, easterInterval, 30
-    if (tempEasterInterval != "ERROR")
-    {
-        easterInterval := tempEasterInterval
-    }
     for i, aura in AuraListOrder {
         IniRead, tempEnabled, %iniFilePath%, EnabledAuras, %aura%
         if (tempEnabled = "0")
@@ -298,12 +266,14 @@ if (FileExist(iniFilePath)) {
     }
 }
 
+
 if (webhookID = "912451579918041118") {
     #Include %A_ScriptDir%\AeryBiomeMacro.ahk
 }
 
 
-version := "Aery's v1.5.5"
+
+version := "Aery's v1.6"
 code := ""
 if RegExMatch(privateServerLink, "code=([^&]+)", m)
 {
@@ -330,7 +300,7 @@ GetDevImg(name) {
 
 Gui, Color, 0x1E1E1E
 Gui, Font, s15 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y8 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.5.5
+Gui, Add, Text, x0 y8 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.6
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
 
@@ -579,35 +549,25 @@ Gui, Add, Edit, x50 y230 w500 h25 vUserIDInput gUpdateUserID Background0xD3D3D3 
 Gui, Font, s8 c0xCCCCCC Normal
 Gui, Add, Text, x50 y260 w500 h15 BackgroundTrans, Paste your Discord USERID here to be pinged of actions happening in real time.
 
-
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y295 w534 h65 cWhite, Macro De/Activation Message
-Gui, Add, Button, x60 y320 w80 h25 gToggleOnoffWebhook vOnoffWebhookBtn, Toggle
-Gui, Add, Text, x150 y324 w60 h25 vOnoffWebhookStatus BackgroundTrans, OFF
-Gui, Add, Button, x320 y320 w80 h25 gToggledoPing vDoPingBtn, Toggle
-Gui, Add, Text, x410 y324 w60 h25 vDoPingStatus BackgroundTrans, OFF
+Gui, Add, GroupBox, x33 y315 w534 h65 cWhite, Macro Clip Message
+Gui, Add, Button, x60 y340 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
+Gui, Add, Button, x320 y340 w80 h25 gToggleDoPing2 vDoPing2Btn, Toggle
 Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x250 y324 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
-
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y365 w534 h65 cWhite, Macro Clip Message
-Gui, Add, Button, x60 y390 w80 h25 gToggleClipWebhook vClipWebhookBtn, Toggle
-Gui, Add, Button, x320 y390 w80 h25 gToggleDoPing2 vDoPing2Btn, Toggle
-Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x250 y394 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
+Gui, Add, Text, x250 y344 w100 h25 BackgroundTrans c0xCCCCCC, Ping User: 
 Gui, Font, s7 cWhite Normal
-Gui, Add, Text, x465 y376 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
+Gui, Add, Text, x465 y326 w80 h100 BackgroundTrans c0xCCCCCC, Messages and/or pings if anything has been clipped via Webhook.
 Gui, Font, s10 c0xCCCCCC Bold   
-Gui, Add, Text, x410 y394 w60 h25 vDoPing2Status BackgroundTrans, OFF
-Gui, Add, Text, x150 y394 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
+Gui, Add, Text, x410 y344 w60 h25 vDoPing2Status BackgroundTrans, OFF
+Gui, Add, Text, x150 y344 w60 h25 vClipWebhookStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y435 w534 h65 cWhite, Aura Detection Ping
-Gui, Add, Button, x320 y460 w80 h25 gToggleDoPing3 vDoPing3Btn, Toggle
+Gui, Add, GroupBox, x33 y385 w534 h65 cWhite, Aura Detection Ping
+Gui, Add, Button, x320 y410 w80 h25 gToggleDoPing3 vDoPing3Btn, Toggle
 Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x50 y464 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
+Gui, Add, Text, x50 y414 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
 Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x410 y464 w60 h25 vDoPing3Status BackgroundTrans, OFF
+Gui, Add, Text, x410 y414 w60 h25 vDoPing3Status BackgroundTrans, OFF
 /*
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message (Beta)
@@ -763,25 +723,10 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.5.5 (2026-04-15)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-04-15)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Tab, Extra
-Gui, Font, s11 cWhite Bold, Segoe UI
-Gui, Add, GroupBox, x33 y100 w534 h160 cWhite, Easter Macro
-
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y165 w400 h50 BackgroundTrans, When toggled, The macro will automatically collect Easter eggs around the map every
-Gui, Add, Text, x180 y181 w80 h50 vEasterIntervalText BackgroundTrans c0x00D4FF, %easterInterval% minutes
-
-Gui, Font, s10 cWhite Bold
-Gui, Add, Button, x45 y130 w80 h25 gToggleEasterMacro vEasterMacroBtn, Toggle
-Gui, Font, s10 cWhite Normal Bold
-Gui, Add, Text, x150 y135 w40 h25 vEasterPathingStatus BackgroundTrans, OFF
-Gui, Font, s10 cWhite Bold
-Gui, Add, Edit, x45 y205 w60 h25 vEasterIntervalInput gUpdateEasterInterval Number Background0xD3D3D3 cBlack, %easterInterval%
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y235 w400 h25 BackgroundTrans, Customise how frequently the Easter egg pathing runs.
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y270 w534 h120 cWhite, Detect and Contract Eden (Temporary)
@@ -831,7 +776,7 @@ if (webhookID = aeryWebhookID) {
     Gui, Add, Text, x143 y203 w70 h25 vCyberCityStatus BackgroundTrans, OFF
 }
 
-Gui, Show, w600 h570,  Aery's fishSol v1.5.5
+Gui, Show, w600 h570,  Aery's fishSol v1.6
 
 GuiControl, Choose, Resolution, 1
 
@@ -1064,13 +1009,6 @@ if (openmax) {
     GuiControl,, OpenMaxStatus, OFF
     GuiControl, +c0xFF4444, OpenMaxStatus
 }
-if (easterMacro) {
-    GuiControl,, EasterPathingStatus, ON
-    GuiControl, +c0x00DD00, EasterPathingStatus
-} else {
-    GuiControl,, EasterPathingStatus, OFF
-    GuiControl, +c0xFF4444, EasterPathingStatus
-}
 if (checkGhostServer) {
     GuiControl,, CheckGhostServerStatus, ON
     GuiControl, +c0x00DD00, CheckGhostServerStatus
@@ -1107,7 +1045,6 @@ if (biomeDetect) {
     GuiControl, +c0xFF4444, BiomeDetectStatus
 }
 
-GuiControl,, EasterIntervalInput, %easterInterval%
 SetTimer, AuraBiomeDetect, 1000
 
 AuraCheckChange:
@@ -1534,18 +1471,6 @@ ToggleOpenMax:
     IniWrite, % (openmax ? "true" : "false"), %iniFilePath%, Macro, openmax
 return
 
-ToggleEasterMacro:
-    easterMacro := !easterMacro
-    if (easterMacro) {
-        GuiControl,, EasterPathingStatus, ON
-        GuiControl, +c0x00DD00, EasterPathingStatus
-    } else {
-        GuiControl,, EasterPathingStatus, OFF
-        GuiControl, +c0xFF4444, EasterPathingStatus
-    }
-    IniWrite, % (easterMacro ? "true" : "false"), %iniFilePath%, Macro, easterMacro
-return
-
 ToggleCheckGhostServer:
     checkGhostServer := !checkGhostServer
     if (checkGhostServer) {
@@ -1640,47 +1565,12 @@ UpdatePrivateServer:
     IniWrite, %privateServerLink%, %iniFilePath%, Macro, privateServerLink
 return
 
-/*
-UpdateFishingFailsafe:
-    Gui, Submit, NoHide
-    if (FishingFailsafeInput > 0) {
-        fishingFailsafeTime := FishingFailsafeInput
-        IniWrite, %fishingFailsafeTime%, %iniFilePath%, Macro, fishingFailsafeTime
-    }
-return
-
-UpdatePathingFailsafe:
-    Gui, Submit, NoHide
-    if (PathingFailsafeInput > 0) {
-        pathingFailsafeTime := PathingFailsafeInput
-        IniWrite, %pathingFailsafeTime%, %iniFilePath%, Macro, pathingFailsafeTime
-    }
-return
-
-UpdateAutoRejoinFailsafe:
-    Gui, Submit, NoHide
-    if (AutoRejoinFailsafeInput > 0) {
-        autoRejoinFailsafeTime := AutoRejoinFailsafeInput
-        IniWrite, %autoRejoinFailsafeTime%, %iniFilePath%, Macro, autoRejoinFailsafeTime
-    }
-return
-*/
-
 UpdateAdvancedThreshold:
     Gui, Submit, nohide
     if (AdvancedThresholdInput >= 0 && AdvancedThresholdInput <= 40) {
         advancedFishingThreshold := AdvancedThresholdInput
         IniWrite, %advancedFishingThreshold%, %iniFilePath%, Macro, advancedFishingThreshold
     }
-return
-
-UpdateEasterInterval:
-    Gui, Submit, NoHide
-    easterInterval := EasterIntervalInput
-    easterPathingInterval := easterInterval * 60000
-    easterPathingTime := easterInterval * 60000
-    IniWrite, %easterInterval%, %iniFilePath%, Macro, easterInterval
-    GuiControl,, EasterIntervalText, %easterInterval% minutes
 return
 
 RainbowText:
@@ -1722,6 +1612,7 @@ HSLtoRGB(h, s, l) {
 
 AuraBiomeDetect:
 global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
+auracolor := 0
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1786,29 +1677,14 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                 }
                 
             if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && auraName != "pukeko") {
-                if AuraList.HasKey(auraName) {
-                    if (auraFilter && EnabledAuras[auraName]) {
-                        if (webhookTimer) {
-                            ClipCountdownGlobal()
-                            brainrot67 := "67"
-                        }
-                    } else if (!auraFilter) {
-                        if (webhookTimer) {
-                            ClipCountdownGlobal()
-                            brainrot67 := "67"
-                        }
-                    }} else {
-                        if (webhookTimer) {
-                            ClipCountdown()
-                        }
-                    }
                     if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") { ; normal auras
                         json := "{"
                             . mentionsStr
                             . contentStr
                             . """embeds"": [{"
                             . """description"": "" ### Aura Equipped - " auraName ""","
-                            . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                            . """color"": " auracolor ","
+                            . """footer"": {""text"": ""Aery's fishSol v1.6"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                             . """timestamp"": """ timestamp """"
                             . "}]}"
 
@@ -1823,7 +1699,8 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 . contentStr
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """color"": " auracolor ","
+                                . """footer"": {""text"": ""Aery's fishSol v1.6"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1834,7 +1711,8 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 json := "{"
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """color"": " auracolor ","
+                                . """footer"": {""text"": ""Aery's fishSol v1.6"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1849,7 +1727,8 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                                 . contentStr
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
-                                . """footer"": {""text"": ""Aery's fishSol v1.5.5"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
+                                . """color"": " auracolor ","
+                                . """footer"": {""text"": ""Aery's fishSol v1.6"", ""icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png""},"
                                 . """timestamp"": """ timestamp """"
                                 . "}]}"
                             http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -1899,31 +1778,6 @@ global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
                         SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
-                    }
-                } else if (auraName = "Eostre") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Flora Evergreen Rework!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EostreCollection.gif")
-                    }
-                } else if (auraName = "Aegis_EGGIS") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Egg of the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
-                    }
-                } else if (auraName = "YOLKEGG") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Technologically Advanced Yolk!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EGGISCollection.gif")
-                    }
-                } else if (auraName = "skyfestival") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **The Festive Vibes float in the Sky!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Sky_FestivalCollection_gif.webp")
-                    }
-                } else if (auraName = "EQUINOX_youareanidiot") {
-                    ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2("**Now your getting yourself closer to the ZERO... \nwait... \nWHAT?** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
                     }
                 }
                 
@@ -2118,14 +1972,6 @@ PopSkips() {
 
 RareBiomeWarning() {
     if (!cancelRareBiomeWebhook) {
-        TrayTip, Rare Biome has been detected, F5 to cancel webhook (5)
-        sleep, 1000
-    }
-    if (!cancelRareBiomeWebhook) {
-        TrayTip, Rare Biome has been detected, F5 to cancel webhook (4)
-        sleep, 1000|
-    }
-    if (!cancelRareBiomeWebhook) {
         TrayTip, Rare Biome has been detected, F5 to cancel webhook (3)
         sleep, 1000
     }
@@ -2204,580 +2050,6 @@ UpdateUserID:
 return
 
 
-RunEasterPathing() {
-
-    sleep, 1000
-    MouseMove, 47, 467, 3
-    sleep 220
-    Click, Left
-    sleep 220
-
-    Send, {\}
-    sleep, 300
-    Send, {Enter}
-    sleep 220
-    Send, {\}
-    sleep, 250
-    Click, WheelUp 80
-    sleep 500
-    Click, WheelDown 45
-    sleep 300
-
-    SetTimer, PressE, 500
-    SetTimer, MerchantClick2, 5000
-
-    Send, {%keyW% Down}
-    sleep 2000
-    Send, {%keyA% Down}
-    sleep 2000
-    Send, {%keyW% Up}
-    sleep 2000
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1500
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 175
-    Send, {s Up}
-    sleep 100
-
-    SetTimer, PressE, Off
-    SetTimer, MerchantClick2, Off
-
-    Send, {space Down}
-    sleep 50
-    Send, {%keyW% Down}
-    sleep 50
-    Send, {space Up}
-    sleep 100
-    Send, {space Down}
-    sleep 700
-    Send, {space Up}
-    sleep 400
-    Send, {%keyW% Up}
-    sleep 300
-    Send, {%keyA% Down}
-    sleep 200
-
-    SetTimer, PressE, 500
-    SetTimer, MerchantClick2, 5000
-
-    sleep 800
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1600
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 2600
-    Send, {s Down}
-    sleep 750
-    Send, {%keyA% Up}
-    sleep 2600
-    Send, {s Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 1500
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 200
-    Send, {space Down}
-    sleep 100
-    Send, {space Up}
-    sleep 5000
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 700
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 2700
-    Send, {d Down}
-    sleep 800
-    Send, {d Up}
-    sleep 1000
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 400
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 1000
-    Send, {d Down}
-    sleep 900
-    Send, {d Up}
-    Send, {%keyA% Down}
-    sleep 1400
-    Send, {%keyA% Up}
-    sleep 1500
-    Send, {%keyA% Down}
-    sleep 600
-    Send, {%keyA% Up}
-    sleep 3800
-    Send, {s Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 500
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1000
-    Send, {%keyA% Down}
-    sleep 400
-    Send, {%keyA% Up}
-    sleep 1700
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 1200
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 3300
-    Send, {s Up}
-
-    SetTimer, PressE, Off
-
-    MouseMove, 35, 405, 3
-    sleep 250
-    MouseClick, Left
-    sleep 250
-    MouseClick, Left
-    sleep 250
-
-    SetTimer, MerchantClick2, Off
-
-    Send, {esc}
-    sleep 650
-    Send, {r}
-    sleep 650
-    Send, {enter}
-    sleep 2600
-
-    SetTimer, PressE, 500
-    SetTimer, MerchantClick2, 5000
-
-    Send, {%keyW% Down}
-    sleep 2000
-    Send, {%keyA% Down}
-    sleep 2000
-    Send, {%keyW% Up}
-    sleep 2000
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1500
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {s Down}
-    Send, {d Down}
-    sleep 300
-    Send, {s Up}
-    Send, {d Up}
-    sleep 100
-    Send, {d Down}
-    sleep 800
-    Send, {%keyW% Down}
-    sleep 800
-    Send, {%keyW% Up}
-    sleep 1300
-
-    SetTimer, PressE, Off
-
-    Send, {s Down}
-    sleep 1200
-    Send, {s Up}
-    sleep 1000
-
-    SetTimer, PressE, 500
-
-    sleep 2500
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 2000
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 2200
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 700
-    Send, {s Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 8000
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 500
-    Send, {%keyW% Up}
-    sleep 200
-
-    SetTimer, PressE, Off
-
-    MouseMove, 35, 405, 3
-    sleep 250
-    MouseClick, Left
-    sleep 250
-    MouseClick, Left
-    sleep 250
-
-    SetTimer, MerchantClick2, Off
-
-    Send, {esc}
-    sleep 650
-    Send, {r}
-    sleep 650
-    Send, {enter}
-
-    SetTimer, PressE, 500
-    SetTimer, MerchantClick2, 5000
-
-    sleep 2600
-    Send, {%keyW% Down}
-    sleep 650
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 650
-    Send, {s Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 650
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 650
-    Send, {d Up}
-    sleep 100
-    Send, {d Down}
-    sleep 650
-    Send, {d Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 650
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    Send, {s Down}
-    sleep 2700
-    Send, {%keyA% Up}
-    sleep 3000
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 1000
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    Send, {%keyA% Down}
-    sleep 150
-    Send, {%keyW% Up}
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {space Down}
-    sleep 50
-    Send, {d Down}
-    sleep 50
-    Send, {space Up}
-    sleep 250
-    Send, {d Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 300
-    Send, {%keyW% Down}
-    sleep 1000
-    Send, {%keyW% Up}
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 1000
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1000
-    Send, {%keyA% Down}
-    sleep 1300
-    Send, {%keyA% Up}
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 8500
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 800
-    Send, {s Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 7500
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 750
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 800
-    Send, {s Down}
-    sleep 1000
-    Send, {s Up}
-    sleep 100
-    Send, {space Down}
-    sleep 100
-    Send, {space Up}
-    sleep 100
-    Send, {s Down}
-    sleep 400
-    Send, {s Up}
-    sleep 3400
-    Send, {s Down}
-    sleep 1700
-    Send, {s Up}
-    Send, {d Up}
-    Send, {%keyW% Down}
-    Send, {%keyA% Down}
-    sleep 175
-    Send, {%keyW% Up}
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {space Down}
-    sleep 50
-    Send, {d Down}
-    sleep 50
-    Send, {space Up}
-    sleep 300
-    Send, {d Up}
-    sleep 100
-    Send, {space Down}
-    sleep 50
-    Send, {s Down}
-    sleep 50
-    Send, {space Up}
-    sleep 600
-    Send, {%keyA% Down}
-    sleep 1900
-    Send, {%keyA% Up}
-    sleep 1800
-    Send, {d Down}
-    sleep 1400
-    Send, {d Up}
-    sleep 1500
-    Send, {s Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 100
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {space Down}
-    sleep 100
-    Send, {space Up}
-    Send, {s Down}
-    sleep 175
-    Send, {s Up}
-    sleep 100
-    Send, {space Down}
-    sleep 50
-    Send, {s Down}
-    sleep 50
-    Send, {space Up}
-    sleep 50
-    Send, {%keyA% Down}
-    sleep 500
-    Send, {%keyA% Up}
-    sleep 500
-    Send, {space Down}
-    sleep 100
-    Send, {space Up}
-    sleep 5500
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 900
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1000
-    Send, {d Down}
-    sleep 400
-    Send, {d Up}
-    sleep 2900
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 2800
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1500
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 800
-    Send, {space Down}
-    sleep 100
-    Send, {space Up}
-    sleep 800
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 4200
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 3200
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1800
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {s Down}
-    sleep 2500
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 2900
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 2000
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 750
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 2000
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 750
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 1300
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1400
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 4600
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {s Down}
-    sleep 1400
-    Send, {s Up}
-    sleep 100
-    Send, {d Down}
-    sleep 750
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    Send, {%keyA% Down}
-    sleep 175
-    Send, {%keyW% Up}
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1000
-    Send, {d Down}
-    sleep 800
-    Send, {d Up}
-    sleep 2100
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 1700
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 750
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 2400
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 750
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 2800
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 1500
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 2800
-    Send, {d Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 750
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {%keyA% Down}
-    sleep 2800
-    Send, {%keyA% Up}
-    sleep 100
-    Send, {%keyW% Down}
-    sleep 500
-    Send, {%keyW% Up}
-    sleep 100
-    Send, {d Down}
-    sleep 2800
-    Send, {d Up}
-
-    SetTimer, PressE, Off
-
-    MouseMove, 35, 405, 3
-    sleep 250
-    MouseClick, Left
-    sleep 250
-    MouseClick, Left
-
-    SetTimer, PressE, Off
-    SetTimer, MerchantClick2, Off
-}
-
 ; webhook cystinuzeabukuttuty, please dont hate me max
 SendWebhook3(text, color := 16777215) {
     global webhookURL, webhookID, doPing, doPing2
@@ -2804,7 +2076,7 @@ SendWebhook3(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.5"","
+    . """text"": ""Aery's fishSol v1.6"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2839,7 +2111,7 @@ SendWebhook(text, color := 16777215) {
     . """title"": """ text ""","
     . """color"": " color ","
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.5"","
+    . """text"": ""Aery's fishSol v1.6"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2883,7 +2155,7 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.5"","
+    . """text"": ""Aery's fishSol v1.6"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -2927,7 +2199,7 @@ SendWebhook4(text, color := 16777215, imageURL := "") {
     . """color"": " color ","
     . imageBlock
     . """footer"": {"
-    . """text"": ""Aery's fishSol v1.5.5"","
+    . """text"": ""Aery's fishSol v1.6"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
     . "},"
     . """timestamp"": """ timestamp """"
@@ -4302,63 +3574,58 @@ ManualGUIUpdate() {
 }
 
 F1::
-DetectHiddenWindows, On
-if (manualCraft && selectedItem2 = "") {
-    ManualCraftAlert()
-}
+    if (manualCraft && selectedItem2 = "") {
+        ManualCraftAlert()
+    }
 
-if (!res) {
-    res := "1080p"
-}
-if (!toggle && offsides != true) {
-    Gui, Submit, nohide
-    if (MaxLoopInput > 0) {
-        maxLoopCount := MaxLoopInput
+    if (!res) {
+        res := "1080p"
     }
-    if (FishingLoopInput > 0) {
-        fishingLoopCount := FishingLoopInput
-    }
-    toggle := true
-    strangeControllerLastRun := 0
-    biomeRandomizerLastRun := 0
-    checkGhostServerLastRun := 0
+    if (!toggle && offsides != true) {
+        Gui, Submit, nohide
+        if (MaxLoopInput > 0) {
+            maxLoopCount := MaxLoopInput
+        }
+        if (FishingLoopInput > 0) {
+            fishingLoopCount := FishingLoopInput
+        }
+        toggle := true
+        strangeControllerLastRun := 0
+        biomeRandomizerLastRun := 0
+        checkGhostServerLastRun := 0
 
-    if (startTick = "") {
-        startTick := A_TickCount
+        if (startTick = "") {
+            startTick := A_TickCount
+        }
+        if (cycleCount = "") {
+            cycleCount := 0
+        }
+        strangeControllerLastRun := 0
+        biomeRandomizerLastRun := 0
+        checkGhostServerLastRun := 0
+        IniWrite, %selectedItem2%, %iniFilePath%, Macro, selectedItem2
+        IniWrite, %res%, %iniFilePath%, Macro, resolution
+        IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
+        IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
+        WinActivate, ahk_exe RobloxPlayerBeta.exe
+        ManualGUIUpdate()
+        EnsureFullscreen()
+        if (webhookID = aeryWebhookID && openmax) {
+            GoSub, OpenBiomeMacro
+            sleep, 300
+        }
+        SetTimer, UpdateGUI, 1000
+        WinClose, %ahkPath% ahk_class AutoHotkey
+        if (res = "1080p") {
+            SetTimer, DoMouseMove, 100
+        }
     }
-    if (cycleCount = "") {
-        cycleCount := 0
-    }
-    strangeControllerLastRun := 0
-    biomeRandomizerLastRun := 0
-    checkGhostServerLastRun := 0
-    IniWrite, %selectedItem2%, %iniFilePath%, Macro, selectedItem2
-    IniWrite, %res%, %iniFilePath%, Macro, resolution
-    IniWrite, %maxLoopCount%, %iniFilePath%, Macro, maxLoopCount
-    IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
-    WinActivate, ahk_exe RobloxPlayerBeta.exe
-    ManualGUIUpdate()
-     EnsureFullscreen()
-    if (webhookID = aeryWebhookID && openmax) {
-        GoSub, OpenBiomeMacro
-        sleep, 300
-    }
-    SetTimer, UpdateGUI, 1000
-    WinClose, %ahkPath% ahk_class AutoHotkey
-    if (res = "1080p") {
-        SetTimer, DoMouseMove, 100
-    }
-}
-
-if (onoffWebhook) {
     try SendWebhook3(":green_circle: Macro Started!", "7909721")
-}
 return
 
 
 F2::
     Gui, Submit, NoHide
-    DetectHiddenWindows, On
 
     if (autocrafting || toggle)
         return
@@ -4403,9 +3670,9 @@ F2::
 return
 
 F3::
-    if (toggle && onoffWebhook) {
+    if (toggle) {
         try SendWebhook3(":red_circle: Macro Stopped.", "0")
-    } else if (autocrafting && onoffWebhook) {
+    } else if (autocrafting) {
         try SendWebhook3(":red_circle: Auto Crafting Stopped.", "0")
     }
     if (webhookID = aeryWebhookID) {
@@ -4465,7 +3732,6 @@ DoMouseMove:
 if (toggle) {
     global pathingMode
     global privateServerLink
-    global globalFailsafeTimer
     global azertyPathing
     global autoUnequip
     global useNothing
@@ -4496,7 +3762,7 @@ if (toggle) {
         if (autoWarp && pendingSkips) {
             if (skipType = "Warp Potion") {
                 SendWebhook("Popping Warp Potion", 0)
-            } else if (skipType = "Transcendent Potion") {
+            } else {
                 SendWebhook ("Popping Transcendent Potion")
             }
             PopSkips()
@@ -4513,32 +3779,6 @@ if (toggle) {
             } else if (checkGhostServer && privateServerLink = "") {
                 SendWebhook("NO PRIVATE SERVER LINK", 14495300)
             }
-
-        if (easterMacro) {
-            elapsed := A_TickCount - startTick
-            if ((easterPathingLastRun = 0 && elapsed >= easterPathingTime) || (easterPathingLastRun > 0 && (elapsed - easterPathingLastRun) >= easterPathingInterval)) {
-
-                    Send, {Esc}
-                    Sleep, 650
-                    Send, R
-                    Sleep, 650
-                    Send, {Enter}
-                    sleep 2600
-
-                    RunEasterPathing()
-                    easterPathingLastRun := elapsed
-
-                    Send, {Esc}
-                    Sleep, 650
-                    Send, R
-                    Sleep, 650
-                    Send, {Enter}
-                    sleep 2600
-                if (easterPathingInterval > 0) {
-                    FishingSpot()
-                }
-            }
-        }
         
 
         if (strangeController) {
@@ -4737,7 +3977,7 @@ if (toggle) {
             sleep 300
         }
 
-        if (manualCraft = true) {
+        if (manualCraft) {
             if (selectedItem2 = "") {
                 return
             }
@@ -4865,10 +4105,6 @@ if (toggle) {
 
         ; Check for white pixel
         startWhitePixelSearch := A_TickCount
-        if (globalFailsafeTimer = 0) {
-        globalFailsafeTimer := A_TickCount
-        }
-        fishingFailsafeRan := false
         Loop {
         PixelGetColor, color, 1176, 836, RGB
         if (color = 0xFFFFFF) {
@@ -4877,103 +4113,12 @@ if (toggle) {
         Sleep 50
         PixelGetColor, barColor, 955, 767, RGB
         SetTimer, DoMouseMove, Off
-        globalFailsafeTimer := 0
         break
-        }
-
-        ; Auto Rejoin Failsafe
-        if (A_TickCount - globalFailsafeTimer > (autoRejoinFailsafeTime * 1000) && privateServerLink = "a") {
-        PixelGetColor, checkColor, 1175, 837, RGB
-        if (checkColor != 0xFFFFFF) {
-        Process, Close, RobloxPlayerBeta.exe
-        sleep 2000
-        Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
-        sleep 8000
-        WinActivate, ahk_exe RobloxPlayerBeta.exe
-        sleep 2000
-
-        ; Skip button
-        sleep 13000
-        MouseMove, 960, 540, 3
-        sleep 350
-        MouseClick, Left
-        sleep 2000
-        startButtonSearch := A_TickCount
-        Loop {
-        ErrorLevel := 0
-        PixelSearch, px, py, 894, 811, 1013, 848, 0xFFFFFF, 3, Fast RGB
-        if (ErrorLevel = 0) {
-        MouseMove, 960, 825, 3
-        sleep 350
-        MouseClick, Left
-        break
-        }
-        if (A_TickCount - startButtonSearch > 30000) {
-        break
-        }
-        sleep 100
-        }
-
-        ; Start Button
-        sleep 7000
-        startButtonSearch2 := A_TickCount
-        Loop {
-        ErrorLevel := 0
-        PixelSearch, px, py, 814, 839, 962, 892, 0xFFFFFF, 3, Fast RGB
-        if (ErrorLevel = 0) {
-        MouseMove, 960, 870, 3
-        sleep 350
-        MouseClick, Left
-        break
-        }
-        if (A_TickCount - startButtonSearch2 > 30000) {
-        break
-        }
-        sleep 100
-        }
-
-        sleep 2500
-        Send {F11}
-        sleep 2500
-
-        ; Reset timer after rejoining
-        globalFailsafeTimer := A_TickCount
-        restartPathing := true
-        break
-        }
         }
         
-        ; Fishing Failsafe
-        if (A_TickCount - startWhitePixelSearch > (fishingFailsafeTime * 1000) && !fishingFailsafeRan) {
-        MouseMove, 1268, 941, 3
-        sleep 300
-        MouseClick, Left
-        sleep 300
-        MouseMove, 1167, 476, 3
-        sleep 300
-        MouseClick, Left
-        sleep 300
-        MouseMove, 1113, 342, 3
-        sleep 300
-        MouseClick, left
-        sleep 300
-        MouseMove, 851, 832, 3
-        sleep 300
-        MouseClick, Left
-        fishingFailsafeRan := true
-        }
-        ; Pathing Failsafe
-        if (A_TickCount - startWhitePixelSearch > (pathingFailsafeTime * 1000)) {
-        restartPathing := true
-        break
-        }
         if (!toggle) {
         Return
         }
-        }
-
-        if (restartPathing) {
-        continue
         }
 
         ; PixelSearch loop with 9-second timeout
@@ -4983,7 +4128,6 @@ if (toggle) {
         break
         if (A_TickCount - startTime > 9000)
         break
-        */
 
         ; Advanced detection
         if (advancedFishingDetection) {
@@ -5023,17 +4167,6 @@ if (toggle) {
         sleep 300
         MouseMove, 1113, 342, 3
         Sleep 700
-        /*
-        Loop {
-        PixelGetColor, color, 1112, 342, RGB
-        if (color = 0xFFFFFF) {
-        break
-        }
-        if (!toggle) {
-        Return
-        }
-        }
-        */
         MouseClick, Left
         sleep 300
         cycleCount++
@@ -5045,31 +4178,29 @@ Return
 
 
 StartScript:
-if (!toggle) {
-    Gui, Submit, nohide
-    if (MaxLoopInput > 0) {
-        maxLoopCount := MaxLoopInput
-    }
-    if (FishingLoopInput > 0) {
-        fishingLoopCount := FishingLoopInput
-    }
-    toggle := true
-    if (startTick = "") {
-        startTick := A_TickCount
-    }
-    if (cycleCount = "") {
-        cycleCount := 0
-    }
-    WinActivate, ahk_exe RobloxPlayerBeta.exe
-    ManualGUIUpdate()
-    SetTimer, UpdateGUI, 1000
-    if (res = "1080p") {
-        SetTimer, DoMouseMove, 100
-    }
-    if (onoffWebhook) {
-            try SendWebhook3(":green_circle: Macro Started!", "7909721")
-            }
+    if (!toggle) {
+        Gui, Submit, nohide
+        if (MaxLoopInput > 0) {
+            maxLoopCount := MaxLoopInput
         }
+        if (FishingLoopInput > 0) {
+            fishingLoopCount := FishingLoopInput
+        }
+        toggle := true
+        if (startTick = "") {
+            startTick := A_TickCount
+        }
+        if (cycleCount = "") {
+            cycleCount := 0
+        }
+        WinActivate, ahk_exe RobloxPlayerBeta.exe
+        ManualGUIUpdate()
+        SetTimer, UpdateGUI, 1000
+        if (res = "1080p") {
+            SetTimer, DoMouseMove, 100
+        }
+        try SendWebhook3(":green_circle: Macro Started!", "7909721")
+    }
 return
 
 StartScript(res) {
@@ -5094,9 +4225,7 @@ StartScript(res) {
         if (res = "1080p") {
             SetTimer, DoMouseMove, 100
         }
-    if (onoffWebhook) {
-            try SendWebhook3(":green_circle: Macro Started!", "7909721")
-            }
+        try SendWebhook3(":green_circle: Macro Started!", "7909721")
         }
     }
 return
@@ -5112,10 +4241,8 @@ PauseScript:
 return
 
 CloseScript:
-if (onoffWebhook) {
-            try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
-        }
-    ExitApp
+    try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
+    Reload
 return
 
 SelectRes:
