@@ -27,7 +27,6 @@ privateServerLink := ""
 webhookURL := ""
 webhookID := ""
 clipWebhook := false
-onoffWebhook := false
 doPing := false
 doPing2 := false
 doPing3 := false
@@ -151,10 +150,6 @@ if (FileExist(iniFilePath)) {
     StringLower, tempClipWebhook, tempClipWebhook
     clipWebhook := (tempClipWebhook = "true" || tempClipWebhook = "1")
     }
-    IniRead, tempOnoffWebhook, %iniFilePath%, Macro, onoffWebhook
-    if (tempOnoffWebhook != "ERROR")
-    onoffWebhook := (tempOnoffWebhook = "true" || tempOnoffWebhook = "1")
-
     IniRead, tempAutoCloseChat, %iniFilePath%, Macro, autoCloseChat, false
     autoCloseChat := (tempAutoCloseChat = "true" || tempAutoCloseChat = "1")
 
@@ -298,18 +293,19 @@ GetDevImg(name) {
     return A_ScriptDir . "\img\" . imgs[name]
 }
 
-Gui, Color, 0x1E1E1E
+Gui, Color, 041024
 Gui, Font, s15 cWhite Bold, Segoe UI
-Gui, Add, Text, x0 y8 w600 h45 Center BackgroundTrans c0x00D4FF, Aery's fishSol v1.6
+Gui, Add, Text, x0 y8 w600 h45 Center BackgroundTrans c0xFFAA00, Aery's fishSol v1.6
 Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0x00D4FF, (Only Works In 1080p and Needs VIP)
+Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0xFFAA00, (Only Works In 1080p and Needs VIP)
 
-Gui, Font, s10 cWhite Normal, Segoe UI
+Gui, Font, s9 cWhite Bold, Segoe UI
 
-tabList := "Main|Misc|Webhook"
+tabList := "Main|Misc|"
 tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Private Server"
+tabList .= "|Webhook"
 tabList .= "|About"
 tabList .= "|Extra"
 if (webhookID = aeryWebhookID) {
@@ -319,8 +315,8 @@ if (webhookID = aeryWebhookID) {
 Gui, Add, Tab3, x15 y55 w570 h500 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
 Gui, Tab, Main
-Gui, Font, s9 cWhite Normal, Segoe UI
 
+Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, GroupBox, x30 y85 w260 h120 cWhite, Control Panel
 Gui, Font, s11 cWhite Bold
 Gui, Add, Text, x45 y110 w60 h25 BackgroundTrans, Status:
@@ -407,6 +403,7 @@ Gui, Add, Text, x30 y400 w5000 h15 BackgroundTrans, Hotkeys:
 Gui, Add, Text, x30 y415 w5000 h15 BackgroundTrans, F1=Start Macro - F2=Start AutoCraft  
 Gui, Add, Text, x30 y430 w5000 h15 BackgroundTrans, F3=Stop Macro/AutoCraft
 Gui, Add, Text, x30 y445 w500 h20 BackgroundTrans, F4=Stop Webhook or Clip
+Gui, Add, Text, x30 y460 w500 h20 BackgroundTrans, F6=Join Private Server Link
 
 Gui, Tab, Misc
 
@@ -462,7 +459,7 @@ Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x307 y200 w270 h155 cWhite, Auto Use Skips in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y222 h45 w255 BackgroundTrans c0xCCCCCC, Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. Only works when you are macroing.
+Gui, Add, Text, x317 y222 h45 w255 BackgroundTrans c0xCCCCCC, (During Macro) Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. Only works when you are macroing.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y280 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 cWhite Bold
@@ -614,7 +611,7 @@ Gui, Add, Text, x385 y469 w600 h100 BackgroundTrans, Bounded:
 
 
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. MUST be inside Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
+Gui, Add, Text, x35 y105 w534 h100 BackgroundTrans c0xCCCCCC, Adds the nessecary potions and/or auras to craft potions. Please already put the desired item on auto craft. You MUST be inside of Stella's Cauldron's UI. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, DropDownList, x245 y165 w120 vAutoCraft gSelectItem, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 IniRead, selectedItem, %iniFilePath%, Macro, selectedItem
@@ -635,7 +632,7 @@ Gui, Add, Button, x55 y385 w80 h25 gToggleDetectPotion vDetectPotionBtn, Toggle
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x153 y388 w70 h25 vDetectPotionStatus BackgroundTrans, OFF
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x35 y350 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Detects if your potion is ready to be crafted with ready notification, and if so, stops fishing to craft it. Only Reccomended for Heavenly/Bound Potion.
+Gui, Add, Text, x35 y350 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Detects if your potion is ready to be crafted with ready notification, and if so, stops fishing to craft it. Only recommended for Heavenly/Bound Potion.
 
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x55 y305 w80 h25 gToggleManualCraft vManualCraftBtn, Toggle
@@ -649,7 +646,7 @@ Gui, Add, Edit, x35 y115 w515 h25 vPrivateServerInput gUpdatePrivateServer Backg
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y185 w534 h100 cWhite, Check For Ghost Server
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y205 w500 h145 BackgroundTrans, Checks for Ghost Server at the start of script, then hourly by seeing if you have access to Command Panel. If detected joins the server in private server link.
+Gui, Add, Text, x45 y205 w500 h145 BackgroundTrans, (During Macro) Checks for Ghost Server at the start of script, then hourly by seeing if you have access to Command Panel. If detected joins the server in private server link.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y245 w80 h25 gToggleCheckGhostServer vCheckGhostServerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -658,7 +655,7 @@ Gui, Add, Text, x143 y248 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x33 y290 w534 h100 cWhite, Biome Detection
 Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y310 w500 h145 BackgroundTrans, Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
+Gui, Add, Text, x45 y310 w500 h145 BackgroundTrans, (During Macro) Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y355 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
@@ -723,7 +720,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-04-15)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-04-29)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Tab, Extra
@@ -742,17 +739,17 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y333 w60 h25 vDetectEdenStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y390 w270 h135 cWhite, Auto-Clicker
-Gui, Add, Button, x46 y485 w80 h25 gStartAutoClicker vAutoClickStart, Start
-Gui, Add, Button, x136 y485 w80 h25 gStopAutoClicker  vAutoClickStop Disabled, Stop
+Gui, Add, GroupBox, x33 y90 w270 h135 cWhite, Auto-Clicker
+Gui, Add, Button, x46 y185 w80 h25 gStartAutoClicker vAutoClickStart, Start
+Gui, Add, Button, x136 y185 w80 h25 gStopAutoClicker  vAutoClickStop Disabled, Stop
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x226 y489 w60 h25 vAutoClickerStatus BackgroundTrans, OFF
+Gui, Add, Text, x226 y189 w60 h25 vAutoClickerStatus BackgroundTrans, OFF
 Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x46 y460 w90 h20 BackgroundTrans, Delay (sec):
+Gui, Add, Text, x46 y160 w90 h20 BackgroundTrans, Delay (sec):
 Gui, Font, s9 cBlack Bold
-Gui, Add, Edit, x131 y460 w60 h22 vAutoClickDelay, 60
+Gui, Add, Edit, x131 y160 w60 h22 vAutoClickDelay, 60
 Gui, Font, s9 c0xCCCCCC Normal
-Gui, Add, Text, x43 y410 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
+Gui, Add, Text, x43 y110 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
 if (webhookID = aeryWebhookID) {
     Gui, Tab, Aery
@@ -861,13 +858,6 @@ if (clipWebhook) {
 } else {
     GuiControl,, ClipWebhookStatus, OFF
     GuiControl, +c0xFF4444, ClipWebhookStatus
-}
-if (onoffWebhook) {
-    GuiControl,, OnoffWebhookStatus, ON
-    GuiControl, +c0x00DD00, OnoffWebhookStatus
-} else {
-    GuiControl,, OnoffWebhookStatus, OFF
-    GuiControl, +c0xFF4444, OnoffWebhookStatus
 }
 if (doPing) {
     GuiControl,, DoPingStatus, ON
@@ -1243,18 +1233,6 @@ ToggleDoPing4:
         GuiControl, +c0xFF4444, DoPing4Status
     }
     IniWrite, % (doPing4 ? "true" : "false"), %iniFilePath%, Macro, doPing4
-return
-
-ToggleOnoffWebhook:
-    onoffWebhook := !onoffWebhook
-    if (onoffWebhook) {
-        GuiControl,, OnoffWebhookStatus, ON
-        GuiControl, +c0x00DD00, OnoffWebhookStatus
-    } else {
-        GuiControl,, OnoffWebhookStatus, OFF
-        GuiControl, +c0xFF4444, OnoffWebhookStatus
-    }
-    IniWrite, % (onoffWebhook ? "true" : "false"), %iniFilePath%, Macro, onoffWebhook
 return
 
 ToggleStrangeController:
@@ -2241,7 +2219,7 @@ return
 OpenAuraFilter:
     Gui, AuraFilter:Destroy
     Gui, AuraFilter:New, +AlwaysOnTop, Aura Filter
-    Gui, AuraFilter:Color, 0x1E1E1E
+    Gui, AuraFilter:Color, 041024
     Gui, AuraFilter:Font, s10 cWhite Bold, Segoe UI
     Gui, AuraFilter:Add, Text, x-15 y10 w600 h20 Center BackgroundTrans c0x00D4FF,Toggle which aura will have a webhook/clip. (Requires Aura Detection and Aura Filter)
     Gui, AuraFilter:Font, s9 cWhite Bold
@@ -3659,9 +3637,7 @@ F2::
     ToolTip, Crafting will start in 1 second..., 900, 10
     Sleep, 1000
     ToolTip
-    if (onoffWebhook) {
-        try SendWebhook("Crafting Started on " selectedItem ":tools:", 0)
-    }
+    try SendWebhook("Crafting Started on " selectedItem ":tools:", 0)
     if (cyberCity && webhookID = aeryWebhookID) {
         WinClose, %ahkPath% ahk_class AutoHotkey
     }
@@ -3721,9 +3697,6 @@ return
 
 
 F6::
-if (webhookID != aeryWebhookID)
-    return
-
     RunRejoin2()
 return
 
