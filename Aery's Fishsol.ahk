@@ -377,19 +377,6 @@ Gui, Add, Text, x270 y470 w285 h30 BackgroundTrans, Advanced Fishing Detection u
 Gui, Font, s9 c0x00D4FF Bold
 Gui, Add, Text, x297 y503 w515 h30 BackgroundTrans c0x00D4FF, [ Recommended For Lower End Devices ]
 
-/*
-Gui, Font, s10 cWhite Bold
-Gui, Add, GroupBox, x30 y345 w205 h95 cWhite, How to Close Collection
-Gui, Add, DropDownList, x45 y400 w80 h125 vChatVersion gchatType, \ Key|Click
-IniRead, chatType, %iniFilePath%, Macro, chatType
-if (chatType = "ERROR" || chatType = "") {
-    chatType := "Click"
-}
-GuiControl, Choose, ChatVersion, %chatType%
-Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x45 y367 w160 h125 BackgroundTrans c0xCCCCCC, Choose which way the macro will exit the collection.
-*/
-
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x30 y355 w205 h95 BackgroundTrans, Roblox MUST be in fullscreen mode
 Gui, Font, s8 c0xCCCCCC
@@ -2669,12 +2656,6 @@ ClipType:
     IniWrite, %clipType%, %iniFilePath%, Macro, clipType
 return
 
-ChatType:
-    Gui, Submit, NoHide
-    chatType := ChatVersion
-    IniWrite, %chatType%, %iniFilePath%, Macro, chatType
-return
-
 SkipType:
     Gui, Submit, NoHide
     skipType := SkipPotionType
@@ -3202,77 +3183,6 @@ CheckGhostServer() {
         Sleep, 300
         Click, Left
         sleep, 500
-        if (chattype = "\ Key") {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Send, {\}
-            sleep, 300
-            Send, {Enter}
-            sleep 220
-            Send, {\}
-            sleep, 250
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
-        } else if (chattype = "Click") {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
-        }
-        ToolTip, Going to fishing spot.., 900, 10
-        SendWebhook("Going to fishing spot... Not in Ghost Server.", 0)
-        FishingSpot()
-    }
-    ToolTip
-}
-
-RunRejoin() {
-    SendWebhook("Rejoining Server link...", 0)
-    Process, Close, RobloxPlayerBeta.exe
-    sleep 2000
-    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
-    sleep 15000
-    WinActivate, ahk_exe RobloxPlayerBeta.exe
-    sleep 5000
-    EnsureFullScreen()
-    sleep, 15000
-    MouseMove, 251, 997, 3
-    Sleep, 300
-    Click, Left
-    sleep, 5000
-    Click, Left
-    sleep, 500
-    if (chattype = "\ Key") {
-        sleep, 1000
-        MouseMove, 47, 467, 3
-        sleep 220
-        Click, Left
-        sleep 220
-        Send, {\}
-        sleep, 300
-        Send, {Enter}
-        sleep 220
-        Send, {\}
-        sleep, 250
-        Click, WheelUp 80
-        sleep 500
-        Click, WheelDown 45
-        sleep 300
-    } else if (chattype = "Click") {
         sleep, 1000
         MouseMove, 47, 467, 3
         sleep 220
@@ -3286,7 +3196,42 @@ RunRejoin() {
         sleep 500
         Click, WheelDown 45
         sleep 300
+        ToolTip, Going to fishing spot.., 900, 10
+        SendWebhook("Going to fishing spot... Not in Ghost Server.", 0)
+        FishingSpot()
     }
+    ToolTip
+}
+
+RunRejoin() {
+    SendWebhook("Rejoining Server link...", 0)
+    Process, Close, RobloxPlayerBeta.exe
+    sleep 2000
+    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
+    sleep 15000s
+    WinActivate, ahk_exe RobloxPlayerBeta.exe
+    sleep 5000
+    EnsureFullScreen()
+    sleep, 15000
+    MouseMove, 251, 997, 3
+    Sleep, 300
+    Click, Left
+    sleep, 5000
+    Click, Left
+    sleep, 500
+    sleep, 1000
+    MouseMove, 47, 467, 3
+    sleep 220
+    Click, Left
+    sleep 220
+    MouseMove, 382, 126, 3
+    sleep 220
+    Click, Left
+    sleep 220
+    Click, WheelUp 80
+    sleep 500
+    Click, WheelDown 45
+    sleep 300
     MouseMove, 600, 600, 3
     Click, Left
     sleep 500
@@ -3691,37 +3636,20 @@ if (toggle) {
             if (selectedItem2 = "") {
                     return
                 }
-            if (chattype = "\ Key") {
-                sleep, 1000
-                MouseMove, 47, 467, 3
-                sleep 220
-                Click, Left
-                sleep 220
-                Send, {\}
-                sleep, 300
-                Send, {Enter}
-                sleep 220
-                Send, {\}
-                sleep, 250
-                Click, WheelUp 80
-                sleep 500
-                Click, WheelDown 45
-                sleep 300
-            } else if (chattype = "Click") {
-                sleep, 1000
-                MouseMove, 47, 467, 3
-                sleep 220
-                Click, Left
-                sleep 220
-                MouseMove, 382, 126, 3
-                sleep 220
-                Click, Left
-                sleep 220
-                Click, WheelUp 80
-                sleep 500
-                Click, WheelDown 45
-                sleep 300
-            }
+
+            sleep, 1000
+            MouseMove, 47, 467, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            MouseMove, 382, 126, 3
+            sleep 220
+            Click, Left
+            sleep 220
+            Click, WheelUp 80
+            sleep 500
+            Click, WheelDown 45
+            sleep 300
 
             Send, {Esc}
             Sleep, 650
@@ -3805,37 +3733,18 @@ if (toggle) {
             }
         }
 
-        if (chattype = "\ Key") {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Send, {\}
-            sleep, 300
-            Send, {Enter}
-            sleep 220
-            Send, {\}
-            sleep, 250
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
-        } else {
-            sleep, 1000
-            MouseMove, 47, 467, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            MouseMove, 382, 126, 3
-            sleep 220
-            Click, Left
-            sleep 220
-            Click, WheelUp 80
-            sleep 500
-            Click, WheelDown 45
-            sleep 300
-        }
+        sleep, 1000
+        MouseMove, 47, 467, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        MouseMove, 382, 126, 3
+        sleep 220
+        Click, Left
+        sleep 220
+        Click, WheelUp 80
+        sleep 500
+        Click, WheelDown 45
 
         if (manualCraft) {
             if (selectedItem2 = "") {
