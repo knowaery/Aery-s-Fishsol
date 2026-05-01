@@ -74,13 +74,11 @@ totalCraftedjp := 0
 webhookTimer := false
 biomeWebhook := false
 biomemacro := false
-openmax := false
 checkGhostServer := false
 checkingicon := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
-cyberCity := false
 biomeDetect := false
 
 if (FileExist(iniFilePath)) {
@@ -262,9 +260,6 @@ if (FileExist(iniFilePath)) {
 }
 
 
-if (webhookID = "912451579918041118") {
-    #Include %A_ScriptDir%\AeryBiomeMacro.ahk
-}
 
 
 
@@ -301,16 +296,14 @@ Gui, Add, Text, x160 y35 w290 h20 Center BackgroundTrans c0xFFAA00, (Only Works 
 
 Gui, Font, s9 cWhite Bold, Segoe UI
 
-tabList := "Main|Misc|"
+tabList := "Main"
+tabList .= "|Misc"
 tabList .= "|Auras"
 tabList .= "|Crafting"
 tabList .= "|Private Server"
 tabList .= "|Webhook"
 tabList .= "|About"
 tabList .= "|Extra"
-if (webhookID = aeryWebhookID) {
-    tabList .= "|Aery"
-}
 
 Gui, Add, Tab3, x15 y55 w570 h500 vMainTabs gTabChange c0xFFFFFF, %tabList%
 
@@ -751,28 +744,6 @@ Gui, Add, Edit, x131 y160 w60 h22 vAutoClickDelay, 60
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x43 y110 w255 h135 BackgroundTrans c0xCCCCCC, Automatically clicks after the desired seconds to prevent disconnection.
 
-if (webhookID = aeryWebhookID) {
-    Gui, Tab, Aery
-
-    Gui, Font, s11 cWhite Bold, Segoe UI
-    Gui, Add, GroupBox, x33 y80 w534 h60 cWhite, Open Maxstellar when Macro Start
-    Gui, Font, s10 c0xCCCCCC Normal
-    Gui, Add, Text, x45 y100 w515 h135 BackgroundTrans,
-    Gui, Font, s10 cWhite Bold, Segoe UI
-    Gui, Add, Button, x45 y109 w80 h25 gToggleOpenMax vOpenMaxBtn, Toggle
-    Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-    Gui, Add, Text, x143 y111 w70 h25 vOpenMaxStatus BackgroundTrans, OFF
-
-    Gui, Font, s11 cWhite Bold
-    Gui, Add, GroupBox, x33 y140 w534 h100 cWhite, CyberCity
-    Gui, Font, s11 cWhite Bold
-    Gui, Add, Text, x45 y160 w500 h145 BackgroundTrans, 1 3 3 5 19 19 4 5 14 9 5 4 25 15 21 1 18 5 14 15 20 23 15 18 20 8 25
-    Gui, Font, s10 cWhite Bold, Segoe UI
-    Gui, Add, Button, x45 y200 w80 h25 gToggleCyberCity vCyberCityBtn, Toggle
-    Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-    Gui, Add, Text, x143 y203 w70 h25 vCyberCityStatus BackgroundTrans, OFF
-}
-
 Gui, Show, w600 h570,  Aery's fishSol v1.6
 
 GuiControl, Choose, Resolution, 1
@@ -992,13 +963,6 @@ if (biomeWebhook) {
     GuiControl,, BiomeWebhookStatus, OFF
     GuiControl, +c0xFF4444, BiomeWebhookStatus
 }
-if (openmax) {
-    GuiControl,, OpenMaxStatus, ON
-    GuiControl, +c0x00DD00, OpenMaxStatus
-} else {
-    GuiControl,, OpenMaxStatus, OFF
-    GuiControl, +c0xFF4444, OpenMaxStatus
-}
 if (checkGhostServer) {
     GuiControl,, CheckGhostServerStatus, ON
     GuiControl, +c0x00DD00, CheckGhostServerStatus
@@ -1011,15 +975,6 @@ if (checkGhostServer) {
 } else {
     GuiControl,, CheckGhostServerStatus, OFF
     GuiControl, +c0xFF4444, CheckGhostServerStatus
-}
-if (cyberCity) {
-    GuiControl,, CyberCityStatus, ON
-    GuiControl, +c0x00DD00, CyberCityStatus
-    Run, AutoHotkey.exe "%A_ScriptDir%\aery\vrovro.ahk"
-} else {
-    GuiControl,, CyberCityStatus, OFF
-    GuiControl, +c0xFF4444, CyberCityStatus
-    WinClose, %ahkPath% ahk_class AutoHotkey
 }
 if (biomeDetect) {
     GuiControl,, BiomeDetectStatus, ON
@@ -1036,6 +991,13 @@ if (biomeDetect) {
 }
 
 SetTimer, AuraBiomeDetect, 1000
+SetTimer, MonitorCheck, 25000
+
+toggle := false
+firstLoop := true
+startTick := 0
+cycleCount := 0
+
 
 AuraCheckChange:
     if (!auraFilterReady)
@@ -1072,19 +1034,16 @@ SaveAuraFilter:
     Gui, AuraFilter:Destroy
 return
 
-
-
+MonitorCheck:
+    DllCall("SetThreadExecutionState", "UInt", 0x80000003)
+return
 
 GuiClose:
 ExitApp
 
-toggle := false
-firstLoop := true
-startTick := 0
-cycleCount := 0
-
 TabChange:
 return
+
 UpdateLoopCount:
     Gui, Submit, NoHide
     if (MaxLoopInput > 0) {
@@ -1437,18 +1396,6 @@ ToggleBiomeWebhook:
     IniWrite, % (biomeWebhook ? "true" : "false"), %iniFilePath%, Macro, biomeWebhook
 return
 
-ToggleOpenMax:
-    openmax := !openmax
-    if (openmax) {
-        GuiControl,, OpenMaxStatus, ON
-        GuiControl, +c0x00DD00, OpenMaxStatus
-    } else {
-        GuiControl,, OpenMaxStatus, OFF
-        GuiControl, +c0xFF4444, OpenMaxStatus
-    }
-    IniWrite, % (openmax ? "true" : "false"), %iniFilePath%, Macro, openmax
-return
-
 ToggleCheckGhostServer:
     checkGhostServer := !checkGhostServer
     if (checkGhostServer) {
@@ -1467,20 +1414,6 @@ ToggleCheckGhostServer:
     IniWrite, % (checkGhostServer ? "true" : "false"), %iniFilePath%, Macro, checkGhostServer
 return
 
-ToggleCyberCity:
-    cyberCity := !cyberCity
-    if (cyberCity) {
-        GuiControl,, CyberCityStatus, ON
-        GuiControl, +c0x00DD00, CyberCityStatus
-        Run, AutoHotkey.exe "%A_ScriptDir%\aery\vrovro.ahk"
-    } else {
-        GuiControl,, CyberCityStatus, OFF
-        GuiControl, +c0xFF4444, CyberCityStatus
-        WinClose, %ahkPath% ahk_class AutoHotkey
-    }
-    IniWrite, % (cyberCity ? "true" : "false"), %iniFilePath%, Macro, cyberCity
-return
-
 ToggleBiomeDetect:
     biomeDetect := !biomeDetect
     if (biomeDetect) {
@@ -1497,44 +1430,6 @@ ToggleBiomeDetect:
         GuiControl, +c0xFF4444, BiomeDetectStatus
     }
     IniWrite, % (biomeDetect ? "true" : "false"), %iniFilePath%, Macro, biomeDetect
-return
-
-OpenBiomeMacro:
-    Process, Exist, BiomeMacro.exe
-    BiomeMacroOpen := (ErrorLevel != 0)
-    if (!biomemacro && toggle && !BiomeMacroOpen) {
-        Run, C:\Users\deras\Downloads\maxstellar-Biome-Macro-v2.3\BiomeMacro.exe
-        biomemacro := true
-        WinWait, maxstellar's Biome Macro
-        sleep, 300
-        WinMove, maxstellar's Biome Macro,, 100, 100
-        sleep, 300
-        Clipboard := aeryWebhook
-        Click, 270, 200, 4
-        sleep, 300
-        Send, ^a
-        sleep, 100
-        Send, ^v
-        sleep, 300
-        Clipboard := aeryServer
-        Click, 300, 260, 4
-        sleep, 300
-        Send, ^a
-        sleep, 100
-        Send ^v
-        sleep, 300
-        Clipboard := aeryWebhookID
-        Click, 276, 320, 3
-        sleep, 300
-        Send, ^a
-        sleep, 100
-        Send ^v
-        sleep, 300
-        Click, 154, 388, 3
-        sleep, 600
-        Click, 960, 540, 3
-        sleep, 600
-    }
 return
 
 UpdatePrivateServer:
@@ -1590,7 +1485,7 @@ HSLtoRGB(h, s, l) {
 
 AuraBiomeDetect:
 global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
-auracolor := 0
+global auracolor := 0
     logDir := LocalAppData "\Roblox\logs"
 
     newestTime := 0
@@ -1720,42 +1615,42 @@ auracolor := 0
                 if (auraName = "Equinox" || auraName = "EQUINOX") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/EquinoxNewCollection.webp")
+                        SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
                     }
                 } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Snake** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/LeviathanLong.png")
+                        SendWebhook2(":tada: **Snake** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
                     }
                 } else if (auraName = "BREAKTHROUGH") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/BreakthroughCollection.webp")
+                        SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
                     }
                 } else if (auraName = "Monarch" || auraName = "MONARCH") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/MonarchCollection.webp")
+                        SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
                     }
                 } else if (auraName = "Luminosity") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/ReworkedLumiCollection.webp")
+                        SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/ReworkedLumiCollection.webp")
                     }
                 } else if (auraName = "Pixelation") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/PixelationCollection.webp")
+                        SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
                     }
                 } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/Illusionary_curation.gif")
+                        SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Illusionary_curation.gif")
                     }
                 } else if (auraName = "CHILLSEAR") {
                     ClipCountdownGlobal()
                     if (webResponse = "false") {
-                        SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuichillsear.gif")
+                        SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/yuichillsear.gif")
                     }
                 }
                 
@@ -2002,7 +1897,7 @@ DoContract:
     sleep, 400
 
     if (clipWebhook) {
-        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected!", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auracutscenes/yuinycto.gif")
+        try SendWebhook2(":tada: **Eden has been Contracted!** :tada: \nWhite & Black Pixel Detected!", 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/yuinycto.gif")
     }
     if (detectGlobal || detectTrans) {
         Sleep, 30000
@@ -3588,10 +3483,6 @@ F1::
         WinActivate, ahk_exe RobloxPlayerBeta.exe
         ManualGUIUpdate()
         EnsureFullscreen()
-        if (webhookID = aeryWebhookID && openmax) {
-            GoSub, OpenBiomeMacro
-            sleep, 300
-        }
         SetTimer, UpdateGUI, 1000
         WinClose, %ahkPath% ahk_class AutoHotkey
         if (res = "1080p") {
@@ -3638,9 +3529,6 @@ F2::
     Sleep, 1000
     ToolTip
     try SendWebhook("Crafting Started on " selectedItem ":tools:", 0)
-    if (cyberCity && webhookID = aeryWebhookID) {
-        WinClose, %ahkPath% ahk_class AutoHotkey
-    }
 
     SetTimer, CraftSelected, 1000
 return
@@ -3650,10 +3538,6 @@ F3::
         try SendWebhook3(":red_circle: Macro Stopped.", "0")
     } else if (autocrafting) {
         try SendWebhook3(":red_circle: Auto Crafting Stopped.", "0")
-    }
-    if (webhookID = aeryWebhookID) {
-        WinClose, BiomeMacro.exe
-        WinClose, maxstellar's Biome Macro
     }
     WinClose, %ahkPath% ahk_class AutoHotkey
     Reload
@@ -3684,9 +3568,6 @@ return
 
 F7::
 global auraName, biome
-
-if (webhookID != aeryWebhookID)
-    return
     try SendWebhook(auraName,  0)
     try SendWebhook(biome,  0)
 return
@@ -4290,4 +4171,3 @@ Return
 ReleasesClick:
     Run, https://github.com/knowaery/Aery-s-Fishsol
 return
-
