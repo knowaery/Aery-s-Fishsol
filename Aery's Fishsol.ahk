@@ -80,6 +80,7 @@ checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
 biomeDetect := false
+webReponse := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -1550,7 +1551,7 @@ global auracolor := 0
                 }
                 
             if (!AuraListTrans.HasKey(auraName) && auraName != "Nothing" && auraName != "pukeko") {
-                    if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName]) && webResponse = "false") { ; normal auras
+                    if (!AuraList.HasKey(auraName) && (!auraFilter || !EnabledAuras[auraName])) { ; normal auras
                         json := "{"
                             . mentionsStr
                             . contentStr
@@ -1566,7 +1567,7 @@ global auracolor := 0
                         http.SetRequestHeader("Content-Type", "application/json")
                         http.Send(json)
                     } else if (auraFilter) { ; check aura filter and see if the aura is enabled
-                        if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && webResponse = "false") {
+                        if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && !webResponse) {
                             json := "{"
                                 . mentionsStr
                                 . contentStr
@@ -1580,7 +1581,7 @@ global auracolor := 0
                             http.Open("POST", webhookURL, false)
                             http.SetRequestHeader("Content-Type", "application/json")
                             http.Send(json)
-                        } else if (AuraList.HasKey(auraName) && !EnabledAuras[auraName] && webResponse = "false") { ; if aura is disabled in aura filter, it js sends webhook on the aura without pinging
+                        } else if (AuraList.HasKey(auraName) && !EnabledAuras[auraName] && !webResponse) { ; if aura is disabled in aura filter, it js sends webhook on the aura without pinging
                                 json := "{"
                                 . """embeds"": [{"
                                 . """description"": "" ### Aura Equipped - " auraName ""","
@@ -1594,7 +1595,7 @@ global auracolor := 0
                             http.Send(json)
                         }
                     } else if (!auraFilter) { ; no aura filter, checks global list
-                        if (AuraList.HasKey(auraName) && webResponse = "false") {
+                        if (AuraList.HasKey(auraName) && !webResponse) {
                             json := "{"
                                 . mentionsStr
                                 . contentStr
@@ -1614,63 +1615,68 @@ global auracolor := 0
 
                 if (auraName = "Equinox" || auraName = "EQUINOX") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
                     }
                 } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
-                        SendWebhook2(":tada: **Snake** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
+                    if (!webReponse) {
+                        SendWebhook2(":tada: **The Ruler of the Beneath** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
                     }
                 } else if (auraName = "BREAKTHROUGH") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
                     }
                 } else if (auraName = "Monarch" || auraName = "MONARCH") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
                     }
                 } else if (auraName = "Luminosity") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/ReworkedLumiCollection.webp")
                     }
                 } else if (auraName = "Pixelation") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
                     }
                 } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Illusionary_curation.gif")
                     }
                 } else if (auraName = "CHILLSEAR") {
                     ClipCountdownGlobal()
-                    if (webResponse = "false") {
+                    if (!webReponse) {
                         SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/yuichillsear.gif")
+                    }
+                } else if (auraName = "ASTRAIOS") {
+                    ClipCountdownGlobal()
+                    if (!webReponse) {
+                        SendWebhook2("**The Ruler of beyond the Sky** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
                     }
                 }
                 
             
                 
                 if (auraFilter) {
-                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && webResponse = "false") {
+                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && !webReponse) {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
                 } else {
-                    if (AuraList.HasKey(auraName) && detectGlobal && webResponse = "false") {
+                    if (AuraList.HasKey(auraName) && detectGlobal && !webReponse) {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
                 }
 
-                if (AuraListTrans.HasKey(auraName) && detectTrans && webResponse = "false") {
+                if (AuraListTrans.HasKey(auraName) && detectTrans && !webReponse) {
                     SetTimer, V2Clip, -%triggerDelayTrans%
                     brainrot67 := "67"
                     ShowClipTextTrans()
@@ -1681,7 +1687,7 @@ global auracolor := 0
                     }
                 }
             prevState := state
-            webResponse := "false"
+            webResponse := false
             brainrot67 := ""
         }
     }
@@ -2285,43 +2291,43 @@ ShowClipTextTrans() {
 ClipCountdownGlobal() {
     global webResponse
 
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (10), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (9), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (8), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (7), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (6), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (5), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (4), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (3), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (2), 850, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook. Clipping Timer will start after... (1), 850, 10
         Sleep, 1000
     }
@@ -2333,43 +2339,43 @@ ClipCountdown() {
     global webResponse
 
 
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (10), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (9), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (8), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (7), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (6), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (5), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (4), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (3), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (2), 900, 10
         Sleep, 1000
     }
-    if (webResponse != "true") {
+    if (!webResponse) {
         ToolTip, F4 To cancel webhook (1), 900, 10
         Sleep, 1000
     }
@@ -3547,7 +3553,7 @@ F4::
 global blehblehbleh, webReponse, auraName
 
     blehblehbleh := "hehe"
-    webResponse := "true"
+    webResponse := true
 
         if (detectGlobal || detectTrans && auraDetection) {
             SetTimer, V2Clip, Off
