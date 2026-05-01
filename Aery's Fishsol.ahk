@@ -701,7 +701,7 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-04-29)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-05-01)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Tab, Extra
@@ -979,12 +979,7 @@ if (biomeDetect) {
 }
 
 SetTimer, AuraBiomeDetect, 1000
-SetTimer, MonitorCheck, 25000
 
-toggle := false
-firstLoop := true
-startTick := 0
-cycleCount := 0
 
 
 AuraCheckChange:
@@ -1022,12 +1017,13 @@ SaveAuraFilter:
     Gui, AuraFilter:Destroy
 return
 
-MonitorCheck:
-    DllCall("SetThreadExecutionState", "UInt", 0x80000003)
-return
-
 GuiClose:
 ExitApp
+
+toggle := false
+firstLoop := true
+startTick := 0
+cycleCount := 0
 
 TabChange:
 return
