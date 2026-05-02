@@ -27,9 +27,8 @@ privateServerLink := ""
 webhookURL := ""
 webhookID := ""
 clipWebhook := false
-doPing2 := false
-doPing3 := false
-doPing4 := false
+doPing2 := false ; ping for clipwebhook
+doPing3 := false ; ping if global/transcendent
 autocrafting := false
 useCelestial := false
 useExotic := false
@@ -54,7 +53,6 @@ detectGlobal := false
 detectTrans := false
 triggerDelayGlobal := 10000
 triggerDelayTrans := 20000
-webResponse := "false"
 pendingUnequip := false
 autoWarp := false
 detectPotion := false
@@ -63,13 +61,6 @@ auraFilter := false
 auraFilterReady := false
 detectEden := false
 brainrot67 := ""
-totalCraftedhp := 0
-totalCraftedbp := 0
-totalCraftedrp := 0
-totalCrafteddp := 0
-totalCrafteddip := 0
-totalCraftedzp := 0
-totalCraftedjp := 0
 checkGhostServer := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
@@ -167,10 +158,6 @@ if (FileExist(iniFilePath)) {
     IniRead, tempDoPing3, %iniFilePath%, Macro, doPing3
     if (tempDoPing3 != "ERROR")
     doPing3 := (tempDoPing3 = "true" || tempDoPing3 = "1")
-
-    IniRead, tempDoPing4, %iniFilePath%, Macro, doPing4
-    if (tempDoPing4 != "ERROR")
-    doPing4 := (tempDoPing4 = "true" || tempDoPing4 = "1")
 
     IniRead, tempCelestial, %iniFilePath%, Macro, useCelestial
     if (tempCelestial != "ERROR")
@@ -787,13 +774,6 @@ if (doPing3) {
     GuiControl,, DoPing3Status, OFF
     GuiControl, +c0xFF4444, DoPing3Status
 }
-if (doPing4) {
-    GuiControl,, DoPing4Status, ON
-    GuiControl, +c0x00DD00, DoPing4Status
-} else {
-    GuiControl,, DoPing4Status, OFF
-    GuiControl, +c0xFF4444, DoPing4Status
-}
 if (useCelestial) {
     GuiControl,, UseCelestialStatus, ON
     GuiControl, +c0x00DD00, UseCelestialStatus
@@ -1093,18 +1073,6 @@ ToggleDoPing3:
         GuiControl, +c0xFF4444, DoPing3Status
     }
     IniWrite, % (doPing3 ? "true" : "false"), %iniFilePath%, Macro, doPing3
-return
-
-ToggleDoPing4:
-    doPing4 := !doPing4
-    if (doPing4) {
-        GuiControl,, DoPing4Status, ON
-        GuiControl, +c0x00DD00, DoPing4Status
-    } else {
-        GuiControl,, DoPing4Status, OFF
-        GuiControl, +c0xFF4444, DoPing4Status
-    }
-    IniWrite, % (doPing4 ? "true" : "false"), %iniFilePath%, Macro, doPing4
 return
 
 ToggleStrangeController:
@@ -1514,12 +1482,12 @@ global auracolor := 0
                     }
                 }
 
-                if (auraName = "Equinox" || auraName = "EQUINOX") {
+                if (auraName = "EQUINOX") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
                     }
-                } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
+                } else if (auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2(":tada: **The Ruler of the Beneath** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
@@ -1529,7 +1497,7 @@ global auracolor := 0
                     if (!webResponse) {
                         SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
                     }
-                } else if (auraName = "Monarch" || auraName = "MONARCH") {
+                } else if (auraName = "MONARCH") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
@@ -1544,7 +1512,7 @@ global auracolor := 0
                     if (!webResponse) {
                         SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
                     }
-                } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
+                } else if (auraName = "illusionary") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Illusionary_curation.gif")
@@ -1557,7 +1525,7 @@ global auracolor := 0
                 } else if (auraName = "ASTRAIOS") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
-                        SendWebhook2("**The Ruler of beyond the Sky** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
+                        SendWebhook2("**The Ruler of the Quantum Vortex* \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
                     }
                 }
                 
@@ -1662,7 +1630,7 @@ global auracolor := 0
                 pendingSkips := true
             }
 
-            if ((detectGlobal || detectTrans) && (prevBiome = "GLITCHED" || prevBiome = "DREAMSPACE" || prevBiome = "CYBERSPACE" || prevBiome = "SINGULARITY")) {
+            if ((detectGlobal || detectTrans) && (prevBiome = "GLITCHED" || prevBiome = "DREAMSPACE" || prevBiome = "CYBERSPACE" || prevBiome = "SINGULARITY") && (biome != prevBiome)) {
                 ClipBiome()
             }
 
@@ -2617,13 +2585,6 @@ CraftHeavenly:
         if (kurwa != "ivaxa")
         Click, Left
         sleep, 350
-        if (doPing4) {
-            PixelGetColor, finishcraftcolor, 870, 920, RGB
-            if (finishcraftcolor = 0x040F04) {
-                totalCraftedhp++
-                try SendWebhook("Heavenly Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedhp, 0)
-            }
-        }
         Sleep, 2500
 
     if (kurwa = "ivaxa") {
@@ -2703,14 +2664,6 @@ CraftBound:
         Sleep, 1000
         if (kurwa != "ivaxa")
         Click, Left
-        sleep, 50
-        if (doPing4) {
-            PixelGetColor, finishcraftcolor, 873, 917, RGB
-            if (finishcraftcolor = 0x40FF40) {
-                totalCraftedbp++
-                try SendWebhook("Bounded Potion Crafted :tools: \nTotal Crafted this Session: "  totalCraftedbp, 0)
-            }
-        }
         Sleep, 2500
 
     if (kurwa = "ivaxa") {
@@ -2767,14 +2720,6 @@ CraftJewerly:
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
-    sleep, 50
-    if (doPing4) {
-        PixelGetColor, finishcraftcolor, 873, 917, RGB
-        if (finishcraftcolor = 0x40FF40) {
-            totalCraftedjp++
-            try SendWebhook("Jewelry Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedjp, 0)
-        }
-    }
     Sleep, 1000
 
     if (kurwa = "ivaxa") {
@@ -2832,14 +2777,6 @@ CraftZombie:
     Sleep, 1000
     if (kurwa != "ivaxa")
     Click, Left
-    sleep, 350
-    if (doPing4) {
-        PixelGetColor, finishcraftcolor, 846, 919, RGB
-        if (finishcraftcolor = 0x092509) {
-            totalCraftedzp++
-            try SendWebhook("Zombie Potion Crafted :tools: \nTotal Crafted this Session: " totalCraftedzp, 0)
-        }
-    }
     Sleep, 1000
     
     if (kurwa = "ivaxa") {
@@ -2898,13 +2835,6 @@ CraftRage:
     if (kurwa != "ivaxa")
     Click, Left
     sleep, 350
-    if (doPing4) {
-        PixelGetColor, finishcraftcolor, 872, 917, RGB
-        if (finishcraftcolor = 0x228822) {
-           totalCraftedrp++
-            try SendWebhook("Rage Potion Crafted :tools: \nTotal Amount Crafted this Session: " totalCraftedrp, 0)
-        }
-    }
     Sleep, 400
 
     if (kurwa = "ivaxa") {
@@ -2978,13 +2908,6 @@ CraftDiver:
     if (kurwa != "ivaxa") {
     Click, Left
     sleep, 50
-    if (doPing4) {
-        PixelGetColor, finishcraftcolor, 873, 917, RGB
-        if (finishcraftcolor = 0x40FF40) {
-            totalCrafteddip++
-            try SendWebhook("Diver Potion Crafted :tools: \nTotal Crafted this Session: " totalCrafteddip, 0)
-        }
-    }
     Sleep, 2000
     
     }
@@ -3297,14 +3220,6 @@ F2::
     }
 
     IniWrite, %selectedItem%, %iniFilePath%, Macro, selectedItem
-    autocrafting := true
-    totalCraftedhp := 0
-    totalCraftedbp := 0
-    totalCraftedrp := 0
-    totalCrafteddp := 0
-    totalCrafteddip := 0
-    totalCraftedzp := 0
-    totalCraftedjp := 0
 
     EnsureFullscreen()
     ToolTip, Crafting will start in 5 seconds..., 900, 10
