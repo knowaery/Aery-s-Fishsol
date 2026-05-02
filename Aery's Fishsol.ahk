@@ -27,7 +27,6 @@ privateServerLink := ""
 webhookURL := ""
 webhookID := ""
 clipWebhook := false
-doPing := false
 doPing2 := false
 doPing3 := false
 doPing4 := false
@@ -55,7 +54,7 @@ detectGlobal := false
 detectTrans := false
 triggerDelayGlobal := 10000
 triggerDelayTrans := 20000
-webReponse := "false"
+webResponse := "false"
 pendingUnequip := false
 autoWarp := false
 detectPotion := false
@@ -71,16 +70,13 @@ totalCrafteddp := 0
 totalCrafteddip := 0
 totalCraftedzp := 0
 totalCraftedjp := 0
-webhookTimer := false
-biomeWebhook := false
-biomemacro := false
 checkGhostServer := false
-checkingicon := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
 biomeDetect := false
-webReponse := false
+webResponse := false
+pingSingularity := false
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -164,10 +160,6 @@ if (FileExist(iniFilePath)) {
     if (tempAzerty != "ERROR")
     azertyPathing := (tempAzerty = "true" || tempAzerty = "1")
 
-    IniRead, tempDoPing, %iniFilePath%, Macro, doPing
-    if (tempDoPing != "ERROR")
-    doPing := (tempDoPing = "true" || tempDoPing = "1")
-
     IniRead, tempDoPing2, %iniFilePath%, Macro, doPing2
     if (tempDoPing2 != "ERROR")
     doPing2 := (tempDoPing2 = "true" || tempDoPing2 = "1")
@@ -228,18 +220,6 @@ if (FileExist(iniFilePath)) {
     if (tempDetectEden != "ERROR")
     detectEden := (tempDetectEden = "true" || tempDetectEden = "1")
 
-    IniRead, tempWebhookTimer, %iniFilePath%, Macro, webhookTimer
-    if (tempWebhookTimer != "ERROR")
-    webhookTimer := (tempWebhookTimer = "true" || tempWebhookTimer = "1")
-
-    IniRead, tempBiomeWebhook, %iniFilePath%, Macro, biomeWebhook
-    if (tempBiomeWebhook != "ERROR")
-    biomeWebhook := (tempBiomeWebhook = "true" || tempBiomeWebhook = "1")
-
-    IniRead, tempOpenMax, %iniFilePath%, Macro, openmax
-    if (tempOpenMax != "ERROR")
-    openmax := (tempOpenMax = "true" || tempOpenMax = "1")
-
     IniRead, tempCheckGhostServer, %iniFilePath%, Macro, checkGhostServer
     if (tempCheckGhostServer != "ERROR")
     checkGhostServer := (tempCheckGhostServer = "true" || tempCheckGhostServer = "1")
@@ -247,6 +227,10 @@ if (FileExist(iniFilePath)) {
     IniRead, tempBiomeDetect, %iniFilePath%, Macro, biomeDetect
     if (tempBiomeDetect != "ERROR")
     biomeDetect := (tempBiomeDetect = "true" || tempBiomeDetect = "1")
+
+    IniRead, tempPingSingularity, %iniFilePath%, Macro, pingSingularity
+    if (tempPingSingularity != "ERROR")
+    pingSingularity := (tempPingSingularity = "true" || tempPingSingularity = "1")
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -265,11 +249,6 @@ if (FileExist(iniFilePath)) {
 
 
 version := "Aery's v1.6"
-code := ""
-if RegExMatch(privateServerLink, "code=([^&]+)", m)
-{
-    code := m1
-}
 
 devNames    := [["maxstellar","ivelchampion249","cresqnt"],["maxstellar","cresqnt","ivelchampion249"],["cresqnt","ivelchampion249","maxstellar"],["cresqnt","maxstellar","ivelchampion249"],["ivelchampion249","maxstellar","cresqnt"],["ivelchampion249","cresqnt","maxstellar"]]
 devRoles    := {"maxstellar":"Lead Developer","ivelchampion249":"Original Creator","cresqnt":"Frontend Developer"}
@@ -413,7 +392,6 @@ Gui, Add, Text, x415 y153 w60 h25 vAutoCloseChatStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x22 y291 w270 h155 cWhite, Biome/Strange Controller:
-;Gui, Add, GroupBox, x22 y291 w270 h195 cWhite, Biome/Strange Controller:
 Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x37 y313 w255 h50 BackgroundTrans, Uses Biome Randomizer and/or Strange Controller after their cooldowns. Biome Randomizer is used 5 minutes after macro start.
 
@@ -428,14 +406,6 @@ Gui, Add, Text, x30 y410 w125 h25 BackgroundTrans, Biome Randomizer:
 Gui, Add, Button, x157 y410 w80 h25 gToggleBiomeRandomizer vBiomeRandomizerBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x257 y413 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
-
-/*
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y450 w125 h25 BackgroundTrans, Webhook:
-Gui, Add, Button, x157 y450 w80 h25 gToggleBiomeWebhook vBiomeWebhookBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x257 y453 w60 h25 vBiomeWebhookStatus BackgroundTrans, OFF
-*/
 
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x307 y200 w270 h155 cWhite, Auto Use Skips in Cyberspace
@@ -501,17 +471,6 @@ Gui, Add, Button, x45 y445 w80 h25 gToggleDetectTrans vDetectTransBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y448 w70 h25 vDetectTransStatus BackgroundTrans, OFF
 
-/*
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y485 w534 h100 cWhite, Webhook Timer
-Gui, Font, s10 c0xCCCCCC Normal
-Gui, Add, Text, x45 y505 w500 h145 BackgroundTrans, Toggle On/Off the timer before an aura webhook is sent. Having this off improves fishing by it not having to disable the macro for 10 seconds
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y545 w80 h25 gToggleWebhookTimer vWebhookTimerBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y548 w70 h25 vWebhookTimerStatus BackgroundTrans, OFF
-*/
-
 
 
 Gui, Tab, Webhook
@@ -546,17 +505,6 @@ Gui, Font, s10 cWhite Normal
 Gui, Add, Text, x50 y414 w300 h25 BackgroundTrans c0xCCCCCC, Ping User if global/transcendent detected: 
 Gui, Font, s10 c0xCCCCCC Bold
 Gui, Add, Text, x410 y414 w60 h25 vDoPing3Status BackgroundTrans, OFF
-/*
-Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y505 w534 h65 cWhite, Auto/Manual Craft Message (Beta)
-Gui, Add, Button, x320 y530 w80 h25 gToggleDoPing4 vDoPing4Btn, Toggle
-Gui, Font, s10 cWhite Normal
-Gui, Add, Text, x50 y534 w300 h25 BackgroundTrans c0xCCCCCC, Message when desired potion is crafted: 
-Gui, Font, s10 c0xCCCCCC Bold
-Gui, Add, Text, x410 y534 w60 h25 vDoPing4Status BackgroundTrans, OFF
-Gui, Font, s7 cWhite Normal
-Gui, Add, Text, x465 y516 w80 h100 BackgroundTrans c0xCCCCCC, Does not work with Zombie, Jewlery, or Diver Potions.
-*/
 
 Gui, Tab, Crafting
 
@@ -634,13 +582,20 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y248 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y290 w534 h100 cWhite, Biome Detection
+Gui, Add, GroupBox, x33 y290 w534 h150 cWhite, Biome Detection
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y310 w500 h145 BackgroundTrans, (During Macro) Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
 Gui, Font, s10 cWhite Bold, Segoe UI
 Gui, Add, Button, x45 y355 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y358 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
+
+Gui, Font, s10 cWhite Bold
+Gui, Add, Text, x45 y384 w534 h100 BackgroundTrans, Ping @everyone if Singularity
+Gui, Font, s10 cWhite Bold, Segoe UI
+Gui, Add, Button, x45 y407 w80 h25 gTogglePingSingularity vPingSingularityBtn, Toggle
+Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
+Gui, Add, Text, x143 y410 w70 h25 vPingSingularityStatus BackgroundTrans, OFF
 
 
 Gui, Tab, About
@@ -818,13 +773,6 @@ if (clipWebhook) {
     GuiControl,, ClipWebhookStatus, OFF
     GuiControl, +c0xFF4444, ClipWebhookStatus
 }
-if (doPing) {
-    GuiControl,, DoPingStatus, ON
-    GuiControl, +c0x00DD00, DoPingStatus
-} else {
-    GuiControl,, DoPingStatus, OFF
-    GuiControl, +c0xFF4444, DoPingStatus
-}
 if (doPing2) {
     GuiControl,, DoPing2Status, ON
     GuiControl, +c0x00DD00, DoPing2Status
@@ -937,20 +885,6 @@ if (detectEden) {
     GuiControl, +c0xFF4444, DetectEdenStatus
     SetTimer, EdenSnatcher, Off
 }
-if (webhookTimer) {
-    GuiControl,, WebhookTimerStatus, ON
-    GuiControl, +c0x00DD00, WebhookTimerStatus
-} else {
-    GuiControl,, WebhookTimerStatus, OFF
-    GuiControl, +c0xFF4444, WebhookTimerStatus
-}
-if (biomeWebhook) {
-    GuiControl,, BiomeWebhookStatus, ON
-    GuiControl, +c0x00DD00, BiomeWebhookStatus
-} else {
-    GuiControl,, BiomeWebhookStatus, OFF
-    GuiControl, +c0xFF4444, BiomeWebhookStatus
-}
 if (checkGhostServer) {
     GuiControl,, CheckGhostServerStatus, ON
     GuiControl, +c0x00DD00, CheckGhostServerStatus
@@ -976,6 +910,13 @@ if (biomeDetect) {
 } else {
     GuiControl,, BiomeDetectStatus, OFF
     GuiControl, +c0xFF4444, BiomeDetectStatus
+}
+if (pingSingularity) {
+    GuiControl,, PingSingularityStatus, ON
+    GuiControl, +c0x00DD00, PingSingularityStatus
+} else {
+    GuiControl,, PingSingularityStatus, OFF
+    GuiControl, +c0xFF4444, PingSingularityStatus
 }
 
 SetTimer, AuraBiomeDetect, 1000
@@ -1128,18 +1069,6 @@ ToggleClipWebhook:
         GuiControl, +c0xFF4444, ClipWebhookStatus
     }
     IniWrite, % (clipWebhook ? "true" : "false"), %iniFilePath%, Macro, clipWebhook
-return
-
-ToggleDoPing:
-    doPing := !doPing
-    if (doPing) {
-        GuiControl,, DoPingStatus, ON
-        GuiControl, +c0x00DD00, DoPingStatus
-    } else {
-        GuiControl,, DoPingStatus, OFF
-        GuiControl, +c0xFF4444, DoPingStatus
-    }
-    IniWrite, % (doPing ? "true" : "false"), %iniFilePath%, Macro, doPing
 return
 
 ToggleDoPing2:
@@ -1356,30 +1285,6 @@ ToggleDetectEden:
     IniWrite, % (detectEden ? "true" : "false"), %iniFilePath%, Macro, detectEden
 return
 
-ToggleWebhookTimer:
-    webhookTimer := !webhookTimer
-    if (webhookTimer) {
-        GuiControl,, WebhookTimerStatus, ON
-        GuiControl, +c0x00DD00, WebhookTimerStatus
-    } else {
-        GuiControl,, WebhookTimerStatus, OFF
-        GuiControl, +c0xFF4444, WebhookTimerStatus
-    }
-    IniWrite, % (webhookTimer ? "true" : "false"), %iniFilePath%, Macro, webhookTimer
-return
-
-ToggleBiomeWebhook:
-    biomeWebhook := !biomeWebhook
-    if (biomeWebhook) {
-        GuiControl,, BiomeWebhookStatus, ON
-        GuiControl, +c0x00DD00, BiomeWebhookStatus
-    } else {
-        GuiControl,, BiomeWebhookStatus, OFF
-        GuiControl, +c0xFF4444, BiomeWebhookStatus
-    }
-    IniWrite, % (biomeWebhook ? "true" : "false"), %iniFilePath%, Macro, biomeWebhook
-return
-
 ToggleCheckGhostServer:
     checkGhostServer := !checkGhostServer
     if (checkGhostServer) {
@@ -1414,6 +1319,18 @@ ToggleBiomeDetect:
         GuiControl, +c0xFF4444, BiomeDetectStatus
     }
     IniWrite, % (biomeDetect ? "true" : "false"), %iniFilePath%, Macro, biomeDetect
+return
+
+TogglePingSingularity:
+    pingSingularity := !pingSingularity
+    if (pingSingularity) {
+        GuiControl,, PingSingularityStatus, ON
+        GuiControl, +c0x00DD00, PingSingularityStatus
+    } else {
+        GuiControl,, PingSingularityStatus, OFF
+        GuiControl, +c0xFF4444, PingSingularityStatus
+    }
+    IniWrite, % (pingSingularity ? "true" : "false"), %iniFilePath%, Macro, pingSingularity
 return
 
 UpdatePrivateServer:
@@ -1468,7 +1385,7 @@ HSLtoRGB(h, s, l) {
 }
 
 AuraBiomeDetect:
-global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome
+global webhookURL, webhookID, doPing2, prevState, blehblehbleh, prevBiome, biome, webResponse
 global auracolor := 0
     logDir := LocalAppData "\Roblox\logs"
 
@@ -1514,6 +1431,7 @@ global auracolor := 0
     if (auraDetection) {
         if (state && state != "In Main Menu" && state != "Equipped _None_" && state != prevState) {
             blehblehbleh := ""
+            webResponse := false
             if (prevState != "None") {
                 needle := Chr(92) Chr(34)
                 pos1 := InStr(state, needle)
@@ -1598,79 +1516,77 @@ global auracolor := 0
 
                 if (auraName = "Equinox" || auraName = "EQUINOX") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
                     }
                 } else if (auraName = "Leviathan" || auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2(":tada: **The Ruler of the Beneath** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
                     }
                 } else if (auraName = "BREAKTHROUGH") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
                     }
                 } else if (auraName = "Monarch" || auraName = "MONARCH") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
                     }
                 } else if (auraName = "Luminosity") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/ReworkedLumiCollection.webp")
                     }
                 } else if (auraName = "Pixelation") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
                     }
                 } else if (auraName = "illusionary" || auraName = "ILLUSIONARY") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Illusionary_curation.gif")
                     }
                 } else if (auraName = "CHILLSEAR") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/yuichillsear.gif")
                     }
                 } else if (auraName = "ASTRAIOS") {
                     ClipCountdownGlobal()
-                    if (!webReponse) {
+                    if (!webResponse) {
                         SendWebhook2("**The Ruler of beyond the Sky** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
                     }
                 }
                 
-            
                 
                 if (auraFilter) {
-                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && !webReponse) {
+                    if (AuraList.HasKey(auraName) && EnabledAuras[auraName] && detectGlobal && !webResponse) {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
                 } else {
-                    if (AuraList.HasKey(auraName) && detectGlobal && !webReponse) {
+                    if (AuraList.HasKey(auraName) && detectGlobal && !webResponse) {
                         SetTimer, V2Clip, -%triggerDelayGlobal%
                         brainrot67 := "67"
                         ShowClipTextGlobal()
                     }
                 }
 
-                if (AuraListTrans.HasKey(auraName) && detectTrans && !webReponse) {
+                if (AuraListTrans.HasKey(auraName) && detectTrans && !webResponse) {
                     SetTimer, V2Clip, -%triggerDelayTrans%
                     brainrot67 := "67"
                     ShowClipTextTrans()
                 }
 
-                if ((toggle) && (autoUnequip) && (auraName != "Nothing")) {
+                if (toggle && autoUnequip && auraName != "Nothing") {
                         pendingUnequip := true
                     }
                 }
             prevState := state
-            webResponse := false
             brainrot67 := ""
         }
     }
@@ -1713,7 +1629,7 @@ global auracolor := 0
                             time := A_NowUTC
                             timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-                            if (biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE" || biome = "SINGULARITY") {
+                            if ((biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") || (biome = "SINGULARITY" && pingSingularity)) {
                                 RareBiomeWarning()
                                 if (!cancelRareBiomeWebhook) {
                                     content := "@everyone"
@@ -1746,19 +1662,8 @@ global auracolor := 0
                 pendingSkips := true
             }
 
-            if (clipType = "Nvidia: Alt + F10" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
-                Send, !{F10}
-            }
-
-            if (clipType = "Medal: F8" && prevBiome = "CYBERSPACE" && biome != "CYBERSPACE") {
-                Send, {F8}
-            }
-            
-
-            if (biome = "CORRUPTION") {
-                corrupt := true
-            } else {
-                corrupt := false
+            if ((detectGlobal || detectTrans) && (prevBiome = "GLITCHED" || prevBiome = "DREAMSPACE" || prevBiome = "CYBERSPACE" || prevBiome = "SINGULARITY")) {
+                ClipBiome()
             }
 
             prevBiome := biome
@@ -1809,7 +1714,14 @@ TurnOnNvidiaReplay() {
         Click, Left
     }
 }
-   
+
+ClipBiome() {
+    if (clipType = "Medal: F8") {
+        Send, {F8}
+    } else {
+        Send, !{F10}
+    }
+}
 
 PopSkips() {
     Sleep, 5000
@@ -1913,44 +1825,6 @@ return
 
 
 ; webhook cystinuzeabukuttuty, please dont hate me max
-SendWebhook3(text, color := 16777215) {
-    global webhookURL, webhookID, doPing, doPing2
-
-    if (!InStr(webhookURL, "discord"))
-        return
-
-    time := A_NowUTC
-    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
-              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
-
-    content := ""
-    allowedMentions := ""
-
-    if (doPing && webhookID != "") {
-        content := "<@" webhookID ">"
-        allowedMentions := """allowed_mentions"": {""users"": [""" webhookID """]},"
-    }
-
-    json := "{"
-    . """content"": """ content ""","
-    . allowedMentions
-    . """embeds"": [{"
-    . """title"": """ text ""","
-    . """color"": " color ","
-    . """footer"": {"
-    . """text"": ""Aery's fishSol v1.6"","
-    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
-    . "},"
-    . """timestamp"": """ timestamp """"
-    . "}]"
-    . "}"
-
-    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    http.Open("POST", webhookURL, false)
-    http.SetRequestHeader("Content-Type", "application/json")
-    http.Send(json)
-}
-
 SendWebhook(text, color := 16777215) {
     global webhookURL, webhookID
 
@@ -2411,7 +2285,7 @@ ManualCraftAlert() {
 }
 
 DoStrangeController() {
-    global biome, biomeWebhook
+    global biome
 
     MouseMove, 45, 521, 3
     sleep 300
@@ -2434,13 +2308,10 @@ DoStrangeController() {
     sleep 300
     Click, Left
     sleep, 600
-    if (biomeWebhook) {
-        try SendWebhook("Strange Controller activated :video_game: \nBiome: " biome , 0)
-    }
 }
 
 DoBiomeRandomizer() {
-    global biome, biomeWebhook
+    global biome
     MouseMove, 45, 521, 3
     sleep 300
     Click, Left
@@ -2462,10 +2333,6 @@ DoBiomeRandomizer() {
     sleep 300
     Click, Left
     sleep, 600
-    if (biomeWebhook) {
-        sleep, 1000
-        try SendWebhook("Biome Randomizer activated :video_game: \nBiome: " biome , 0)
-    }
 }
 
 DoAutoUnequip() {
@@ -3203,7 +3070,7 @@ RunRejoin() {
     SendWebhook("Rejoining Server link...", 0)
     Process, Close, RobloxPlayerBeta.exe
     sleep 2000
-    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
+    Run, % "powershell -NoProfile -Command ""Start-Process '" . privateServerLink . "'"""
     sleep 15000s
     WinActivate, ahk_exe RobloxPlayerBeta.exe
     sleep 5000
@@ -3238,7 +3105,7 @@ RunRejoin() {
 RunRejoin2() {
     Process, Close, RobloxPlayerBeta.exe
     SendWebhook("Rejoining Server link...", 0)
-    Run, % "powershell -NoProfile -Command ""Start-Process 'roblox://navigation/share_links?code=" code "&type=Server'"""
+    Run, % "powershell -NoProfile -Command ""Start-Process '" . privateServerLink . "'"""
 }
 FishingSpot() {
     global keyW, keyA
@@ -3349,18 +3216,6 @@ if (toggle) {
     GuiControl,, StatusText, Running
     GuiControl, +c0x00DD00, StatusText
     GuiControl,, ResStatusText, Active - %res%
-
-    elapsed := A_TickCount - startTick
-    hours := elapsed // 3600000
-    minutes := (elapsed - hours * 3600000) // 60000
-    seconds := (elapsed - hours * 3600000 - minutes * 60000) // 1000
-    timeStr := Format("{:02d}:{:02d}:{:02d}", hours, minutes, seconds)
-    GuiControl,, RuntimeText, %timeStr%
-    GuiControl, +c0x00DD00, RuntimeText
-    GuiControl,, CyclesText, %cycleCount%
-    GuiControl, +c0x00DD00, CyclesText
-
-
 } else {
     GuiControl,, StatusText, Stopped
     GuiControl, +c0xFF4444, StatusText
@@ -3374,18 +3229,6 @@ ManualGUIUpdate() {
         GuiControl,, StatusText, Running
         GuiControl, +c0x00DD00, StatusText
         GuiControl,, ResStatusText, Active - %res%
-
-        elapsed := A_TickCount - startTick
-        hours := elapsed // 3600000
-        minutes := (elapsed - hours * 3600000) // 60000
-        seconds := (elapsed - hours * 3600000 - minutes * 60000) // 1000
-        timeStr := Format("{:02d}:{:02d}:{:02d}", hours, minutes, seconds)
-        GuiControl,, RuntimeText, %timeStr%
-        GuiControl, +c0x00DD00, RuntimeText
-        GuiControl,, CyclesText, %cycleCount%
-        GuiControl, +c0x00DD00, CyclesText
-
-
     } else {
         GuiControl,, StatusText, Stopped
         GuiControl, +c0xFF4444, StatusText
@@ -3436,7 +3279,7 @@ F1::
             SetTimer, DoMouseMove, 100
         }
     }
-    try SendWebhook3(":green_circle: Macro Started!", "7909721")
+    try SendWebhook(":green_circle: Macro Started!", "7909721")
 return
 
 
@@ -3482,16 +3325,16 @@ return
 
 F3::
     if (toggle) {
-        try SendWebhook3(":red_circle: Macro Stopped.", "0")
+        try SendWebhook(":red_circle: Macro Stopped.", "0")
     } else if (autocrafting) {
-        try SendWebhook3(":red_circle: Auto Crafting Stopped.", "0")
+        try SendWebhook(":red_circle: Auto Crafting Stopped.", "0")
     }
     WinClose, %ahkPath% ahk_class AutoHotkey
     Reload
 return
 
 F4::
-global blehblehbleh, webReponse, auraName
+global blehblehbleh, webResponse, auraName
 
     blehblehbleh := "hehe"
     webResponse := true
@@ -3514,7 +3357,7 @@ global blehblehbleh, webReponse, auraName
 return
 
 F7::
-global auraName, biome
+global auraName, biome, prevBiome
     try SendWebhook(auraName,  0)
     try SendWebhook(biome,  0)
 return
@@ -3522,7 +3365,6 @@ return
 F5::
     cancelRareBiomeWebhook := true
 return
-
 
 F6::
     RunRejoin2()
@@ -3548,7 +3390,6 @@ if (toggle) {
     global manualCraft
     global pendingCraft
     global pendingUnequip
-    global code
     global biome
     global biomeWebhook
     loopCount := 0
@@ -3584,38 +3425,24 @@ if (toggle) {
 
         if (strangeController) {
                     elapsed := A_TickCount - startTick
-                    if (corrupt = true) {
-                        if (corruptStartTick = 0)
-                            corruptStartTick := A_TickCount
-                        if (A_TickCount - corruptStartTick < 600000)
-                            goto, SkipStrange
-                    } else {
-                        corruptStartTick := 0
-                    }
-                    if ((strangeControllerLastRun = 0 && elapsed >= strangeControllerTime) || (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval)) {
+                    if ((strangeControllerLastRun = 0 && elapsed >= strangeControllerTime && biome != "CORRUPTION") || (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval && biome != "CORRUPTION")) {
                         DoStrangeController()
                         sleep, 1000
                         strangeControllerLastRun := elapsed
-                    }
-                    SkipStrange:
+                    } else if ((strangeControllerLastRun = 0 && elapsed >= strangeControllerTime && biome = "CORRUPTION") || (strangeControllerLastRun > 0 && (elapsed - strangeControllerLastRun) >= strangeControllerInterval && biome = "CORRUPTION")) {
+                    strangeControllerLastRun := elapsed
                 }
+            }
 
         if (biomeRandomizer) {
                     elapsed := A_TickCount - startTick
-                    if (corrupt = true) {
-                        if (corruptStartTick2 = 0)
-                            corruptStartTick2 := A_TickCount
-                        if (A_TickCount - corruptStartTick2 < 600000)
-                            goto, SkipBiome
-                    } else {
-                        corruptStartTick2 := 0
-                    }
-                    if ((biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime) || (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval)) {
+                    if ((biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime && biome != "CORRUPTION") || (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval && biome != "CORRUPTION")) {
                         DoBiomeRandomizer()
                         biomeRandomizerLastRun := elapsed
-                    }
-                    SkipBiome:
+                    } else if ((biomeRandomizerLastRun = 0 && elapsed >= biomeRandomizerTime && biome = "CORRUPTION") || (biomeRandomizerLastRun > 0 && (elapsed - biomeRandomizerLastRun) >= biomeRandomizerInterval && biome = "CORRUPTION")) {
+                    biomeRandomizerLastRun := elapsed
                 }
+            }
 
             if (pendingUnequip = true) {
                 sleep, 1000
@@ -3742,10 +3569,8 @@ if (toggle) {
         sleep 500
         Click, WheelDown 45
 
-        if (manualCraft) {
-            if (selectedItem2 = "") {
-                return
-            }
+        if (manualCraft && selectedItem2 = "") {
+
             sleep, 1000
             ManualCraftMovement()
             Sleep, 500
@@ -3964,7 +3789,7 @@ StartScript:
         if (res = "1080p") {
             SetTimer, DoMouseMove, 100
         }
-        try SendWebhook3(":green_circle: Macro Started!", "7909721")
+        try SendWebhook(":green_circle: Macro Started!", "7909721")
     }
 return
 
@@ -3990,7 +3815,7 @@ StartScript(res) {
         if (res = "1080p") {
             SetTimer, DoMouseMove, 100
         }
-        try SendWebhook3(":green_circle: Macro Started!", "7909721")
+        try SendWebhook(":green_circle: Macro Started!", "7909721")
         }
     }
 return
@@ -4006,7 +3831,7 @@ PauseScript:
 return
 
 CloseScript:
-    try SendWebhook3(":red_circle: Macro Stopped.", "14495300")
+    try SendWebhook(":red_circle: Macro Stopped.", "14495300")
     Reload
 return
 
