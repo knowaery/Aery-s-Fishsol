@@ -67,7 +67,13 @@ checkGhostServerInterval := 3600000
 storagewebhooksent := false
 biomeDetect := false
 webResponse := false
-pingSingularity := false
+totalCraftedhp := 0
+totalCraftedbp := 0
+totalCraftedrp := 0
+totalCrafteddp := 0
+totalCrafteddip := 0
+totalCraftedzp := 0
+totalCraftedjp := 0
 
 if (FileExist(iniFilePath)) {
     IniRead, tempRes, %iniFilePath%, Macro, resolution
@@ -215,9 +221,10 @@ if (FileExist(iniFilePath)) {
     if (tempBiomeDetect != "ERROR")
     biomeDetect := (tempBiomeDetect = "true" || tempBiomeDetect = "1")
 
-    IniRead, tempPingSingularity, %iniFilePath%, Macro, pingSingularity
-    if (tempPingSingularity != "ERROR")
-    pingSingularity := (tempPingSingularity = "true" || tempPingSingularity = "1")
+    IniRead, tempPotionCraftCount, %iniFilePath%, Macro, potionCraftCount
+    if (tempPotionCraftCount != "ERROR")
+    potionCraftCount := tempPotionCraftCount
+    potionCraftCount2 := potionCraftCount
 
     IniRead, tempAdvancedThreshold, %iniFilePath%, Macro, advancedFishingThreshold
     if (tempAdvancedThreshold != "ERROR" && tempAdvancedThreshold >= 0 && tempAdvancedThreshold <= 40)
@@ -238,22 +245,18 @@ if (FileExist(iniFilePath)) {
 version := "Aery's v1.6"
 
 devNames    := [["maxstellar","ivelchampion249","cresqnt"],["maxstellar","cresqnt","ivelchampion249"],["cresqnt","ivelchampion249","maxstellar"],["cresqnt","maxstellar","ivelchampion249"],["ivelchampion249","maxstellar","cresqnt"],["ivelchampion249","cresqnt","maxstellar"]]
-devRoles    := {"maxstellar":"Lead Developer","ivelchampion249":"Original Creator","cresqnt":"Frontend Developer"}
-devDiscords := {"maxstellar":"Twitch","ivelchampion249":"Youtube","cresqnt":"Scope Development (other macros)"}
+devRoles    := {"maxstellar":"Lead Developer","ivelchampion249":"Original Creator","cresqnt":"Frontend Developer", "Nadir Rift":"General Programmer"}
+devDiscords := {"maxstellar":"Twitch","ivelchampion249":"Youtube","cresqnt":"Scope Development (other macros)","Nadir Rift": "Twitch"}
 
 s := (shuffle >= 1 && shuffle <= 6) ? shuffle : 6
 dev1_name := devNames[s][1], dev2_name := devNames[s][2], dev3_name := devNames[s][3]
 dev1_role := devRoles[dev1_name], dev2_role := devRoles[dev2_name], dev3_role := devRoles[dev3_name]
 dev1_discord := devDiscords[dev1_name], dev2_discord := devDiscords[dev2_name], dev3_discord := devDiscords[dev3_name]
 
-dev1_img := GetDevImg(dev1_name)
-dev2_img := GetDevImg(dev2_name)
-dev3_img := GetDevImg(dev3_name)
-
-GetDevImg(name) {
-    static imgs := {"ivelchampion249": "yui3.png", "maxstellar": "yui2.png", "cresqnt": "yui1.png"}
-    return A_ScriptDir . "\img\" . imgs[name]
-}
+dev1_img :=  A_ScriptDir . "\img\yui1.png"
+dev2_img :=  A_ScriptDir . "\img\yui2.png"
+dev3_img :=  A_ScriptDir . "\img\yui3.png"
+;dev4_img := A_ScriptDir . "\img\yui4.png"
 
 Gui, Color, 041024
 Gui, Font, s15 cWhite Bold, Segoe UI
@@ -397,7 +400,7 @@ Gui, Add, Text, x257 y413 w60 h25 vBiomeRandomizerStatus BackgroundTrans, OFF
 Gui, Font, s11 cWhite Bold
 Gui, Add, GroupBox, x307 y200 w270 h155 cWhite, Auto Use Skips in Cyberspace
 Gui, Font, s9 cWhite Normal
-Gui, Add, Text, x317 y222 h45 w255 BackgroundTrans c0xCCCCCC, (During Macro) Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion. Only works when you are macroing.
+Gui, Add, Text, x317 y222 h45 w255 BackgroundTrans c0xCCCCCC, (During Macro) Automatically detects if you are in Cyberspace and uses a Transcendent Potion or Warp Potion.
 Gui, Font, s10 cWhite Bold
 Gui, Add, Button, x320 y280 w80 h25 gToggleAutoWarp vAutoWarpBtn, Toggle
 Gui, Font, s10 cWhite Bold
@@ -536,9 +539,12 @@ GuiControl, Choose, AutoCraft, %selectedItem%
 Gui, Font, s9 cWhite Normal
 Gui, Add, Text, x35 y245 w534 h100 BackgroundTrans c0xCCCCCC, (During Macro) Goes to Stella's cauldron and crafts the desired item before going to the fish sell shop. Please have the desired on auto craft. Toggling the auras listed below means adding them to the desired potion from your inventory and turns on Add Everything.
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, DropDownList, x245 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
+Gui, Add, DropDownList, x195 y305 w120 vManualCraft gSelectItem2, Heavenly Potion|Bound Potion|Jewelry Potion|Zombie Potion|Rage Potion|Diver Potion
 IniRead, selectedItem2, %iniFilePath%, Macro, selectedItem2
 GuiControl, Choose, ManualCraft, %selectedItem2%
+Gui, Font, s10 cWhite Bold
+Gui, Add, Edit, x450 y305 w70 h25 vPotionCraftInput gUpdatePotionCraft Number Background0xD3D3D3 cBlack, %potionCraftCount%
+Gui, Add, Text, x335 y310 w534 h100 BackgroundTrans, Amount to Craft:
 
 Gui, Font, s10 cWhite Bold
 Gui, Add, Text, x35 y333 w534 h100 BackgroundTrans, Detect Ready Notification
@@ -569,7 +575,7 @@ Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y248 w70 h25 vCheckGhostServerStatus BackgroundTrans, OFF
 
 Gui, Font, s11 cWhite Bold
-Gui, Add, GroupBox, x33 y290 w534 h150 cWhite, Biome Detection
+Gui, Add, GroupBox, x33 y290 w534 h100 cWhite, Biome Detection
 Gui, Font, s10 c0xCCCCCC Normal
 Gui, Add, Text, x45 y310 w500 h145 BackgroundTrans, (During Macro) Sends a webhook on current biome, mentions everyone when a Glitch, Dreamspace, or Cyberspace is detected. Only detects when you are macroing.
 Gui, Font, s10 cWhite Bold, Segoe UI
@@ -577,18 +583,11 @@ Gui, Add, Button, x45 y355 w80 h25 gToggleBiomeDetect vBiomeDetectBtn, Toggle
 Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
 Gui, Add, Text, x143 y358 w70 h25 vBiomeDetectStatus BackgroundTrans, OFF
 
-Gui, Font, s10 cWhite Bold
-Gui, Add, Text, x45 y384 w534 h100 BackgroundTrans, Ping @everyone if Singularity
-Gui, Font, s10 cWhite Bold, Segoe UI
-Gui, Add, Button, x45 y407 w80 h25 gTogglePingSingularity vPingSingularityBtn, Toggle
-Gui, Font, s10 c0xCCCCCC Bold, Segoe UI
-Gui, Add, Text, x143 y410 w70 h25 vPingSingularityStatus BackgroundTrans, OFF
-
 
 Gui, Tab, About
 
 Gui, Font, s14 cWhite Bold, Segoe UI
-Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0x00D4FF, Original fishSol Creators
+Gui, Add, Text, x30 y90 w535 h30 Center BackgroundTrans c0xFFAA00, Original fishSol Creators
 
 Gui, Add, Picture, x50 y130 w50 h50, %dev1_img%
 Gui, Font, s11 cWhite Bold
@@ -623,6 +622,8 @@ Gui, Font, s9 c0xCCCCCC Normal
 Gui, Add, Text, x110 y285 w300 h15 BackgroundTrans, %dev3_role%
 Gui, Add, Text, x110 y300 w300 h15 BackgroundTrans c0x0088FF gDev3LinkClick, %dev3_discord%
 
+Gui, Font, s9 c0xCCCCCC Normal
+
 Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y325 w480 h1 0x10 BackgroundTrans
 
@@ -643,7 +644,8 @@ Gui, Font, s8 c0x888888
 Gui, Add, Text, x50 y490 w480 h1 0x10 BackgroundTrans
 
 Gui, Font, s8 c0xCCCCCC Normal
-Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-05-01)
+Gui, Add, Text, x50 y500 w500 h15 BackgroundTrans, Aery's fishSol v1.6 (2026-05-03)
+Gui, Add, Text, x300 y500 w500 h15 BackgroundTrans, If you need help, message me on discord. (noaery)
 Gui, Add, Text, x50 y525 w500 h15 BackgroundTrans c0x0088FF gReleasesClick +0x200, https://github.com/knowaery/Aery-s-Fishsol
 
 Gui, Tab, Extra
@@ -891,13 +893,6 @@ if (biomeDetect) {
     GuiControl,, BiomeDetectStatus, OFF
     GuiControl, +c0xFF4444, BiomeDetectStatus
 }
-if (pingSingularity) {
-    GuiControl,, PingSingularityStatus, ON
-    GuiControl, +c0x00DD00, PingSingularityStatus
-} else {
-    GuiControl,, PingSingularityStatus, OFF
-    GuiControl, +c0xFF4444, PingSingularityStatus
-}
 
 SetTimer, AuraBiomeDetect, 1000
 
@@ -958,6 +953,14 @@ UpdateLoopCount:
     if (FishingLoopInput > 0) {
         fishingLoopCount := FishingLoopInput
         IniWrite, %fishingLoopCount%, %iniFilePath%, Macro, fishingLoopCount
+    }
+return
+
+UpdatePotionCraft:
+    Gui, Submit, NoHide
+    if (PotionCraftInput > 0) {
+        potionCraftCount := PotionCraftInput
+        IniWrite, %potionCraftCount%, %iniFilePath%, Macro, potionCraftCount
     }
 return
 
@@ -1289,17 +1292,6 @@ ToggleBiomeDetect:
     IniWrite, % (biomeDetect ? "true" : "false"), %iniFilePath%, Macro, biomeDetect
 return
 
-TogglePingSingularity:
-    pingSingularity := !pingSingularity
-    if (pingSingularity) {
-        GuiControl,, PingSingularityStatus, ON
-        GuiControl, +c0x00DD00, PingSingularityStatus
-    } else {
-        GuiControl,, PingSingularityStatus, OFF
-        GuiControl, +c0xFF4444, PingSingularityStatus
-    }
-    IniWrite, % (pingSingularity ? "true" : "false"), %iniFilePath%, Macro, pingSingularity
-return
 
 UpdatePrivateServer:
     Gui, Submit, NoHide
@@ -1597,7 +1589,7 @@ global auracolor := 0
                             time := A_NowUTC
                             timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2) "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-                            if ((biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") || (biome = "SINGULARITY" && pingSingularity)) {
+                            if (biome = "GLITCHED" || biome = "DREAMSPACE" || biome = "CYBERSPACE") {
                                 RareBiomeWarning()
                                 if (!cancelRareBiomeWebhook) {
                                     content := "@everyone"
@@ -1803,8 +1795,8 @@ SendWebhook(text, color := 16777215) {
     timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
               . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
 
-    content := ""
     allowedMentions := ""
+    content := ""
 
 
 
@@ -1858,6 +1850,40 @@ SendWebhook2(text, color := 16777215, imageURL := "") {
     . """title"": """ text ""","
     . """color"": " color ","
     . imageBlock
+    . """footer"": {"
+    . """text"": ""Aery's fishSol v1.6"","
+    . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
+    . "},"
+    . """timestamp"": """ timestamp """"
+    . "}]"
+    . "}"
+
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("POST", webhookURL, false)
+    http.SetRequestHeader("Content-Type", "application/json")
+    http.Send(json)
+}
+
+SendWebhook3(text, color := 16777215) {
+    global webhookURL, webhookID
+
+    if (!InStr(webhookURL, "discord"))
+        return
+
+    time := A_NowUTC
+    timestamp := SubStr(time,1,4) "-" SubStr(time,5,2) "-" SubStr(time,7,2)
+              . "T" SubStr(time,9,2) ":" SubStr(time,11,2) ":" SubStr(time,13,2) ".000Z"
+
+    allowedMentions := ""
+    content := "<@" webhookID ">"
+
+
+    json := "{"
+    . """content"": """ content ""","
+    . allowedMentions
+    . """embeds"": [{"
+    . """title"": """ text ""","
+    . """color"": " color ","
     . """footer"": {"
     . """text"": ""Aery's fishSol v1.6"","
     . """icon_url"": ""https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/img/yui2.png"""
@@ -2499,55 +2525,40 @@ CraftHeavenly:
     if (IfAdded != "Heavenly") {
         IfAdded := "Heavenly"
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
-        if (kurwa != "ivaxa")
         Send, Heavenly Potion
         Sleep, 200
-        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 200, 830, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
     }
 
         if (!useCelestial || !useExotic){
-            if (kurwa != "ivaxa")
             MouseMove, 1023, 437, 3
             Sleep, 200
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 200
-            if (kurwa != "ivaxa")
             Send, ^a
             Sleep, 200
-            if (kurwa != "ivaxa")
             Send, 250
             Sleep, 200
-            if (kurwa != "ivaxa") 
             MouseMove, 1130, 437, 3
             Sleep, 1000
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 1000
         }
@@ -2555,10 +2566,8 @@ CraftHeavenly:
         if (useCelestial && !useExotic) {
             MouseMove, 1130, 487, 3
             Sleep, 500
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 500
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 500
         }
@@ -2566,7 +2575,6 @@ CraftHeavenly:
         if (useExotic && !useCelestial) {
             MouseMove, 1130, 537, 3
             Sleep, 500
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 500
         }
@@ -2574,22 +2582,22 @@ CraftHeavenly:
         if (useExotic && useCelestial) {
             MouseMove, 850, 688, 3
             Sleep, 500
-            if (kurwa != "ivaxa")
             Click, Left
             Sleep, 500
         }
 
-        if (kurwa != "ivaxa")
         MouseMove, 1084, 688, 3
         Sleep, 1000
-        if (kurwa != "ivaxa")
         Click, Left
         sleep, 350
+        if (toggle) {
+            PixelGetColor, finishcraftcolor, 870, 920, RGB
+            if (finishcraftcolor = 0x040F04) {
+                totalCraftedhp++
+            }
+        }
         Sleep, 2500
 
-    if (kurwa = "ivaxa") {
-        kurwa := ""
-    }
 return
 
 CraftBound:
@@ -2598,77 +2606,62 @@ CraftBound:
     if (IfAdded != "Bounded") {
         IfAdded := "Bounded"
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
-        if (kurwa != "ivaxa")
         Send, Potion of Bound
         Sleep, 200
-        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
-         Click, Left
+        Click, Left
         Sleep, 200
     }
-        If  (!useBounded) {
-            if (kurwa != "ivaxa")
-            MouseMove, 1023, 597, 3
-            Sleep, 200
-            if (kurwa != "ivaxa")
-            Click, Left
-            Sleep, 200
-            if (kurwa != "ivaxa")
-            Send, ^a
-            Sleep, 200
-            if (kurwa != "ivaxa")
-            Send, 100
-            Sleep, 200
-
-            if (kurwa != "ivaxa")
-            MouseMove, 1130, 597, 3
-            Sleep, 200
-            if (kurwa != "ivaxa")
-            Click, Left
-            sleep, 200
-        }
-
-        if (useBounded) {
-            MouseMove, 850, 688, 3
-            Sleep, 500
-            if (kurwa != "ivaxa")
-            Click, Left
-            Sleep, 500
-        }
-
-        if (kurwa != "ivaxa")
-        MouseMove, 1084, 688, 3
-        Sleep, 1000
-        if (kurwa != "ivaxa")
+    If  (!useBounded) {
+        MouseMove, 1023, 597, 3
+        Sleep, 200
         Click, Left
-        Sleep, 2500
+        Sleep, 200
+        Send, ^a
+        Sleep, 200
+        Send, 100
+        Sleep, 200
 
-    if (kurwa = "ivaxa") {
-        kurwa := ""
+        MouseMove, 1130, 597, 3
+        Sleep, 200
+        Click, Left
+        sleep, 200
     }
+
+    if (useBounded) {
+        MouseMove, 850, 688, 3
+        Sleep, 500
+        Click, Left
+        Sleep, 500
+    }
+
+    MouseMove, 1084, 688, 3
+    Sleep, 1000
+    Click, Left
+    sleep, 50
+    if (toggle) {
+        PixelGetColor, finishcraftcolor, 873, 917, RGB
+        if (finishcraftcolor = 0x40FF40) {
+            totalCraftedbp++
+        }
+    }
+    Sleep, 2500
 return
 
 CraftJewerly:
@@ -2677,54 +2670,45 @@ CraftJewerly:
     if (IfAdded != "Jewerly") {
         IfAdded := "Jewerly"
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
-        if (kurwa != "ivaxa")
         Send, Jewelry Potion
         Sleep, 200
-        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
     }
 
-    if (kurwa != "ivaxa") 
     MouseMove, 850, 688, 3
     Sleep, 500
-    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 2000
-    if (kurwa != "ivaxa")
     MouseMove, 1084, 688, 3
     Sleep, 1000
-    if (kurwa != "ivaxa")
     Click, Left
+    sleep, 50
+    if (toggle) {
+        PixelGetColor, finishcraftcolor, 873, 917, RGB
+        if (finishcraftcolor = 0x40FF40) {
+            totalCraftedjp++
+        }
+    }
     Sleep, 1000
 
-    if (kurwa = "ivaxa") {
-        kurwa := ""
-    }
 return
 
 CraftZombie:
@@ -2733,55 +2717,46 @@ CraftZombie:
     if (IfAdded != "Zombie") {
         IfAdded := "Zombie"
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
-        if (kurwa != "ivaxa")
         Send, Zombie Potion
         Sleep, 200
-        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
     }
 
-    if (kurwa != "ivaxa") 
     MouseMove, 850, 688, 3
     Sleep, 500
-    if (kurwa != "ivaxa")
     Click, Left
     Sleep, 2000
 
-    if (kurwa != "ivaxa")
     MouseMove, 1084, 688, 3
     Sleep, 1000
-    if (kurwa != "ivaxa")
     Click, Left
-    Sleep, 1000
-    
-    if (kurwa = "ivaxa") {
-        kurwa := ""
+    sleep, 350
+    if (toggle) {
+        PixelGetColor, finishcraftcolor, 846, 919, RGB
+        if (finishcraftcolor = 0x092509) {
+            totalCraftedzp++
+        }
     }
+    Sleep, 1000
+
 return
 
 CraftRage:
@@ -2790,56 +2765,46 @@ CraftRage:
     if (IfAdded != "Rage") {
         IfAdded := "Rage"
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 275, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         Send, ^a
         Sleep, 100
-        if (kurwa != "ivaxa")
         Send, Rage Potion
         Sleep, 200
-        if (kurwa != "ivaxa")
         Send {Enter}
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 1500, 367, 3
         Sleep, 500
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
 
-        if (kurwa != "ivaxa")
         MouseMove, 200, 832, 3
         Sleep, 200
-        if (kurwa != "ivaxa")
         Click, Left
         Sleep, 200
     }
 
-    if (kurwa != "ivaxa")
     MouseMove, 850, 688, 3
     Sleep, 250
-    if (kurwa != "ivaxa") 
     Click, Left
     Sleep, 750
 
-    if (kurwa != "ivaxa")
     MouseMove, 1084, 688, 3
     Sleep, 400
-    if (kurwa != "ivaxa")
     Click, Left
     sleep, 350
+    if (toggle) {
+        PixelGetColor, finishcraftcolor, 872, 917, RGB
+        if (finishcraftcolor = 0x228822) {
+           totalCraftedrp++
+        }
+    }
     Sleep, 400
 
-    if (kurwa = "ivaxa") {
-        kurwa := ""
-    }
 return
 
 CraftDiver:
@@ -2847,75 +2812,44 @@ CraftDiver:
     if (IfAdded != "Diver") {
         IfAdded := "Diver"
 
-        if (kurwa != "ivaxa") {
         MouseMove, 1500, 275, 3
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         Send, ^a
         Sleep, 100
-        }
-
-        if (kurwa != "ivaxa") {
         Send, Diver Potion
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         Send {Enter}
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         MouseMove, 1500, 367, 3
         Sleep, 500
-        }
-
-        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         MouseMove, 200, 832, 3
         Sleep, 200
-        }
-
-        if (kurwa != "ivaxa") {
         Click, Left
         Sleep, 200
+    }
+
+    MouseMove, 850, 688, 3
+    Sleep, 250
+    Click, Left
+    Sleep, 750
+    MouseMove, 1084, 688, 3
+    Sleep, 400
+    Click, Left
+    sleep, 350
+    if (toggle) {
+        PixelGetColor, finishcraftcolor, 873, 917, RGB
+        if (finishcraftcolor = 0x40FF40) {
+            totalCrafteddip++
         }
     }
-
-    if (kurwa != "ivaxa") {
-    MouseMove, 850, 688, 3
-    Sleep, 500
-    }
-    if (kurwa != "ivaxa") {
-    Click, Left
     Sleep, 2000
-    }
-    if (kurwa != "ivaxa") {
-    MouseMove, 1084, 688, 3
-    Sleep, 1000
-    }
-    if (kurwa != "ivaxa") {
-    Click, Left
-    sleep, 50
-    Sleep, 2000
-    
-    }
 
-    if (kurwa = "ivaxa") {
-        kurwa := ""
-    }
 return
+
 
 CraftSelected:
 
@@ -3220,6 +3154,7 @@ F2::
     }
 
     IniWrite, %selectedItem%, %iniFilePath%, Macro, selectedItem
+    autocrafting := true
 
     EnsureFullscreen()
     ToolTip, Crafting will start in 5 seconds..., 900, 10
@@ -3244,7 +3179,6 @@ F3::
     } else if (autocrafting) {
         try SendWebhook(":red_circle: Auto Crafting Stopped.", "0")
     }
-    WinClose, %ahkPath% ahk_class AutoHotkey
     Reload
 return
 
@@ -3260,19 +3194,17 @@ global blehblehbleh, webResponse, auraName
         if (clipWebhook && AuraList.HasKey(auraName) && brainrot67 = "67") {
                 try SendWebhook(auraName " Clip Canceled.",  14495300)
         }
-        if (auraDetection) {
-            ToolTip, Detection Restarting in 2 Seconds..., 870, 10
-            sleep, 1000
-            ToolTip, Detection Restarting in 1 Seconds..., 870, 10
-            sleep, 1000
-            ToolTip
-            SetTimer, AuraBiomeDetect, 1000
-        }
+        ToolTip, Detection Restarting in 2 Seconds..., 870, 10
+        sleep, 1000
+        ToolTip, Detection Restarting in 1 Seconds..., 870, 10
+        sleep, 1000
+        ToolTip
+        SetTimer, AuraBiomeDetect, 1000
     }
 return
 
 F7::
-global auraName, biome, prevBiome
+global auraName, biome
     try SendWebhook(auraName,  0)
     try SendWebhook(biome,  0)
 return
@@ -3334,7 +3266,7 @@ if (toggle) {
                     checkGhostServerlastRun := elapsed
                 }
             } else if (checkGhostServer && privateServerLink = "") {
-                SendWebhook("NO PRIVATE SERVER LINK", 14495300)
+                SendWebhook3("NO PRIVATE SERVER LINK", 14495300)
             }
         
 
@@ -3368,12 +3300,15 @@ if (toggle) {
                 }
                 pendingUnequip := false
             }
+
+        PixelGetColor, deletebutton, 1106, 919, RGB
+        if (deletebutton = 0xFF5A5D) {
+                try SendWebhook3("Max Storage Detected \nDisabling Macro", 0)
+            Reload
+        }
         
 
-        if (pendingCraft = true) {
-            if (selectedItem2 = "") {
-                    return
-                }
+        if (pendingCraft && manualCraft && selectedItem2 != "") {
 
             sleep, 1000
             MouseMove, 47, 467, 3
@@ -3431,12 +3366,6 @@ if (toggle) {
         Send, {Enter}
         sleep 5000  
 
-        PixelGetColor, deletebutton, 1106, 919, RGB
-        if (deletebutton = 0xFF5A5D && !storagewebhooksent) {
-            try SendWebhook("Max Storage Detected", 0)
-            storagewebhooksent := true
-        }
-
 
         if (autoCloseChat) {
             PixelGetColor, chatcolor, 138, 40, RGB
@@ -3484,30 +3413,72 @@ if (toggle) {
         sleep 500
         Click, WheelDown 45
 
-        if (manualCraft && selectedItem2 = "") {
-
+        if (manualCraft && selectedItem2 != "") {
             sleep, 1000
             ManualCraftMovement()
             Sleep, 500
             Send, f
             Sleep, 1000
-            Gosub, CraftSelected2
-            Sleep, 1000
-
-            if (detectPotion) {
-                MouseMove, 850, 688, 3
-                Sleep, 500
-                Click, Left
-                Sleep, 500
+        if (potionCraftCount > 0) {
+                Loop {
+                    Gosub, CraftSelected2
+                    Sleep, 1000
+                    potionCraftCount--
+                    if (potionCraftCount <= 0) {
+                        potionCraftCount := potionCraftCount2
+                        break
+                    }
+                }
             }
 
-            Send, {Esc}
-            Sleep, 650
-            Send, R
-            Sleep, 650
-            Send, {Enter}
-            sleep 3000
-        }
+                if (selectedItem2 = "Heavenly Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCraftedhp " times", 0)
+                } else if (selectedItem2 = "Bound Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCraftedbp " times", 0)
+                } else if (selectedItem2 = "Jewelry Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCraftedjp " times", 0)
+                } else if (selectedItem2 = "Zombie Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCraftedzp " times", 0)
+                } else if (selectedItem2 = "Rage Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCraftedrp " times", 0)
+                } else if (selectedItem2 = "Diver Potion") {
+                    SendWebhook( selectedItem2 " has been crafted " totalCrafteddip " times", 0)
+                }
+
+                totalCraftedhp := 0
+                totalCraftedbp := 0
+                totalCraftedrp := 0
+                totalCrafteddp := 0
+                totalCrafteddip := 0
+                totalCraftedzp := 0
+                totalCraftedjp := 0
+
+                if (detectPotion) {
+                    MouseMove, 850, 688, 3
+                    Sleep, 500
+                    Click, Left
+                    Sleep, 500
+                }
+
+                Send, {Esc}
+                Sleep, 650
+                Send, R
+                Sleep, 650
+                Send, {Enter}
+                sleep 3000
+                MouseMove, 47, 467, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                MouseMove, 382, 126, 3
+                sleep 220
+                Click, Left
+                sleep 220
+                Click, WheelUp 80
+                sleep 500
+                Click, WheelDown 45
+                sleep 300
+            }
 
 
 
@@ -3594,7 +3565,7 @@ if (toggle) {
             Send, {%keyA% Up}
             sleep 75
             Send, {%keyW% Down}
-            sleep 2670
+            sleep 2692
             Send, {%keyW% Up}
             loopCount := 0
         }
@@ -3610,6 +3581,7 @@ if (toggle) {
 
         ; Check for white pixel
         startWhitePixelSearch := A_TickCount
+        fishingFailsafeRan := false
         Loop {
         PixelGetColor, color, 1176, 836, RGB
         if (color = 0xFFFFFF) {
@@ -3624,6 +3596,25 @@ if (toggle) {
         if (!toggle) {
         Return
         }
+        }
+
+        if (A_TickCount - startWhitePixelSearch > (31 * 1000) && !fishingFailsafeRan) {
+            MouseMove, 1368, 950, 3
+            sleep 300
+            MouseClick, Left
+            sleep 300
+            MouseMove, 1167, 476, 3
+            sleep 300
+            MouseClick, Left
+            sleep 300
+            MouseMove, 1113, 342, 3
+            sleep 300
+            MouseClick, left
+            sleep 300
+            MouseMove, 851, 832, 3
+            sleep 300
+            MouseClick, Left
+            fishingFailsafeRan := true
         }
 
         ; PixelSearch loop with 9-second timeout
