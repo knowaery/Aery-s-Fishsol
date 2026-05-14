@@ -24,8 +24,8 @@ strangeController := false
 biomeRandomizer := false
 autoCloseChat := false
 privateServerLink := ""
-webhookURL := ""
-webhookID := ""
+webhookURL := "" ; webhook url
+webhookID := "" ; user id to ping
 clipWebhook := false
 doPing2 := false ; ping for clipwebhook
 doPing3 := false ; ping if global/transcendent
@@ -35,9 +35,8 @@ useExotic := false
 useBounded := false
 advancedFishingThreshold := 25
 autoClicker := false
-IfAdded := ""
-blehblehbleh := ""
-kurwa := ""
+IfAdded := "" ; if opened potion menu
+blehblehbleh := "" ; check to cancel timer tooltip
 strangeControllerLastRun := 0
 strangeControllerInterval := 1260000
 strangeControllerTime := 0
@@ -60,20 +59,19 @@ pendingCraft := false
 auraFilter := false
 auraFilterReady := false
 detectEden := false
-brainrot67 := ""
+brainrot67 := "" ; checks if clip is canceled
 checkGhostServer := false
 checkGhostServerlastRun := 0
 checkGhostServerInterval := 3600000
 storagewebhooksent := false
 biomeDetect := false
 webResponse := false
-totalCraftedhp := 0
-totalCraftedbp := 0
-totalCraftedrp := 0
-totalCrafteddp := 0
-totalCrafteddip := 0
-totalCraftedzp := 0
-totalCraftedjp := 0
+totalCraftedhp := 0 ;heavenly potion
+totalCraftedbp := 0 ;bounded potion
+totalCraftedrp := 0 ;rage potion
+totalCrafteddip := 0 ;diver potion
+totalCraftedzp := 0 ;zombie potion
+totalCraftedjp := 0 ;jewelry potion
 potionCraftCount := 1
 fishingFailsafeRan := false
 limboFish := false
@@ -247,6 +245,7 @@ if (FileExist(iniFilePath)) {
 }
 
 checkGhostServer := false
+IniWrite, false, %iniFilePath%, Macro, checkGhostServer
 
 
 
@@ -1497,50 +1496,52 @@ global auracolor := 0
                     }
                 }
 
-                if (auraName = "EQUINOX") {
+                
+
+                if (auraName = "Pixelation") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
-                        SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
-                    }
-                } else if (auraName = "LEVIATHAN") {
-                    ClipCountdownGlobal()
-                    if (!webResponse) {
-                        SendWebhook2(":tada: **The Ruler of the Beneath** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
-                    }
-                } else if (auraName = "BREAKTHROUGH") {
-                    ClipCountdownGlobal()
-                    if (!webResponse) {
-                        SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
-                    }
-                } else if (auraName = "MONARCH") {
-                    ClipCountdownGlobal()
-                    if (!webResponse) {
-                        SendWebhook2("**The fallen ruler that retained power.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
+                        SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
                     }
                 } else if (auraName = "Luminosity") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2( ":tada: **The Absolute Radiant** :tada: \nAura detected: " auraName , 11393254, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/ReworkedLumiCollection.webp")
                     }
-                } else if (auraName = "Pixelation") {
+                } else if (auraName = "LEVIATHAN") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
-                        SendWebhook2(":tada: **Game Start!** :tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/PixelationCollection.webp")
+                        SendWebhook2(":tada: **The Ruler of the Beneath** :tada: \nAura detected: " auraName, 5600, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/LeviathanLong.png")
+                    }
+                } else if (auraName = "ASTRAIOS") {
+                    ClipCountdownGlobal()
+                    if (!webResponse) {
+                        SendWebhook2("**The Ruler of Cosmos** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
+                    }
+                } else if (auraName = "BREAKTHROUGH") {
+                    ClipCountdownGlobal()
+                    if (!webResponse) {
+                        SendWebhook2("**rune i: starting with a few** \n**rune ii: only less it gets.** \n**rune iii: time by time, now empty** \n**rune iv: and there was nothing left.** \n**get out of my head.** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/BreakthroughCollection.webp")
+                    }
+                } else if (auraName = "EQUINOX") {
+                    ClipCountdownGlobal()
+                    if (!webResponse) {
+                        SendWebhook2("**Now your getting yourself closer.. to the.. ZERO** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/EquinoxNewCollection.webp")
+                    }
+                } else if (auraName = "MONARCH") {
+                    ClipCountdownGlobal()
+                    if (!webResponse) {
+                        SendWebhook2("**The fallen ruler that retained power. \nAll Hail... <@" webhookID ">** \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MonarchCollection.webp")
+                    }
+                } else if (auraName = "meta") {
+                    ClipCountdownGlobal()
+                    if (!webResponse) {
+                        SendWebhook2("**I came from somewhere. Where could that be? \nAura detected: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/MetaCollection.webp")
                     }
                 } else if (auraName = "illusionary") {
                     ClipCountdownGlobal()
                     if (!webResponse) {
                         SendWebhook2("**<>;'100110101000110101002010-,><';[][[[[][100011001l} \nThe Ultimate ####'# \nP█e█r█f#█3█cT p█##UpP█3█T  ** \n**:)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :)      :) **\n**(:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (:      (: **" auraName , 736657, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Illusionary_curation.gif")
-                    }
-                } else if (auraName = "CHILLSEAR") {
-                    ClipCountdownGlobal()
-                    if (!webResponse) {
-                        SendWebhook2(":tada:**:tada: \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/yuichillsear.gif")
-                    }
-                } else if (auraName = "ASTRAIOS") {
-                    ClipCountdownGlobal()
-                    if (!webResponse) {
-                        SendWebhook2("**The Ruler of the Quantum Vortex* \nAura detected: " auraName, 0, "https://raw.githubusercontent.com/knowaery/Aery-s-Fishsol/main/auraimages/Astraios.gif")
                     }
                 }
                 
@@ -3509,7 +3510,6 @@ if (toggle) {
                 totalCraftedhp := 0
                 totalCraftedbp := 0
                 totalCraftedrp := 0
-                totalCrafteddp := 0
                 totalCrafteddip := 0
                 totalCraftedzp := 0
                 totalCraftedjp := 0
@@ -3659,7 +3659,7 @@ if (toggle) {
         }
         }
 
-        if (A_TickCount - startWhitePixelSearch > (31000) && !fishingFailsafeRan) {
+        if (A_TickCount - startWhitePixelSearch > (61000) && !fishingFailsafeRan) {
             MouseMove, 1368, 950, 3
             sleep 300
             MouseClick, Left
